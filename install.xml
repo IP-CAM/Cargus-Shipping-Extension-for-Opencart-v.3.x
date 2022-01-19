@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>Cargus</name>
+    <version>4.0</version>
+    <author>Cargus S.A.</author>
+    <link>https://www.cargus.ro/</link>
+    <code>Cargus Shipping</code>
+    <description>Shipping extension</description>
+
+    <file path="admin/language/*/*.php">
+        <operation>
+            <search><![CDATA[ <?php ]]></search>
+            <add position="after"><![CDATA[
+          $_['text_cargus_index'] = 'Cargus';
+          $_['text_cargus_comanda'] = 'Comanda Curenta';
+          $_['text_cargus_istoric'] = 'Istoric Comenzi';
+          $_['text_cargus_preferinte'] = 'Preferinte';
+          $_['text_cargus_setari'] = 'Configurare';
+          $_['add_to_cargus'] = 'Adauga in lista de livrari Cargus';
+        ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/controller/common/column_left.php">
+        <operation>
+            <search><![CDATA[ // Stats ]]></search>
+            <add position="before"><![CDATA[
+			// Cargus
+			$cargus = array();
+
+            $cargus[] = array(
+                'name'	   => $this->language->get('text_cargus_comanda'),
+                'href'     => $this->url->link('extension/cargus/comanda', 'user_token=' . $this->session->data['user_token'], true),
+                'children' => array()
+            );
+
+            $cargus[] = array(
+                'name'	   => $this->language->get('text_cargus_istoric'),
+                'href'     => $this->url->link('extension/cargus/istoric', 'user_token=' . $this->session->data['user_token'], true),
+                'children' => array()
+            );
+
+            $cargus[] = array(
+                'name'	   => $this->language->get('text_cargus_preferinte'),
+                'href'     => $this->url->link('extension/cargus/preferinte', 'user_token=' . $this->session->data['user_token'], true),
+                'children' => array()
+            );
+
+            $cargus[] = array(
+                'name'	   => $this->language->get('text_cargus_setari'),
+                'href'     => $this->url->link('extension/shipping/cargus', 'user_token=' . $this->session->data['user_token'], true),
+                'children' => array()
+            );
+
+			if ($cargus) {
+				$data['menus'][] = array(
+					'id'       => 'menu-extension',
+					'icon'	   => 'fa-truck',
+					'name'	   => $this->language->get('text_cargus_index'),
+					'href'     => '',
+					'children' => $cargus
+				);
+			}
+                ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/view/template/common/header.twig">
+        <operation>
+            <search><![CDATA[ </head> ]]></search>
+            <add position="before"><![CDATA[
+			<link rel="stylesheet" type="text/css" href="view/stylesheet/cargus.css" />
+			<script type="text/javascript" src="view/javascript/cargus.js"></script>
+                ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/controller/common/header.php">
+        <operation>
+            <search><![CDATA[ $this->load->language('common/header'); ]]></search>
+            <add position="after"><![CDATA[
+                $data['text_cargus_index'] = $this->language->get('text_cargus_index');
+                $data['text_cargus_comanda'] = $this->language->get('text_cargus_comanda');
+                $data['text_cargus_istoric'] = $this->language->get('text_cargus_istoric');
+                $data['text_cargus_preferinte'] = $this->language->get('text_cargus_preferinte');
+                $data['text_cargus_setari'] = $this->language->get('text_cargus_setari');
+                $data['cargus_comanda'] = $this->url->link('cargus/comanda', 'user_token=' . (isset($this->session->data['user_toke']) ? $this->session->data['user_toke'] : ''), 'SSL');
+                $data['cargus_istoric'] = $this->url->link('cargus/istoric', 'user_toke=' . (isset($this->session->data['user_toke']) ? $this->session->data['user_toke'] : ''), 'SSL');
+                $data['cargus_preferinte'] = $this->url->link('cargus/preferinte', 'user_toke=' . (isset($this->session->data['user_toke']) ? $this->session->data['user_toke'] : ''), 'SSL');
+                $data['cargus_setari'] = $this->url->link('shipping/cargus', 'user_toke=' . (isset($this->session->data['user_toke']) ? $this->session->data['user_toke'] : ''), 'SSL');
+                ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/view/template/sale/order_list.twig">
+        <operation>
+            <search><![CDATA[ <div class="pull-right"> ]]></search>
+            <add position="after"><![CDATA[
+			<a href="#" token="{{ opencart_token }}" id="add_cargus" class="btn btn-info">{{ add_to_cargus }}</button></a>
+                ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/controller/sale/order.php">
+        <operation>
+            <search><![CDATA[ $results = $this->model_sale_order->getOrders($filter_data); ]]></search>
+            <add position="after"><![CDATA[
+              $data['add_to_cargus'] = $this->language->get('add_to_cargus');
+              $data['opencart_token'] = (isset($this->session->data['user_token']) ? $this->session->data['user_token'] : '');
+                ]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/view/theme/*/template/common/header.twig">
+        <operation>
+            <search><![CDATA[ </head> ]]></search>
+            <add position="before"><![CDATA[
+            <script type="text/javascript" src="catalog/view/javascript/cargus.js"></script>
+                ]]></add>
+        </operation>
+    </file>
+
+
+    <file path="catalog/controller/checkout/shipping_method.php">
+        <operation>
+            <search><![CDATA[ $results = $this->model_setting_extension->getExtensions('shipping'); ]]></search>
+            <add position="after"><![CDATA[
+            $this->config->set('shipping_cargus_status', $this->config->get('cargus_status'));
+                ]]></add>
+        </operation>
+    </file>
+
+    <file path="catalog/model/total/coupon.php">
+        <operation>
+            <search><![CDATA[ public function getTotal(&$total_data, &$total, &$taxes) { ]]></search>
+            <add position="after"><![CDATA[
+                $this->language->load('shipping/cargus');
+
+                if (isset($this->session->data['coupon_cargus']) && $this->session->data['coupon_cargus'] > 0) {
+                    $total_data[] = array(
+                        'code'          => 'coupon',
+                        'title'         => $this->language->get('text_discount_cargus'),
+                        'text'          => $this->currency->format(-$this->session->data['coupon_cargus']),
+                        'value'         => $this->session->data['coupon_cargus'],
+                        'sort_order'    => 5
+                    );
+                    $total -= $this->session->data['coupon_cargus'];
+                }
+                ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/controller/startup/permission.php">
+        <operation>
+            <search><![CDATA[ $extension = array( ]]></search>
+            <add position="after"><![CDATA[
+			'extension/cargus',
+                ]]></add>
+        </operation>
+    </file>
+</modification>
