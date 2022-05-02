@@ -40,6 +40,7 @@ class ControllerExtensionCargusEdit extends Controller {
         $data['text_yes'] = $this->language->get('text_yes');
         $data['text_cargus_destinatie'] = $this->language->get('text_cargus_destinatie');
         $data['text_cargus_franciza'] = $this->language->get('text_cargus_franciza');
+        $data['text_cargus_ship'] = $this->language->get('text_cargus_ship_and_go');
         $data['entry_pickup'] = $this->language->get('entry_pickup');
         $data['entry_county'] = $this->language->get('entry_county');
         $data['entry_locality'] = $this->language->get('entry_locality');

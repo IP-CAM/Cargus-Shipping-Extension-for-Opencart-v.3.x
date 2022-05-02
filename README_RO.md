@@ -18,6 +18,7 @@
 - Dupa confirmarea instalarii extensiei, se acceseaza `Extensions`, apoi `Modifications`
 - Se da click pe butonul albastru `Refresh` din partea dreapta-sus a paginii
 - In menu-ul principal din partea stanga o sa apara o optinue noua, numita `Cargus`
+- Pentru instalarea extensiilor de livrare, mergi la  `Extensions` -> `Extensions`, alege Shipping de la `Extension type` si cauta `Cargus` si `Cargus Ship and Go` apoi da click pe install
 - Se acceseaza pagina `Cargus`, apoi `Configuration` si se completeaza formularul, dupa care se apasa butonul albastru `Save` din partea dreapta-sus a paginii
 
 ### Configurarea modulului
@@ -45,3 +46,7 @@
 - Free shipping after: se introduce limita pentru care cumparaturile mai mari de beneficiaza de transport gratuit (plata transportului se face automat la expeditor)
 - Pickup from Cargus: se alege daca este oferita posibilitatea ridicarii coletului de catre destinatar din cel mai apropiat depozit Cargus
 - Fixed shipping price: se alege un cost fix de livrare sau se lasa necompletat, pentru ca modulul sa calculeze automat tariful
+- Se acceseaza pagina `Cargus Ship and Go`, apoi `Preferences` si se completeaza formularul, dupa care se apasa butonul albastru `Save` din partea dreapta-sus a paginii
+- Free shipping after: se introduce limita pentru care cumparaturile mai mari de beneficiaza de transport gratuit (plata transportului se face automat la expeditor)
+- Fixed shipping price: se alege un cost fix de livrare sau se lasa necompletat, pentru ca modulul sa calculeze automat tariful
+- Status: Are 2 optiuni `enabled` si `disabled`. Daca se opteaza pentru enabled, atunci aceasta metoda de livrare va fi activata in zona de checkout.

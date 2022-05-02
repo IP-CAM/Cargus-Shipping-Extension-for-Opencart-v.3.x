@@ -33,5 +33,10 @@ $_['entry_free']                = 'Free shipping after';
 $_['entry_free_details']        = 'Standard shipping is free but does not include the extra kilometers cost.';
 $_['entry_fixed']               = 'Fixed shipping price';
 $_['entry_fixed_details']       = 'Standard shipping will have a fixed cost, regardless of the extra kilometers.';
+$_['entry_service_id']          = 'Service ID';
+$_['entry_service_id_details']  = 'Service ID sent as parameter API de AWB';
+$_['entry_service_id_1']        = '1 Standard';
+$_['entry_service_id_34']       = '34 Economic Standard';
+$_['entry_service_id_39']       = '39 Multipiece';
 // Error
 $_['error_permission']          = 'Warning: You do not have permission to modify Cargus shipping method preferences!';

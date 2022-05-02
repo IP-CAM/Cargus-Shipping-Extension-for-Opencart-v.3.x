@@ -57,9 +57,14 @@ class ControllerExtensionShippingCargus extends Controller {
             $this->db->query($addExtension);
 
 			$this->model_setting_setting->editSetting('cargus', $this->request->post);
-
+            $this->model_setting_setting->editSetting(
+                'shipping_cargus', 
+                [
+                    'shipping_cargus_status' => $this->request->post['cargus_status']
+                ]
+            );
             // instantiez clasa cargus
-            require(DIR_CATALOG.'model/extension/shipping/cargusclass.php');
+            require_once(DIR_CATALOG.'model/extension/shipping/cargusclass.php');
             $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass();
 
             // setez url si key
@@ -323,6 +328,12 @@ class ControllerExtensionShippingCargus extends Controller {
                 $payer = 1;
             }
 
+            // check if we have pudo_location_id
+            $pudo_location_id = (!empty($order['shipping_custom_field'])) ? $order['shipping_custom_field'] : null;
+            if($pudo_location_id && isset($pudo_location_id['pudo_location_id'])){
+                $pudo_location_id = $pudo_location_id['pudo_location_id'];
+            }
+
             // adaug awb-ul in baza de date
             $sql = "INSERT INTO awb_cargus SET
                                 order_id = '".addslashes($this->request->get['id'])."',
@@ -351,7 +362,8 @@ class ControllerExtensionShippingCargus extends Controller {
                                 observations = '',
                                 contents = '".addslashes(htmlentities(implode('; ', $contents_array)))."',
                                 barcode = '0',
-                                shipping_code = '".addslashes($order['shipping_code'])."'
+                                shipping_code = '".addslashes($order['shipping_code'])."',
+                                pudo_location_id = '".addslashes($pudo_location_id)."'
                             ";
 
             if ($this->db->query($sql)) {

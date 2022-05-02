@@ -201,8 +201,9 @@
                                     <td>{{ entry_shipping_method }}</td>
                                     <td>
                                         <select class="form-control" name="shipping_code">
-                                            <option{% if awb.row.shipping_code != 'cargus.franciza' %} selected="selected" {% endif %} value="cargus.destinatie">{{ text_cargus_destinatie }}</option>
+                                            <option{% if awb.row.shipping_code == 'cargus.destinatie' %} selected="selected" {% endif %} value="cargus.destinatie">{{ text_cargus_destinatie }}</option>
                                             <option{% if awb.row.shipping_code == 'cargus.franciza' %} selected="selected" {% endif %} value="cargus.franciza">{{ text_cargus_franciza }}</option>
+                                            <option{% if awb.row.shipping_code == 'cargus_ship_and_go.ship_and_go' %} selected="selected" {% endif %} value="cargus_ship_and_go.ship_and_go">{{ text_cargus_ship }}</option>
                                         </select>
                                     </td>
                                 </tr>

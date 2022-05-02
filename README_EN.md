@@ -19,9 +19,11 @@
 - Click `Upload 'to choose' cargus.ocmod.zip`, followed by` Continue`
 - After extensions are confirmed, `Extensions' and 'Modifications' are accessed
 - Click the blue refresh button at the top right of the page
-- In the main menu on the left side there will be a new option, called `Cargus`
+- In the main menu on the left side there will be 2 new options, called `Cargus` and `Cargus Ship and Go`
+- To install shipping extensions, go to  `Extensions` -> `Extensions`, choose Shipping and loook for `Cargus` and `Cargus Ship and Go` methods and click install
 - Go to the 'Cargus' page, then 'Configuration' and fill in the form, followed by the 'Save' blue button at the top
    right of the page
+
 
 ### Configuring the Module
 
@@ -53,3 +55,10 @@
     nearest Cargus warehouse
 - Fixed shipping price: Choose a fixed cost of delivery or leave blank, so the module automatically calculates the
     tariff
+- Go to the 'Cargus Ship and Go' page, then 'Preferences' and fill in the form, followed by the 'Save' blue button at the top
+   right of the page
+   - Free shipping limit: enter the limit for which larger purchases benefit of free shipping (payment of the shipment is
+    done automatically to the sender)
+   - Fixed shipping price: Choose a fixed cost of delivery or leave blank, so the module automatically calculates the
+    tariff
+   - Status: Has 2 option enabled or disabled. If enabled, the sipping method will be available in checkout.

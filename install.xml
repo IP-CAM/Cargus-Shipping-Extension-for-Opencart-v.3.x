@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <modification>
     <name>Cargus</name>
-    <version>4.0</version>
+    <version>4.1</version>
     <author>Cargus S.A.</author>
     <link>https://www.cargus.ro/</link>
     <code>Cargus Shipping</code>
@@ -17,6 +17,8 @@
           $_['text_cargus_preferinte'] = 'Preferinte';
           $_['text_cargus_setari'] = 'Configurare';
           $_['add_to_cargus'] = 'Adauga in lista de livrari Cargus';
+          $_['text_cargus_ship_and_go_index'] = 'Cargus Ship and Go';
+          $_['text_cargus_ship_and_go_preferinte'] = 'Preferinte';
         ]]></add>
         </operation>
     </file>
@@ -61,6 +63,23 @@
 					'children' => $cargus
 				);
 			}
+            $cargus_ship[] = array(
+                'name'	   => $this->language->get('text_cargus_ship_and_go_preferinte'),
+                'href'     => $this->url->link('extension/cargus/ship_and_go', 'user_token=' . $this->session->data['user_token'], true),
+                'children' => array()
+            );
+            
+            if ($cargus_ship) {
+				$data['menus'][] = array(
+					'id'       => 'menu-extension',
+					'icon'	   => 'fa-truck',
+					'name'	   => $this->language->get('text_cargus_ship_and_go_index'),
+					'href'     => '',
+					'children' => $cargus_ship
+				);
+			}
+
+
                 ]]></add>
         </operation>
     </file>
@@ -70,7 +89,7 @@
             <search><![CDATA[ </head> ]]></search>
             <add position="before"><![CDATA[
 			<link rel="stylesheet" type="text/css" href="view/stylesheet/cargus.css" />
-			<script type="text/javascript" src="view/javascript/cargus.js"></script>
+			<script type="text/javascript" src="view/javascript/cargus/cargus.js"></script>
                 ]]></add>
         </operation>
     </file>
@@ -115,12 +134,32 @@
         <operation>
             <search><![CDATA[ </head> ]]></search>
             <add position="before"><![CDATA[
-            <script type="text/javascript" src="catalog/view/javascript/cargus.js"></script>
+            <script type="text/javascript" src="catalog/view/javascript/cargus/cargus.js"></script>
+            <link href="catalog/view/theme/default/stylesheet/ship_and_go.css" rel="stylesheet"> 
+            <script type="text/javascript" src="catalog/view/javascript/cargus/ship_and_go.js"></script>
                 ]]></add>
         </operation>
     </file>
-
-
+    
+    
+    <file path="catalog/view/theme/*/template/checkout/shipping_method.twig">
+        <operation>
+            <search><![CDATA[ <div class="buttons"> ]]></search>
+            <add position="before"><![CDATA[
+            <script type="text/javascript">cargusCheckShipping()</script>
+                ]]>
+            </add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/checkout/payment_method.twig">
+        <operation>
+            <search><![CDATA[ <div class="buttons"> ]]></search>
+            <add position="after"><![CDATA[
+             <script language="javascript">checkPaymentMethod()</script>
+                ]]>
+            </add>
+        </operation>
+    </file>
     <file path="catalog/controller/checkout/shipping_method.php">
         <operation>
             <search><![CDATA[ $results = $this->model_setting_extension->getExtensions('shipping'); ]]></search>

@@ -4,21 +4,24 @@
  *
  * cargus description.
  *
- * @version 1.0
+ * @version 1.1
  * @author Catalin Pantazi
  */
 class ModelExtensionShippingCargusClass extends Model {
     private $key;
     private $curl;
     public $url;
+    const CURL_TIMEOUT = 60; // increase timeput for curl for pudo location
 
     function __construct() {
         $this->curl = curl_init();
         curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, 10);
-        curl_setopt($this->curl, CURLOPT_TIMEOUT, 10);
+        curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, self::CURL_TIMEOUT);
+        curl_setopt($this->curl, CURLOPT_TIMEOUT, self::CURL_TIMEOUT);
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, false);
     }
+
+      
 
     function SetKeys($url, $key) {
         $this->url = $url;
@@ -63,7 +66,6 @@ class ModelExtensionShippingCargusClass extends Model {
 
         $data = json_decode($result, true);
         $status = $header['http_code'];
-
         if ($status == '200') {
             if (is_array($data) && isset($data['message'])) {
                 return $data['message'];

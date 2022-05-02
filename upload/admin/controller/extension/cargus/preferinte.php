@@ -15,6 +15,7 @@ class ControllerExtensionCargusPreferinte extends Controller {
         $data['error_warning'] = '';
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			$this->model_setting_setting->editSetting('cargus_preferinte', $this->request->post);
+            
 			$data['success'] = $this->language->get('text_success');
 		}
 
@@ -81,6 +82,13 @@ class ControllerExtensionCargusPreferinte extends Controller {
             $data['entry_free_details'] = $this->language->get('entry_free_details');
             $data['entry_fixed'] = $this->language->get('entry_fixed');
             $data['entry_fixed_details'] = $this->language->get('entry_fixed_details');
+            $data['entry_service_id'] = $this->language->get('entry_service_id');
+            $data['entry_service_id_details'] = $this->language->get('entry_service_id_details');
+            $data['cargus_preferinte_service_id_options'] = array(''=>'');
+            foreach(array(1,34,39) as $elm){    
+                $data['cargus_preferinte_service_id_options'][$elm] = $this->language->get('entry_service_id_'.$elm);
+            }
+
 
             $data['button_save'] = $this->language->get('button_save');
             $data['button_cancel'] = $this->language->get('button_cancel');
@@ -171,6 +179,13 @@ class ControllerExtensionCargusPreferinte extends Controller {
             } else {
                 $data['cargus_preferinte_noextrakm'] = $this->config->get('cargus_preferinte_noextrakm');
             }
+            
+            if (isset($this->request->post['cargus_preferinte_service_id'])) {
+                $data['cargus_preferinte_service_id'] = $this->request->post['cargus_preferinte_service_id'];
+            } else {
+                $data['cargus_preferinte_service_id'] = $this->config->get('cargus_preferinte_service_id');
+            }
+
         }
 
         $data['breadcrumbs'] = array();
