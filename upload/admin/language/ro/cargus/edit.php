@@ -16,6 +16,7 @@ $_['text_yes']                  = 'Da';
 $_['text_success']              = 'AWB-ul a fost salvat!';
 $_['text_cargus_destinatie']    = 'Livrare la adresa clientului';
 $_['text_cargus_franciza']      = 'Ridicare din depozitul Cargus';
+$_['text_cargus_ship_and_go']   = 'Ridicare prin Ship and Go';
 $_['text_currentorder']         = 'Cargus - Comanda curenta';
 // Entry
 $_['entry_pickup']              = 'Punct de lucru:';

@@ -37,4 +37,7 @@ class ControllerExtensionModuleCargus extends Controller {
             echo '<option'.(trim(strtolower($this->request->get['val'])) == trim(strtolower($row['Name'])) ? ' selected="selected"' : '').' km="'.($row['InNetwork'] ? 0 : (!$row['ExtraKm'] ? 0 : $row['ExtraKm'])).'">'.$row['Name'].'</option>'."\n";
         }
 	}
+    
+
+    
 }

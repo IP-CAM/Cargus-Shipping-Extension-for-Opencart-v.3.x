@@ -226,6 +226,30 @@ class ControllerExtensionCargusComanda extends Controller
                                         );
                                     }
 
+                                    $fields['ServiceId'] = 0;
+                                    if($this->config->get('cargus_preferinte_service_id')){
+                                       $fields['ServiceId'] = $this->config->get('cargus_preferinte_service_id'); 
+                                    }
+
+                                    if($row->row['shipping_code'] == 'cargus_ship_and_go.ship_and_go'){
+                                         if(!empty($row->row['pudo_location_id'])){
+                                            $fields['DeliveryPudoPoint'] = $row->row['pudo_location_id'];
+                                        }
+                                        $fields['ServiceId'] =  $this->config->get('cargus_shipping_preferinte_service_id'); //38
+                                        $fields['CashRepayment']     = 0;
+                                        $fields['ShipmentPayer']     = 1;
+                                        $fields['SaturdayDelivery']  = false;
+                                        unset( $fields['OpenPackage'] );
+                                    }elseif(in_array($this->config->get('cargus_preferinte_service_id'), array(34,39))) {
+                                        if ($row->row['weight'] <= 31) {
+                                            $fields['ServiceId'] = 34;
+                                        } elseif ($row->row['weight'] <= 50) {
+                                            $fields['ServiceId'] = 35;
+                                        } else {
+                                            $fields['ServiceId'] = 36;
+                                        }
+                                    }  
+
                                     $cod_bara = $this->model_shipping_cargusclass->CallMethod(
                                         'Awbs',
                                         $fields,
