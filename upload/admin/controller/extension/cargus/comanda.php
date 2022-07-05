@@ -228,7 +228,7 @@ class ControllerExtensionCargusComanda extends Controller
 
                                     $fields['ServiceId'] = 0;
                                     if($this->config->get('cargus_preferinte_service_id')){
-                                       $fields['ServiceId'] = $this->config->get('cargus_preferinte_service_id'); 
+                                       $fields['ServiceId'] = $this->config->get('cargus_preferinte_service_id');
                                     }
 
                                     if($row->row['shipping_code'] == 'cargus_ship_and_go.ship_and_go'){
@@ -248,7 +248,7 @@ class ControllerExtensionCargusComanda extends Controller
                                         } else {
                                             $fields['ServiceId'] = 36;
                                         }
-                                    }  
+                                    }
 
                                     $cod_bara = $this->model_shipping_cargusclass->CallMethod(
                                         'Awbs',
