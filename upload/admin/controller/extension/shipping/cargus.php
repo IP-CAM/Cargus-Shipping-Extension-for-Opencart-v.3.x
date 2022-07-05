@@ -58,7 +58,7 @@ class ControllerExtensionShippingCargus extends Controller {
 
 			$this->model_setting_setting->editSetting('cargus', $this->request->post);
             $this->model_setting_setting->editSetting(
-                'shipping_cargus', 
+                'shipping_cargus',
                 [
                     'shipping_cargus_status' => $this->request->post['cargus_status']
                 ]

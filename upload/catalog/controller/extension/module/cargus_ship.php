@@ -16,7 +16,7 @@ class ControllerExtensionModuleCargusShip extends Controller
 
     public function cron()
     {
-        $isUpdating = false; 
+        $isUpdating = false;
         if (file_exists(self::LOCATION_FILE_NAME_TMP) && (time() - filemtime(self::LOCATION_FILE_NAME_TMP) <= 1 * self::FILE_TEMP_THRESHOLD_SECONDS)) {
             // other cron is working on it
             $isUpdating = true;
@@ -91,4 +91,41 @@ class ControllerExtensionModuleCargusShip extends Controller
         echo json_encode($this->message);
         return true;
     }
+
+	public function location()
+	{
+		$json = array();
+
+		// Validate if shipping is required. If not the customer should not have reached this page.
+		if (!$this->cart->hasShipping()) {
+			$json['redirect'] = $this->url->link('checkout/checkout', '', true);
+		}
+
+		// Validate if shipping address has been set.
+		if (!isset($this->session->data['shipping_address'])) {
+			$json['redirect'] = $this->url->link('checkout/checkout', '', true);
+		}
+
+		// Validate cart has products and has stock.
+		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
+			$json['redirect'] = $this->url->link('checkout/cart');
+		}
+
+		if (!$json) {
+			$pudo_location_id = $this->request->post['location_id'];
+
+			if (!isset($this->session->data['shipping_address']['custom_field']['pudo_location_id'])) {
+				$this->session->data['shipping_address']['custom_field'] = array(
+					'pudo_location_id' => $pudo_location_id
+				);
+			} else {
+				$this->session->data['shipping_address']['custom_field']['pudo_location_id'] = $pudo_location_id;
+			}
+
+			$json['responseText'] = 'ok';
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
 }

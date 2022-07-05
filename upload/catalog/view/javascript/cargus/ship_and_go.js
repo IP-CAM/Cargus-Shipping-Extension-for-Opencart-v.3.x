@@ -13,7 +13,7 @@ var translations = {
         online_payment_available: "Link de plata a rambursului pe telefon",
         cash_payment_available: "Numerar",
     }
-} 
+}
 var Widget = (function () {
     function Widget(options) {
         this.testPins = [
@@ -310,7 +310,7 @@ var Widget = (function () {
         var icon = Widget.instance.options.pinIcon;
         if (!icon || icon == 'null') {
             icon = Widget.instance.env.assetsUrl + "/pin_cargus.png";
-        } 
+        }
         this.smallIcon = new L.icon({
             iconSize: [40, 50],
             iconAnchor: [15, 36],
@@ -971,7 +971,7 @@ function setupShippingMap(){
     mapDom += '<div class="alert alert-danger d-none location-error mt-2 mr-2" role="alert">';
     mapDom += 'A aparut o problema la salvarea locatiei. Incercati din nou!';
     mapDom += '</div>';
-    mapDom += '<input type="hidden" name="has_cash_on_delivery" value="">'; 
+    mapDom += '<input type="hidden" name="has_cash_on_delivery" value="">';
     mapDom += 'Continue';
     mapDom += '</button>';
     mapDom += '</div>';
@@ -989,7 +989,7 @@ function attachActionOnRadio(){
     $(this).click(
         function(){
             if(isSippingRadioItem($(this))){
-                  $("#map_container").show();  
+                  $("#map_container").show();
                   toggleShipingMethodSave(0);
 
             }else{
@@ -1002,11 +1002,11 @@ function attachActionOnRadio(){
     );
    });
 }
- 
+
 function checkPaymentMethod(){
   if(checkShipAndGoValue($("[name='shipping_method']:checked").val()) && $("[name='has_cash_on_delivery']").val() == 0){
     // disable Cash on Delivery
-    enableDisablePaymentMethod();  
+    enableDisablePaymentMethod();
   }else{
     enableDisablePaymentMethod(false);
   }
@@ -1017,18 +1017,18 @@ function hideLocationDiv(){
 
 function toggleShipingMethodSave(show =  1){
     if(show){
-        $("#button-shipping-method").removeAttr('disabled'); 
+        $("#button-shipping-method").removeAttr('disabled');
     }else{
-        $("#button-shipping-method").attr('disabled','disabled'); 
+        $("#button-shipping-method").attr('disabled','disabled');
     }
 }
- 
+
 function enableDisablePaymentMethod(disabled = true){
         $("[name='payment_method']").each(function (){
              if($(this).prop('value') == "cod"){
                  if(disabled){
                      $(this).attr('disabled','disabled');
-                     $(this).prop('checked',false);                   
+                     $(this).prop('checked',false);
                  }else{
                      $(this).removeAttr('disabled');
                  }
@@ -1040,7 +1040,7 @@ function enableDisablePaymentMethod(disabled = true){
 function showMapBasedOnShipingRadioChecked(){
     $("[name='shipping_method']").each(function (){
              if(isSippingRadioItem($(this)) && $(this).prop('checked')){
-                   $("#map_container").show();  
+                   $("#map_container").show();
                    toggleShipingMethodSave(0);
              }
          });
@@ -1054,7 +1054,7 @@ function cargusCheckShipping(){
         $("#map_container").hide();
         renderMap();
         attachActionOnRadio();
-        showMapBasedOnShipingRadioChecked(); 
+        showMapBasedOnShipingRadioChecked();
     }
 
 }
@@ -1136,8 +1136,7 @@ function renderMap() {
             type: "POST",
             url: "index.php?route=extension/module/cargus_ship/location",
             cache: true,
-            data: JSON.stringify({location_id: location.Id}),
-            contentType: "application/json; charset=utf-8",
+            data: { location_id: location.Id },
             dataType: "json",
             success: function(data){
                 checkAndRenderContinue(data, location);
