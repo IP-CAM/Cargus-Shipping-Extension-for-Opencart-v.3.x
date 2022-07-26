@@ -66,10 +66,10 @@ class ControllerExtensionCargusEdit extends Controller {
         $data['entry_shipping_method'] = $this->language->get('entry_shipping_method');
         $data['button_save'] = $this->language->get('button_save');
         $data['button_cancel'] = $this->language->get('button_cancel');
-        $data['cancel'] = $this->url->link('extension/cargus/comanda', 'token=' . $this->session->data['user_token'], 'SSL');
+        $data['cancel'] = $this->url->link('extension/cargus/comanda', 'user_token=' . $this->session->data['user_token'], 'SSL');
 
         // instantiez clasa cargus
-        require(DIR_CATALOG.'model/extension/shipping/cargusclass.php');
+        require(DIR_CATALOG . 'model/extension/shipping/cargusclass.php');
         $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass();
 
         // setez url si key

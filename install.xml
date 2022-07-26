@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <modification>
     <name>Cargus</name>
-    <version>4.1</version>
+    <version>4.2</version>
     <author>Cargus S.A.</author>
     <link>https://www.cargus.ro/</link>
     <code>Cargus Shipping</code>
@@ -68,7 +68,7 @@
                 'href'     => $this->url->link('extension/cargus/ship_and_go', 'user_token=' . $this->session->data['user_token'], true),
                 'children' => array()
             );
-            
+
             if ($cargus_ship) {
 				$data['menus'][] = array(
 					'id'       => 'menu-extension',
@@ -135,13 +135,13 @@
             <search><![CDATA[ </head> ]]></search>
             <add position="before"><![CDATA[
             <script type="text/javascript" src="catalog/view/javascript/cargus/cargus.js"></script>
-            <link href="catalog/view/theme/default/stylesheet/ship_and_go.css" rel="stylesheet"> 
+            <link href="catalog/view/theme/default/stylesheet/ship_and_go.css" rel="stylesheet">
             <script type="text/javascript" src="catalog/view/javascript/cargus/ship_and_go.js"></script>
                 ]]></add>
         </operation>
     </file>
-    
-    
+
+
     <file path="catalog/view/theme/*/template/checkout/shipping_method.twig">
         <operation>
             <search><![CDATA[ <div class="buttons"> ]]></search>

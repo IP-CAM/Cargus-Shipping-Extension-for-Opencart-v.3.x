@@ -493,7 +493,10 @@ var Widget = (function () {
         c += '</div>';
         c += '</div>';
         c += '<div class="cwmp-popup-location-details">';
-        if (location.MainPicture) {
+
+        if (/http/.test(location.MainPicture)) {
+            c += '<img src="' + location.MainPicture + '" class="cwmp-popup-location-image"/>';
+        } else if (location.MainPicture) {
             c += '<img src="data:image/png;base64, ' + location.MainPicture + '" class="cwmp-popup-location-image" />';
         }
         else {
