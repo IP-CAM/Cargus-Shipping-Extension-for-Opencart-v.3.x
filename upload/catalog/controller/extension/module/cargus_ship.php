@@ -1,14 +1,14 @@
 <?php
 class ControllerExtensionModuleCargusShip extends Controller
 {
-
-    const FILE_THRESHOLD_SECONDS = 1800; // If file wasn't modified for > 1h (3600s)
+    const FILE_THRESHOLD_SECONDS = 6*3600; // If file wasn't modified for > 6h (6*3600s)
 
     const FILE_TEMP_THRESHOLD_SECONDS = 80;
 
-    const LOCATION_FILE_NAME_TMP = DIR_APPLICATION . '/view/locations/pudo_locations_tmp.json';
+    const LOCATION_FILE_NAME_TMP = DIR_APPLICATION . '/view/javascript/cargus/locations/pudo_locations_tmp.json';
 
-    const LOCATION_FILE_NAME = DIR_APPLICATION . '/view/locations/pudo_locations.json';
+    const LOCATION_FILE_NAME = DIR_APPLICATION . '/view/javascript/cargus/locations/pudo_locations.json';
+
     public $message = [
         'error' => false,
         'message' => ''
@@ -25,7 +25,13 @@ class ControllerExtensionModuleCargusShip extends Controller
         }
 
         if (!file_exists(self::LOCATION_FILE_NAME) || (time() - filemtime(self::LOCATION_FILE_NAME) >= 1 * self::FILE_THRESHOLD_SECONDS && !$isUpdating)) {
-            file_put_contents(self::LOCATION_FILE_NAME_TMP, "", FILE_APPEND);
+            $result = file_put_contents(self::LOCATION_FILE_NAME_TMP, "", FILE_APPEND);
+	        if ($result === false) {
+		        $this->message['error'] = true;
+		        $this->message['message'] = "Can't write to file ".self::LOCATION_FILE_NAME_TMP;
+		        return $this->showResponse();
+	        }
+
             $isUpdating = true;
 
             require_once(DIR_APPLICATION . 'model/extension/shipping/cargusclass.php');
@@ -55,6 +61,12 @@ class ControllerExtensionModuleCargusShip extends Controller
 
     private function computePudoLocationFile($locations)
     {
+		if (!is_writable(self::LOCATION_FILE_NAME_TMP)) {
+			$this->message['error'] = true;
+			$this->message['message'] = "Can't write to file ".self::LOCATION_FILE_NAME_TMP;
+			return false;
+		}
+
         // can be null or false so we won't update pudo json file
         $locationsJson = '[';
 
@@ -82,8 +94,12 @@ class ControllerExtensionModuleCargusShip extends Controller
         if (file_exists(self::LOCATION_FILE_NAME)) {
             unlink(self::LOCATION_FILE_NAME);
         }
-        rename(self::LOCATION_FILE_NAME_TMP, self::LOCATION_FILE_NAME);
-        $this->message['message'] = "File was updated"; /*  */
+        if (rename(self::LOCATION_FILE_NAME_TMP, self::LOCATION_FILE_NAME)) {
+	        $this->message['message'] = "File was updated"; /*  */
+        } else {
+			$this->message['message'] = "Error updating file";
+			$this->message['error'] = true;
+        }
     }
 
     public function showResponse()
