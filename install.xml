@@ -115,7 +115,7 @@
         <operation>
             <search><![CDATA[ <div class="pull-right"> ]]></search>
             <add position="after"><![CDATA[
-			<a href="#" token="{{ opencart_token }}" id="add_cargus" class="btn btn-info">{{ add_to_cargus }}</button></a>
+			<a href="#" token="{{ opencart_token }}" id="add_cargus" class="btn btn-info">{{ add_to_cargus }}</a>
                 ]]></add>
         </operation>
     </file>

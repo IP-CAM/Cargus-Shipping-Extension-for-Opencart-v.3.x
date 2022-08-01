@@ -330,8 +330,11 @@ class ControllerExtensionShippingCargus extends Controller {
 
             // check if we have pudo_location_id
             $pudo_location_id = (!empty($order['shipping_custom_field'])) ? $order['shipping_custom_field'] : null;
-            if($pudo_location_id && isset($pudo_location_id['pudo_location_id'])){
+            if ($pudo_location_id && isset($pudo_location_id['pudo_location_id'])) {
                 $pudo_location_id = $pudo_location_id['pudo_location_id'];
+            } else {
+				//pudo_location_id could have other data from 'shipping_custom_field', we need to empty it
+	            $pudo_location_id = null;
             }
 
             // adaug awb-ul in baza de date
@@ -372,6 +375,8 @@ class ControllerExtensionShippingCargus extends Controller {
                 echo 'err';
             }
         } else {
+			error_log('cargus_preferinte_pickup is empty? value='.$this->config->get('cargus_preferinte_pickup'));
+
             echo 'err';
         }
     }
