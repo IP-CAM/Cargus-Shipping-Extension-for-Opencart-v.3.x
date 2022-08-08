@@ -15,8 +15,40 @@ $(function () {
                 $.post('index.php?route=extension/module/cargus/localitati&judet=' + $('select[name="zone_id"]:in-viewport:visible').val() + '&val=' + value, function (data) {
                     element.replaceWith('<select name="' + attr_name + '" placeholder="' + placeholder + '" class="' + attr_class + '" id="' + attr_id + '">' + data + '</select>');
                 });
-            } else {
-                element.replaceWith('<input type="text" name="' + attr_name + '" placeholder="' + placeholder + '" class="' + attr_class + '" id="' + attr_id + '" value="" />');
+            }
+            if (window._QuickCheckoutData !== undefined && window['_QuickCheckoutData'].order_data.shipping_country_id == 175 && $('select[id="input-payment-zone"]:in-viewport:visible').val()) {
+                $('#input-payment-zoneclone').remove();
+
+                $.post('index.php?route=extension/module/cargus/localitati&judet=' + $('select[id="input-payment-zone"]:in-viewport:visible').val() + '&val=' + value, function (data) {
+                    $('#input-payment-city').hide();
+                    $('#input-payment-city').parent().append('<select name="' + attr_name + 'clone" placeholder="' + placeholder + '" class="' + attr_class + '" id="input-payment-zoneclone">' + data + '</select>');
+
+                    $('#input-payment-zoneclone').on('change', function(){
+                        if (window['_QuickCheckoutData'].same_address) {
+                            window['_QuickCheckoutData'].order_data.payment_city = $('#input-payment-zoneclone option:selected').text();
+                            window['_QuickCheckoutData'].order_data.shipping_city = $('#input-payment-zoneclone option:selected').text();
+                        } else {
+                            window['_QuickCheckoutData'].order_data.payment_city = $('#input-payment-zoneclone option:selected').text();
+                        }
+                    });
+                });
+            }
+            if (window._QuickCheckoutData !== undefined && window['_QuickCheckoutData'].order_data.shipping_country_id == 175 && $('select[id="input-shipping-zone"]:in-viewport:visible').val()) {
+                $('#input-shipping-zoneclone').remove();
+
+                $.post('index.php?route=extension/module/cargus/localitati&judet=' + $('select[id="input-shipping-zone"]:in-viewport:visible').val() + '&val=' + value, function (data) {
+                    $('#input-shipping-city').hide();
+                    $('#input-shipping-city').parent().append('<select name="' + attr_name + 'clone" placeholder="' + placeholder + '" class="' + attr_class + '" id="input-shipping-zoneclone">' + data + '</select>');
+
+                    $('#input-shipping-zoneclone').on('change', function() {
+                        if (window['_QuickCheckoutData'].same_address) {
+                            window['_QuickCheckoutData'].order_data.payment_city = $('#input-shipping-zoneclone option:selected').text();
+                            window['_QuickCheckoutData'].order_data.shipping_city = $('#input-shipping-zoneclone option:selected').text();
+                        } else {
+                            window['_QuickCheckoutData'].order_data.shipping_city = $('#input-shipping-zoneclone option:selected').text();
+                        }
+                    });
+                });
             }
         }
     }
