@@ -171,14 +171,14 @@ class ModelExtensionShippingCargus extends Model {
                     'OpenPackage' => $this->config->get('cargus_preferinte_openpackage') != 1 ? false : true,
                     'SaturdayDelivery' => $this->config->get('cargus_preferinte_saturday') != 1 ? false : true,
                     'MorningDelivery' => $this->config->get('cargus_preferinte_morning') != 1 ? false : true,
-                    'ShipmentPayer' => $this->config->get('cargus_preferinte_payer') != 'recipient' ? 1 : 2                    
+                    'ShipmentPayer' => $this->config->get('cargus_preferinte_payer') != 'recipient' ? 1 : 2
                 );
                 $fields['ServiceId'] = 0;
                 if($this->config->get('cargus_preferinte_service_id')){
-                   $fields['ServiceId'] = $this->config->get('cargus_preferinte_service_id'); 
+                   $fields['ServiceId'] = $this->config->get('cargus_preferinte_service_id');
                 }
 
-                if(in_array($this->config->get('cargus_preferinte_service_id'), array(34,39))) {
+                if(in_array($this->config->get('cargus_preferinte_service_id'), array(34))) {
                     if ($total_weight <= 31) {
                         $fields['ServiceId'] = 34;
                     } elseif ($total_weight <= 50) {
@@ -186,7 +186,7 @@ class ModelExtensionShippingCargus extends Model {
                     } else {
                         $fields['ServiceId'] = 36;
                     }
-                }  
+                }
 
 
                 $calculate = $this->model_shipping_cargusclass->CallMethod('ShippingCalculation', $fields, 'POST', $token);
