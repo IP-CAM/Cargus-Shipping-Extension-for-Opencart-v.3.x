@@ -2,6 +2,10 @@
 
 $(function () {
     function do_replace() {
+        if (window._QuickCheckoutData !== undefined && window['_QuickCheckoutData'].order_data.shipping_country_id == 175) {
+            $('#input-payment-city').show();
+            $('#input-shipping-city').show();
+        }
         var element = $('[name="city"]:in-viewport:visible');
 
         var attr_name = element.attr('name');
@@ -31,6 +35,7 @@ $(function () {
                             window['_QuickCheckoutData'].order_data.payment_city = $('#input-payment-zoneclone option:selected').text();
                         }
                     });
+                    $('#input-payment-zoneclone').trigger('change');
                 });
             }
             if (window._QuickCheckoutData !== undefined && window['_QuickCheckoutData'].order_data.shipping_country_id == 175 && $('select[id="input-shipping-zone"]:in-viewport:visible').val()) {
@@ -48,6 +53,7 @@ $(function () {
                             window['_QuickCheckoutData'].order_data.shipping_city = $('#input-shipping-zoneclone option:selected').text();
                         }
                     });
+                    $('#input-shipping-zoneclone').trigger('change');
                 });
             }
         }
