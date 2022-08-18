@@ -968,14 +968,14 @@ var WidgetPopupStyle = (function () {
 var widget;
 function setupShippingMap(){
     // we need to inject map dom element
-    var mapDom = '<div id="map_container">';
-    mapDom += '<div class="ship-and-go-map right w-100 mb-3"><div id="widget"></div></div>';
+    var mapDom = '<div id="map_container" style="max-width: 900px; min-width: 650px; z-index: 999; position: relative;">';
+    mapDom += '<div class="ship-and-go-map w-100 mb-3"><div id="widget"></div></div>';
     mapDom += '<div class="alert alert-warning d-none location-alert mt-2 mr-2" role="alert"></div>';
     mapDom += '<div class="alert alert-danger d-none location-error mt-2 mr-2" role="alert">';
     mapDom += 'A aparut o problema la salvarea locatiei. Incercati din nou!';
     mapDom += '</div>';
     mapDom += '<input type="hidden" name="has_cash_on_delivery" value="">';
-    mapDom += 'Continue';
+    //mapDom += 'Continue';
     mapDom += '</button>';
     mapDom += '</div>';
     var isMapNedeed = false;
@@ -1059,7 +1059,6 @@ function cargusCheckShipping(){
         attachActionOnRadio();
         showMapBasedOnShipingRadioChecked();
     }
-
 }
 
 function checkShipAndGoValue(val){
@@ -1150,6 +1149,10 @@ function renderMap() {
                 spinner.addClass('d-none');
             }
         });
+
+        if (window._QuickCheckoutData !== undefined && window['_QuickCheckoutData'].order_data.shipping_country_id == 175) {
+            window['_QuickCheckoutData'].order_data.custom_field.pudo_location_id = location.Id;
+        }
     };
 
     function checkAndRenderContinue(data, location) {
