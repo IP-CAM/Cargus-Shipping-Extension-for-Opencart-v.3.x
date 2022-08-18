@@ -29,14 +29,14 @@
     --popup-button-text-hover-color: white;
     --popup-button-background-hover-color: darkorange;
 }
-.d-none { 
-    display: none;
+.d-none {
+    display: none !important;
 }
 .ship-and-go-map{
     padding-bottom: 10px;
 }
 
-button { 
+button {
     font-weight: 900;
 }
 
@@ -135,7 +135,7 @@ button {
     margin: 5px !important;
     text-decoration: none;
     font-size: 11px !important;
-    
+
     border-radius: 12px;
     margin-top: 1.2em;
 }
@@ -815,7 +815,7 @@ button {
 
 
 
-.cwmp-widget-more-popup-backdrop { 
+.cwmp-widget-more-popup-backdrop {
     width: 100%;
     height: 100%;
     position: absolute;
@@ -827,7 +827,7 @@ button {
     /* display: none; */
 }
 
-.cwmp-widget-more-popup { 
+.cwmp-widget-more-popup {
     z-index: 999999;
     width: 60%;
     /* height: 50%; */
@@ -911,7 +911,7 @@ button {
     height: 30px;
     animation: spin 0.5s linear infinite;
   }
-  
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -984,7 +984,7 @@ button {
         flex: none;
         display: none;
     }
-    
+
     .cwmp-more-popup-address-details {
         padding: 10px;
         flex-wrap: wrap;
@@ -1025,6 +1025,13 @@ button {
     height: 600px;
     position: relative;
     outline: none;
+}
+
+#map_container::before {
+    content: " ";
+    clear: both;
+    display: table;
+    margin-top: 30px;
 }
 
 .location-alert, .location-payment-alert {

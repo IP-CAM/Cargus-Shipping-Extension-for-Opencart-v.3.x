@@ -330,6 +330,9 @@ class ControllerExtensionShippingCargus extends Controller {
 
             // check if we have pudo_location_id
             $pudo_location_id = (!empty($order['shipping_custom_field'])) ? $order['shipping_custom_field'] : null;
+			if (is_null($pudo_location_id)) {
+				$pudo_location_id = (!empty($order['custom_field'])) ? $order['custom_field'] : null;
+			}
             if ($pudo_location_id && isset($pudo_location_id['pudo_location_id'])) {
                 $pudo_location_id = $pudo_location_id['pudo_location_id'];
             } else {
