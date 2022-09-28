@@ -353,7 +353,7 @@ var Widget = (function () {
                     icon = Widget.instance.env.assetsUrl + "/apmPin.svg";
                 }
                 else {
-                    icon = Widget.instance.env.assetsUrl + "/sgPin.svg";
+                    icon = '/catalog/view/theme/default/image/cargus' + "/sgPin.svg";
                 }
             }
         }
@@ -433,8 +433,8 @@ var Widget = (function () {
                 this.smallIcon.options.iconUrl = Widget.instance.env.assetsUrl + "/apmPin.svg";
             }
             else {
-                this.smallIcon.iconUrl = Widget.instance.env.assetsUrl + "/sgPin.svg";
-                this.smallIcon.options.iconUrl = Widget.instance.env.assetsUrl + "/sgPin.svg";
+                this.smallIcon.iconUrl = '/catalog/view/theme/default/image/cargus' + "/sgPin.svg";
+                this.smallIcon.options.iconUrl = '/catalog/view/theme/default/image/cargus' + "/sgPin.svg";
             }
             $('#cwmp-locations-list').append(this.getListItemContent(this.pins[i]));
             this.markers
@@ -475,7 +475,7 @@ var Widget = (function () {
             content += "<img src=\"" + Widget.instance.env.assetsUrl + "/apmLogo.svg\" alt=\"" + location.Name + '"  />';
         }
         else {
-            content += "<img src=\"" + Widget.instance.env.assetsUrl + "/shipgoLogo.svg\" alt=\"" + location.Name + '"  />';
+            content += "<img src=\"" + '/catalog/view/theme/default/image/cargus' + "/shipgoLogo.svg\" alt=\"" + location.Name + '"  />';
         }
         content += '</div>'; //cwmp-location-icon-container
         //#endregion
@@ -695,7 +695,7 @@ var Widget = (function () {
             content += '<span> <div class="cwmp-list-icon"> <img src=\"' + Widget.instance.env.assetsUrl + '/apmLogo.svg\" class=\"cwmp-ship-go-icon-list\" /> <b>' + item.Name + ' </b> </div> ' + item.Address + '</span></li>';
         }
         else {
-            content += '<span> <div class="cwmp-list-icon"> <img src=\"' + Widget.instance.env.assetsUrl + '/shipgoLogo.svg\" class=\"cwmp-ship-go-icon-list\" /> <b>' + item.Name + ' </b> </div> ' + item.Address + '</span></li>';
+            content += '<span> <div class="cwmp-list-icon"> <img src=\"' + '/catalog/view/theme/default/image/cargus' + '/shipgoLogo.svg\" class=\"cwmp-ship-go-icon-list\" /> <b>' + item.Name + ' </b> </div> ' + item.Address + '</span></li>';
         }
         return content;
     };
@@ -849,7 +849,7 @@ var Widget = (function () {
                 oldImage = Widget.instance.env.assetsUrl + "/apmPin.svg";
             }
             else if (currentImage.includes("/shipAndGoSelectedPin.svg")) {
-                oldImage = Widget.instance.env.assetsUrl + "/sgPin.svg";
+                oldImage = '/catalog/view/theme/default/image/cargus' + "/sgPin.svg";
             }
             if (oldImage != undefined) {
                 var oldImageIcon = new L.Icon({
@@ -874,10 +874,10 @@ var Widget = (function () {
             var newImage = undefined;
 
             if (currentImage.includes("/apmPin.svg")) {
-                newImage = Widget.instance.env.assetsUrl + "/apmSelectedPin.svg";
+                newImage = '/catalog/view/theme/default/image/cargus' + "/apmSelectedPin.svg";
             }
             else if (currentImage.includes("/sgPin.svg")) {
-                newImage = Widget.instance.env.assetsUrl + "/shipAndGoSelectedPin.svg";
+                newImage = '/catalog/view/theme/default/image/cargus' + "/shipAndGoSelectedPin.svg";
             }
             if (newImage != undefined) {
                 var newImageIcon = new L.Icon({
