@@ -21,12 +21,11 @@ function renderMap() {
         mapSelector: 'map',
         containerSelector: '#widget',
         width: '100%',
-        height: '100vh',
+        height: '600px',
         zoomEnabled: 'true',
         defaultZoomLevel: '13',
         pinIcon: 'null',
         lang: 'EN',
-        widgetSize: 'small',
         apiUrl: 'https://app.urgentcargus.ro/map',
         showChooseButton: true,
         showOnlyShipGo: true,
@@ -66,6 +65,13 @@ function renderMap() {
         }
     });
     widget.init();
+
+    $( '#shipgomap-modal' ).on( 'shown.bs.modal', function () {
+        if (Widget.instance.map) {
+            Widget.instance.map.invalidateSize(true);
+        }
+    } );
+
     widget.onChanged = function (location) {
         // Location selection changed
         var spinner = $('.spinner-border').removeClass('d-none');
@@ -131,6 +137,8 @@ function checkAndRenderContinue(data, location) {
         locationErrorAlert.addClass('d-none');
         $("[name='has_cash_on_delivery']").val(location.ServiceCOD ? 1 : 0);
         toggleShipingMethodSave(1);
+
+        $('#shipgomap-modal').modal('hide');
     } else {
         continueButton.prop('disabled', true);
         locationErrorAlert.removeClass('d-none');
@@ -158,8 +166,36 @@ function checkPaymentMethod(){
 }
 function setupShippingMap(){
     // we need to inject map dom element
-    var mapDom = '<div id="map_container" style="max-width: 900px; min-width: 650px; z-index: 999; position: relative;">';
+    var mapDom = '<div id="map_container" style="position: relative;">';
+
+    mapDom += `<div class="modal" id="shipgomap-modal" tabIndex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content cargus-modal-content">
+                <div class="cargus-modal-header">
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+                        
+                    </button>
+                </div>
+                <div class="modal-body">`;
+
     mapDom += '<div class="ship-and-go-map w-100 mb-3"><div id="widget"></div></div>';
+
+    mapDom += `<div class="alert alert-warning d-none location-alert mt-2 mr-2" role="alert"></div>
+                    <div class="alert alert-danger d-none location-error mt-2 mr-2" role="alert">
+                        A aparut o problema la salvarea locatiei. Incercati din nou!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+    mapDom += `<div class="position-relative mx-auto">
+        <button type="button" class="btn btn-primary position-relative start-50 translate-middle-x"
+                data-toggle="modal" data-target="#shipgomap-modal">
+            Alege cel mai apropiat Ship&Go!
+        </button>
+    </div>`;
+
     mapDom += '<div class="alert alert-warning d-none location-alert mt-2 mr-2" role="alert"></div>';
     mapDom += '<div class="alert alert-danger d-none location-error mt-2 mr-2" role="alert">';
     mapDom += 'A aparut o problema la salvarea locatiei. Incercati din nou!';
