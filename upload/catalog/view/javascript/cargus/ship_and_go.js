@@ -178,7 +178,7 @@ function setupShippingMap(){
                 </div>
                 <div class="modal-body">`;
 
-    mapDom += '<div class="ship-and-go-map w-100 mb-3"><div id="widget"></div></div>';
+    mapDom += '<div class="ship-and-go-map w-100"><div id="widget"></div></div>';
 
     mapDom += `<div class="alert alert-warning d-none location-alert mt-2 mr-2" role="alert"></div>
                     <div class="alert alert-danger d-none location-error mt-2 mr-2" role="alert">
