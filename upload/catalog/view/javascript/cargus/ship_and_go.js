@@ -247,6 +247,9 @@ function attachActionOnRadio(){
         );
     });
 }
+function hideLocationDiv() {
+    $('.location-alert').addClass('d-none');
+}
 function showMapBasedOnShipingRadioChecked() {
     $("[name='shipping_method']").each(function (){
         if (isSippingRadioItem($(this)) && $(this).prop('checked')) {
