@@ -199,6 +199,7 @@ class ControllerExtensionCargusComanda extends Controller
                                         'CashRepayment' => $row->row['cash_repayment'],
                                         'BankRepayment' => $row->row['bank_repayment'],
                                         'OtherRepayment' => $row->row['other_repayment'],
+                                        'PriceTableId' => $this->config->get('cargus_preferinte_price'),
                                         'OpenPackage' => $row->row['openpackage'] == 1 ? true : false,
                                         'ShipmentPayer' => $row->row['payer'],
                                         'MorningDelivery' => $row->row['morning_delivery'] == 1 ? true : false,
