@@ -21,7 +21,7 @@ class ModelExtensionShippingCargusClass extends Model {
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, false);
     }
 
-      
+
 
     function SetKeys($url, $key) {
         $this->url = $url;
@@ -87,7 +87,9 @@ class ModelExtensionShippingCargusClass extends Model {
                 'data' => $data
             ));
             echo 'CURL Error<br/>';
-            print_r(curl_error($this->curl));
+            echo print_r(curl_error($this->curl), true);
+            echo 'CURL Result<br>';
+            echo print_r($result, true);
             echo '</pre>';
             die();
         }

@@ -194,18 +194,65 @@ class ControllerExtensionShippingCargus extends Controller {
 		return !$this->error;
 	}
 
+    public function addAwb()
+    {
+        $this->language->load('shipping/cargus');
+        $this->load->model('sale/order');
+
+        if (!isset($this->request->get['order_id']) || !($orderInfo = $this->model_sale_order->getOrder($this->request->get['order_id']))) {
+            // Order id not sent or order not found.
+            return new Action('error/not_found');
+        }
+
+        $this->load->model('extension/shipping/cargus');
+        $awb = $this->model_extension_shipping_cargus->getAwbForOrderId($orderInfo['order_id']);
+
+        if ($awb) {
+            // Already generated.
+            $this->session->data['success'] = $this->language->get('text_cargus_already_awb');
+
+            $this->response->redirect($this->url->link('extension/cargus/comanda', $this->addToken(), true));
+        }
+
+        $result = $this->insertNewAwb($this->request->get['order_id']);
+
+        if (!$result) {
+            //error inserting new awb
+
+            $this->session->data['error'] = $this->language->get('text_cargus_error_new_awb');
+            $this->response->redirect($this->url->link('sale/order', $this->addToken(), true));
+        }
+
+        $awb = $this->model_extension_shipping_cargus->getAwbForOrderId($orderInfo['order_id']);
+
+        //validate awb
+        $result = $this->load->controller('extension/cargus/comanda/validateAwb', array($awb['id']));
+
+        $this->response->redirect($this->url->link('extension/cargus/comanda', $this->addToken(), true));
+    }
+
     public function add() {
-        error_reporting(E_ALL);
-        ini_set('display_errors', '1');
+        $result = $this->insertNewAwb($this->request->get['id']);
+
+        if ($result) {
+            echo 'ok';
+        } else {
+            echo 'err';
+        }
+    }
+
+    private function insertNewAwb($order_id) {
+//        error_reporting(E_ALL);
+//        ini_set('display_errors', '1');
         if ($this->config->get('cargus_preferinte_pickup') != '') {
             $this->load->model('sale/order');
             $this->load->model('catalog/product');
 
             // obtin detaliile comenzii
-            $order = $this->model_sale_order->getOrder($this->request->get['id']);
+            $order = $this->model_sale_order->getOrder($order_id);
 
             // calculeaza valoarea totala a cosului
-            $total_data = $this->model_sale_order->getOrderTotals($this->request->get['id']);
+            $total_data = $this->model_sale_order->getOrderTotals($order_id);
             $totals = array();
             foreach ($total_data as $row) {
                 $totals[$row['code']] = $row['value'];
@@ -234,7 +281,7 @@ class ControllerExtensionShippingCargus extends Controller {
             }
 
             // calculez greutatea totala a comenzii in kilograme
-            $order_prodcts = $this->model_sale_order->getOrderProducts($this->request->get['id']);
+            $order_prodcts = $this->model_sale_order->getOrderProducts($order_id);
             $products = array();
             $weight = 0;
             $contents_array = array();
@@ -255,7 +302,7 @@ class ControllerExtensionShippingCargus extends Controller {
 
                 $options_as_string = '';
                 $options_as_array = array();
-                $p_options = $this->model_sale_order->getOrderOptions($this->request->get['id'], $p['order_product_id']);
+                $p_options = $this->model_sale_order->getOrderOptions($order_id, $p['order_product_id']);
                 if (is_array($p_options) && count($p_options) > 0) {
                     foreach ($p_options as $po) {
                         $options_as_array[] = trim($po['name']).': '.trim($po['value']);
@@ -330,19 +377,19 @@ class ControllerExtensionShippingCargus extends Controller {
 
             // check if we have pudo_location_id
             $pudo_location_id = (!empty($order['shipping_custom_field'])) ? $order['shipping_custom_field'] : null;
-			if (is_null($pudo_location_id)) {
-				$pudo_location_id = (!empty($order['custom_field'])) ? $order['custom_field'] : null;
-			}
+            if (is_null($pudo_location_id)) {
+                $pudo_location_id = (!empty($order['custom_field'])) ? $order['custom_field'] : null;
+            }
             if ($pudo_location_id && isset($pudo_location_id['pudo_location_id'])) {
                 $pudo_location_id = $pudo_location_id['pudo_location_id'];
             } else {
-				//pudo_location_id could have other data from 'shipping_custom_field', we need to empty it
-	            $pudo_location_id = null;
+                //pudo_location_id could have other data from 'shipping_custom_field', we need to empty it
+                $pudo_location_id = null;
             }
 
             // adaug awb-ul in baza de date
             $sql = "INSERT INTO awb_cargus SET
-                                order_id = '".addslashes($this->request->get['id'])."',
+                                order_id = '".addslashes($order_id)."',
                                 pickup_id = '".addslashes($this->config->get('cargus_preferinte_pickup'))."',
                                 name = '".addslashes(htmlentities($order['shipping_company'] ? $order['shipping_company'] : implode(' ', array($order['shipping_firstname'], $order['shipping_lastname']))))."',
                                 locality_name = '".addslashes(htmlentities($order['shipping_city']))."',
@@ -373,14 +420,17 @@ class ControllerExtensionShippingCargus extends Controller {
                             ";
 
             if ($this->db->query($sql)) {
-                echo 'ok';
+//                echo 'ok';
+                return true;
             } else {
-                echo 'err';
+//                echo 'err';
+                return false;
             }
         } else {
-			error_log('cargus_preferinte_pickup is empty? value='.$this->config->get('cargus_preferinte_pickup'));
+            error_log('cargus_preferinte_pickup is empty? value='.$this->config->get('cargus_preferinte_pickup'));
 
-            echo 'err';
+//            echo 'err';
+            return false;
         }
     }
 
@@ -389,5 +439,75 @@ class ControllerExtensionShippingCargus extends Controller {
 
         $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/shipping/cargus');
         $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/shipping/cargus');
+    }
+
+    /**
+     * Get data for order info template.
+     *
+     * @param $orderInfo
+     *
+     * @return array|null
+     */
+    public function info($orderInfo)
+    {
+        if (!$orderInfo) {
+            return null;
+        }
+
+        $this->language->load('shipping/cargus');
+        $this->load->model('extension/shipping/cargus');
+
+        $awb = $this->model_extension_shipping_cargus->getAwbForOrderId($orderInfo['order_id']);
+
+        $data['awb_number'] = 0;
+
+        if (isset($awb['barcode']) && !empty($awb['barcode'])) {
+            $data['awb_number'] = $awb['barcode'];
+        }
+
+        $data = array(
+            'buttonAddAwb' => $this->language->get('text_cargus_button_add_awb'),
+//            'buttonDeleteAwb' => $this->language->get('text_button_delete_awb'),
+            'buttonShowAwb' => $this->language->get('text_cargus_print_awb'),
+            'buttonAddAwbLink' => $this->url->link(
+                'extension/shipping/cargus/addAwb',
+                $this->addToken(array('order_id' => $orderInfo['order_id'])),
+                true
+            ),
+            'buttonShowAwbPdf' => $this->url->link(
+                'extension/cargus/comanda/print_awbs',
+                $this->addToken(array('bar_codes' => $data['awb_number'], 'format' => 0)),
+                true
+            ),
+
+            'buttonShowAwbHistory' => $this->url->link('extension/cargus/comanda', $this->addToken(), true),
+//            'buttonDeleteAwbLink' => $this->url->link('extension/shipping/sameday/deleteAwb', $this->addToken(array('order_id' => $orderInfo['order_id'])), true)
+        );
+
+        $awb = $this->model_extension_shipping_cargus->getAwbForOrderId($orderInfo['order_id']);
+
+        if (isset($awb['barcode']) && !empty($awb['barcode'])) {
+            $data['awb_number'] = $awb['barcode'];
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param array $parts
+     *
+     * @return array
+     */
+    private function addToken(array $parts = array())
+    {
+        if (isset($this->session->data['token'])) {
+            return array_merge($parts, array('token' => $this->session->data['token']));
+        }
+
+        if (isset($this->session->data['user_token'])) {
+            return array_merge($parts, array('user_token' => $this->session->data['user_token']));
+        }
+
+        return $parts;
     }
 }
