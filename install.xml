@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <modification>
     <name>Cargus</name>
-    <version>4.7.3</version>
+    <version>4.8.0</version>
     <author>Cargus S.A.</author>
     <link>https://www.cargus.ro/</link>
     <code>Cargus Shipping</code>
@@ -16,6 +16,10 @@
           $_['text_cargus_istoric'] = 'Istoric Comenzi';
           $_['text_cargus_preferinte'] = 'Preferinte';
           $_['text_cargus_setari'] = 'Configurare';
+          $_['text_cargus_button_add_awb'] = 'Generare AWB';
+          $_['text_cargus_already_awb'] = 'Comanda este in lista de livrari cargus';
+          $_['text_cargus_error_new_awb'] = 'Eroare create awb nou';
+          $_['text_cargus_print_awb'] = 'Print AWB';
           $_['add_to_cargus'] = 'Adauga in lista de livrari Cargus';
           $_['text_cargus_ship_and_go_index'] = 'Cargus Ship and Go';
           $_['text_cargus_ship_and_go_preferinte'] = 'Preferinte';
@@ -204,6 +208,39 @@
             <add position="after"><![CDATA[
 			'extension/cargus',
                 ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/controller/sale/order.php">
+        <operation>
+            <search><![CDATA[
+                $data['tabs'] = array();
+            ]]></search>
+            <add position="after"><![CDATA[
+                $data['shipping_method_cargus'] = $this->load->controller('extension/shipping/cargus/info', $order_info);
+            ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/view/template/sale/order_info.twig">
+        <operation>
+            <search><![CDATA[
+                <td>{{ text_invoice }}</td>
+            ]]></search>
+            <add position="before"><![CDATA[
+                {% if shipping_method_cargus %}
+                    {% if (shipping_method_cargus.awb_number is null) %}
+                        <td class="text-left">Cargus AWB</td>
+                        <td class="text-center"></td>
+                        <td class="text-right"><a href="{{ shipping_method_cargus.buttonAddAwbLink }}" data-toggle="tooltip" title="{{ shipping_method_cargus.buttonAddAwb }}" class="btn btn-success btn-xs"><i class="fa fa-plus-circle"></i></a></td>
+                    {% else %}
+                        <td class="text-left"><strong>Cargus AWB</strong>&nbsp;&nbsp;<a href="{{ shipping_method_cargus.buttonShowAwbHistory }}">{{ shipping_method_cargus.awb_number }}</a></td>
+                        <td class="text-center"></td>
+                        <td class="text-right"><a href="{{ shipping_method_cargus.buttonShowAwbPdf }}" target="_blank" data-toggle="tooltip" title="{{ shipping_method_cargus.buttonShowAwb }}" class="btn btn-info btn-xs"><i class="fa fa-print"></i></a></td>
+                    {% endif %}
+                    </tr><tr>
+                {% endif %}
+            ]]></add>
         </operation>
     </file>
 </modification>
