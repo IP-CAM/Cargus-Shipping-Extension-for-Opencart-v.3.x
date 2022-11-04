@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <modification>
     <name>Cargus</name>
-    <version>4.8.0</version>
+    <version>4.9.0</version>
     <author>Cargus S.A.</author>
     <link>https://www.cargus.ro/</link>
     <code>Cargus Shipping</code>
@@ -155,6 +155,7 @@
             </add>
         </operation>
     </file>
+
     <file path="catalog/view/theme/*/template/journal3/checkout/checkout.twig">
         <operation>
             <search><![CDATA[ {{ footer }} ]]></search>
@@ -240,6 +241,19 @@
                     {% endif %}
                     </tr><tr>
                 {% endif %}
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/checkout/guest.twig">
+        <operation>
+            <search><![CDATA[
+                <input type="text" name="company" value="{{ company }}" placeholder="{{ entry_company }}" id="input-payment-company" class="form-control" />
+            ]]></search>
+            <add position="after" offset="1"><![CDATA[
+                <div class="form-group required">
+                    <label class="control-label" for="input-payment-cargus-street">{{ entry_cargus_street }}</label>
+                    <input type="text" name="cargus_street" value="{{ cargus_street }}" placeholder="{{ entry_cargus_street }}" id="input-payment-cargus-street" class="form-control" />
+                </div>
             ]]></add>
         </operation>
     </file>

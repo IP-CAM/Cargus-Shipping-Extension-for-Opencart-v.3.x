@@ -1,5 +1,6 @@
 <?php
 class ControllerExtensionShippingCargus extends Controller {
+    private $codename = 'cargus_events';
 	private $error = array();
 
 	public function index() {
@@ -434,11 +435,47 @@ class ControllerExtensionShippingCargus extends Controller {
         }
     }
 
-    protected function install() {
+    public function install() {
         $this->load->model('user/user_group');
+
+        $this->log->write('admin ship cargus install23');
 
         $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/shipping/cargus');
         $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/shipping/cargus');
+
+        $this->load->model('setting/event');
+
+        //ok 'catalog/controller/checkout/payment_method/save/after',
+        //ok 'catalog/controller/checkout/checkout/customfield/after',
+        //ok 'catalog/controller/checkout/checkout/customfield/before'
+        //ok 'catalog/model/account/custom_field/getCustomFields/before'
+        //not 'catalog/view/theme/default/template/checkout/payment_method/before'
+        // List of events
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'catalog/model/account/custom_field/getCustomFields/after',
+            'extension/module/cargus/modelAddCustomFieldsAfter'
+        );
+
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'catalog/view/checkout/guest/after',
+            'extension/module/cargus/viewGuestAfter'
+        );
+    }
+
+    public function event($route, &$args, &$output) {
+        $this->log->write('admin mod');
+        $this->log->write('Route: ' . $route);
+        $this->log->write('Order Info: ');
+        $this->log->write($args);
+        $this->log->write('Order ID: ' . $output);
+    }
+
+    public function uninstall() {
+        $this->load->model('setting/event');
+        $this->model_setting_event->deleteEventByCode($this->codename);
+        $this->log->write('admin ship cargus uninstall');
     }
 
     /**
