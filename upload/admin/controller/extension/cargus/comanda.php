@@ -552,6 +552,7 @@ class ControllerExtensionCargusComanda extends Controller
         $successes = array();
         error_reporting(E_ALL);
         ini_set('display_errors', '0');
+        ini_set('log_errors', '1');
 
         $this->language->load('cargus/comanda');
 
@@ -685,6 +686,7 @@ class ControllerExtensionCargusComanda extends Controller
 
                     if (is_array($cod_bara)) {
                         if (isset($cod_bara['error'])) {
+                            $this->log->write('Create AWB error, data:' . print_r($fields, true));
                             $errors[] = $this->language->get(
                                     'text_order'
                                 ) . ' ' . $row->row['parcels'] . ': ' . $cod_bara['error'];
@@ -698,6 +700,7 @@ class ControllerExtensionCargusComanda extends Controller
                             );
                             $successes[] = $cod_bara;
                         } else {
+                            $this->log->write('Create AWB error, data:' . print_r($fields, true));
                             $errors[] = 'Unknown error!';
                         }
                     }

@@ -243,8 +243,9 @@ class ControllerExtensionShippingCargus extends Controller {
     }
 
     private function insertNewAwb($order_id) {
-//        error_reporting(E_ALL);
-//        ini_set('display_errors', '1');
+        error_reporting(E_ALL);
+        ini_set('display_errors', '0');
+        ini_set('log_errors', '1');
         if ($this->config->get('cargus_preferinte_pickup') != '') {
             $this->load->model('sale/order');
             $this->load->model('catalog/product');
@@ -259,11 +260,11 @@ class ControllerExtensionShippingCargus extends Controller {
                 $totals[$row['code']] = $row['value'];
             }
 
-            require_once(DIR_SYSTEM . 'library/cart/customer.php');
-            $this->registry->set('customer', new Cart\Customer($this->registry));
+//            require_once(DIR_SYSTEM . 'library/cart/customer.php');
+//            $this->registry->set('customer', new Cart\Customer($this->registry));
 
-            require_once(DIR_SYSTEM . 'library/cart/tax.php');
-            $this->registry->set('tax', new Cart\Tax($this->registry));
+//            require_once(DIR_SYSTEM . 'library/cart/tax.php');
+//            $this->registry->set('tax', new Cart\Tax($this->registry));
 
             // calculez totalul transportului inclusiv taxele
             $shipping_total = $this->tax->calculate($totals['shipping'], $this->config->get('cargus_tax_class_id'));
