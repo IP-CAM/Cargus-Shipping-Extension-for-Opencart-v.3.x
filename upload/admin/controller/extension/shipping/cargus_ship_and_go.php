@@ -207,11 +207,11 @@ class ControllerExtensionShippingCargusShipAndGo extends Controller {
                 $totals[$row['code']] = $row['value'];
             }
 
-            require_once(DIR_SYSTEM . 'library/cart/customer.php');
-            $this->registry->set('customer', new Cart\Customer($this->registry));
+//            require_once(DIR_SYSTEM . 'library/cart/customer.php');
+//            $this->registry->set('customer', new Cart\Customer($this->registry));
 
-            require_once(DIR_SYSTEM . 'library/cart/tax.php');
-            $this->registry->set('tax', new Cart\Tax($this->registry));
+//            require_once(DIR_SYSTEM . 'library/cart/tax.php');
+//            $this->registry->set('tax', new Cart\Tax($this->registry));
 
             // calculez totalul transportului inclusiv taxele
             $shipping_total = $this->tax->calculate($totals['shipping'], $this->config->get('cargus_tax_class_id'));
