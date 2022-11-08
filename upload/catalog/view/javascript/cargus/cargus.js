@@ -115,15 +115,46 @@ $(function () {
 
             jQuery.uniqueSort = jQuery.uniqueSort ? jQuery.uniqueSort : jQuery.unique;
 
-            const tags = [ "test1", "test2" ];
+            function getStreets(request, response) {
+                console.log('getStreets');
+
+                let streets = [];
+
+                //check required field city
+                if (
+                    $("select#input-payment-city").length > 0 &&
+                    $("select#input-payment-city").find(':selected').data("cid") !== undefined
+                ) {
+                    streets = [ "test1", "test2" ];
+
+                    let city = $("select#input-payment-city").find(':selected').data("cid");
+
+                    console.log('city=', city);
+
+                    $.ajax({
+                        url: "",
+                        dataType: "json",
+                        success: function (data) {
+
+                        },
+
+                    });
+                }
+
+                return streets;
+            }
 
             $("#input-payment-custom-field9001").autocomplete({
-                source: tags
+                source: function(request, response) {
+                    response( getStreets() );
+                }
             });
 
             if ($("#input-shipping-custom-field9001").length > 0) {
                 $("#input-shipping-custom-field9001").autocomplete({
-                    source: tags
+                    source: function(request, response) {
+                        response( getStreets() );
+                    }
                 });
             }
 

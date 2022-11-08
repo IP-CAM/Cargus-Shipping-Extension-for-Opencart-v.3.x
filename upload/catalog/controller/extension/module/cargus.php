@@ -132,7 +132,7 @@ class ControllerExtensionModuleCargus extends Controller
                          ' selected="selected"' :
                          ''
                  ).
-                 ' cid="'. $row['LocalityId'] .'"'.
+                 ' data-cid="'. $row['LocalityId'] .'"'.
                  ' km="'. $km .'">'.$row['Name'].
                  '</option>'."\n";
         }
