@@ -191,12 +191,16 @@ class ControllerExtensionCargusPreferinte extends Controller {
                 $data['cargus_preferinte_service_id'] = $this->config->get('cargus_preferinte_service_id');
             }
 
-            $data['cargus_preferinte_postal_codes'] = $this->config->get('cargus_preferinte_postal_codes');
+            $theme = $this->config->get('config_theme');
 
-            if ($this->request->server['REQUEST_METHOD'] == 'POST') {
-                $data['cargus_preferinte_postal_codes'] = 0;
-                if (isset($this->request->post['cargus_preferinte_postal_codes'])) {
-                    $data['cargus_preferinte_postal_codes'] = $this->request->post['cargus_preferinte_postal_codes'];
+            if ($theme != 'journal3') {
+                $data['cargus_preferinte_postal_codes'] = $this->config->get( 'cargus_preferinte_postal_codes' );
+
+                if ( $this->request->server['REQUEST_METHOD'] == 'POST' ) {
+                    $data['cargus_preferinte_postal_codes'] = 0;
+                    if ( isset( $this->request->post['cargus_preferinte_postal_codes'] ) ) {
+                        $data['cargus_preferinte_postal_codes'] = $this->request->post['cargus_preferinte_postal_codes'];
+                    }
                 }
             }
         }

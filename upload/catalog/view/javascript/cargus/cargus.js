@@ -83,6 +83,11 @@ $(function () {
 
     $.cargusGuestAddressForm = function() {
 
+        if (window._QuickCheckoutData !== undefined) {
+            //ignore journal3 theme
+            return true;
+        }
+
         const company = $("#input-payment-company").parent();
 
         $("#input-payment-city").parent().insertAfter(company);
@@ -96,7 +101,6 @@ $(function () {
         $("#input-shipping-zone").parent().parent().insertAfter(companyShipping);
 
         $("#input-shipping-address-1").parent().parent().hide();
-
 
         //trim the inputs
         $("#input-payment-custom-field9001").val( $("#input-payment-custom-field9001").val().trim() );

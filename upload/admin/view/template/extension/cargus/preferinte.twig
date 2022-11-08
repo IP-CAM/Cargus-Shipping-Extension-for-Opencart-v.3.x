@@ -181,6 +181,7 @@
                             </select>
                         </div>
                     </div>
+                    {% if cargus_preferinte_postal_codes is defined %}
                     <div class="form-group">
                         <label class="col-sm-2 control-label" for="cargus_preferinte_postal_codes">
                             <span data-toggle="tooltip" title="" data-original-title="{{ entry_postal_codes_details }}">{{ entry_postal_codes }}</span>
@@ -199,6 +200,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                 </form>
                 {% endif %}
             </div>

@@ -439,36 +439,35 @@ class ControllerExtensionShippingCargus extends Controller {
     public function install() {
         $this->load->model('user/user_group');
 
-        $this->log->write('admin ship cargus install26');
+        $this->log->write('admin ship cargus install32');
 
         $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/shipping/cargus');
         $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/shipping/cargus');
 
-        $this->load->model('setting/event');
+        $theme = $this->config->get('config_theme');
 
-        //ok 'catalog/controller/checkout/payment_method/save/after',
-        //ok 'catalog/controller/checkout/checkout/customfield/after',
-        //ok 'catalog/controller/checkout/checkout/customfield/before'
-        //ok 'catalog/model/account/custom_field/getCustomFields/before'
-        //not 'catalog/view/theme/default/template/checkout/payment_method/before'
-        // List of events
-        $this->model_setting_event->addEvent(
-            $this->codename,
-            'catalog/model/account/custom_field/getCustomFields/after',
-            'extension/module/cargus/modelAddCustomFieldsAfter'
-        );
+        if ($theme != 'journal3') {
+            $this->load->model( 'setting/event' );
 
-        $this->model_setting_event->addEvent(
-            $this->codename,
-            'catalog/view/checkout/guest/after',
-            'extension/module/cargus/viewGuestAfter'
-        );
+            // List of events
+            $this->model_setting_event->addEvent(
+                $this->codename,
+                'catalog/model/account/custom_field/getCustomFields/after',
+                'extension/module/cargus/modelAddCustomFieldsAfter'
+            );
 
-        $this->model_setting_event->addEvent(
-            $this->codename,
-            'catalog/view/checkout/guest_shipping/after',
-            'extension/module/cargus/viewGuestAfter'
-        );
+            $this->model_setting_event->addEvent(
+                $this->codename,
+                'catalog/view/checkout/guest/after',
+                'extension/module/cargus/viewGuestAfter'
+            );
+
+            $this->model_setting_event->addEvent(
+                $this->codename,
+                'catalog/view/checkout/guest_shipping/after',
+                'extension/module/cargus/viewGuestAfter'
+            );
+        }
     }
 
     public function event($route, &$args, &$output) {
