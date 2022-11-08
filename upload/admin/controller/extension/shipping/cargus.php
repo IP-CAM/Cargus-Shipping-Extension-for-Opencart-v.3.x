@@ -1,22 +1,22 @@
 <?php
 class ControllerExtensionShippingCargus extends Controller {
     private $codename = 'cargus_events';
-	private $error = array();
+    private $error = array();
 
-	public function index() {
+    public function index() {
 
         $this->language->load('shipping/cargus');
 
-		$this->document->setTitle($this->language->get('heading_title'));
+        $this->document->setTitle($this->language->get('heading_title'));
 
-		$this->load->model('setting/setting');
+        $this->load->model('setting/setting');
 
         if (isset($this->session->data['success'])) {
             $data['success'] = $this->session->data['success'];
             $this->session->data['success'] = null;
         }
 
-		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+        if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
             $install = "CREATE TABLE IF NOT EXISTS `awb_cargus` (
                             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                             `order_id` int(11) NOT NULL,
@@ -40,8 +40,8 @@ class ControllerExtensionShippingCargus extends Controller {
                             `other_repayment` varchar(256) NOT NULL,
                             `payer` int(11) NOT NULL,
                             `saturday_delivery` tinyint(1) NOT NULL,
-	                        `morning_delivery` tinyint(1) NOT NULL,
-	                        `openpackage` tinyint(1) NOT NULL,
+                            `morning_delivery` tinyint(1) NOT NULL,
+                            `openpackage` tinyint(1) NOT NULL,
                             `observations` varchar(256) NOT NULL,
                             `contents` varchar(256) NOT NULL,
                             `barcode` varchar(50) NOT NULL,
@@ -57,7 +57,7 @@ class ControllerExtensionShippingCargus extends Controller {
             $addExtension = "INSERT INTO `" . DB_PREFIX . "extension` SET `type` = 'shipping', `code` = 'cargus' ";
             $this->db->query($addExtension);
 
-			$this->model_setting_setting->editSetting('cargus', $this->request->post);
+            $this->model_setting_setting->editSetting('cargus', $this->request->post);
             $this->model_setting_setting->editSetting(
                 'shipping_cargus',
                 [
@@ -84,116 +84,116 @@ class ControllerExtensionShippingCargus extends Controller {
                 $this->session->data['success'] = $this->language->get('text_success');
                 $this->response->redirect($this->url->link('extension/shipping/cargus', 'user_token=' . $this->session->data['user_token'], 'SSL'));
             }
-		}
+        }
 
-		$data['heading_title'] = $this->language->get('heading_title');
+        $data['heading_title'] = $this->language->get('heading_title');
         $data['text_edit'] = $this->language->get('text_edit');
-		$data['text_enabled'] = $this->language->get('text_enabled');
-		$data['text_disabled'] = $this->language->get('text_disabled');
-		$data['text_all_zones'] = $this->language->get('text_all_zones');
-		$data['text_none'] = $this->language->get('text_none');
+        $data['text_enabled'] = $this->language->get('text_enabled');
+        $data['text_disabled'] = $this->language->get('text_disabled');
+        $data['text_all_zones'] = $this->language->get('text_all_zones');
+        $data['text_none'] = $this->language->get('text_none');
         $data['entry_api_url'] = $this->language->get('entry_api_url');
         $data['entry_api_key'] = $this->language->get('entry_api_key');
         $data['entry_username'] = $this->language->get('entry_username');
         $data['entry_password'] = $this->language->get('entry_password');
         $data['entry_tax_class'] = $this->language->get('entry_tax_class');
-		$data['entry_geo_zone'] = $this->language->get('entry_geo_zone');
-		$data['entry_status'] = $this->language->get('entry_status');
-		$data['entry_sort_order'] = $this->language->get('entry_sort_order');
-		$data['button_save'] = $this->language->get('button_save');
-		$data['button_cancel'] = $this->language->get('button_cancel');
+        $data['entry_geo_zone'] = $this->language->get('entry_geo_zone');
+        $data['entry_status'] = $this->language->get('entry_status');
+        $data['entry_sort_order'] = $this->language->get('entry_sort_order');
+        $data['button_save'] = $this->language->get('button_save');
+        $data['button_cancel'] = $this->language->get('button_cancel');
 
-		if (isset($this->error['warning'])) {
-			$data['error_warning'] = $this->error['warning'];
-		} else {
-			$data['error_warning'] = '';
-		}
+        if (isset($this->error['warning'])) {
+            $data['error_warning'] = $this->error['warning'];
+        } else {
+            $data['error_warning'] = '';
+        }
 
-		$data['breadcrumbs'] = array();
-		$data['breadcrumbs'][] = array(
-			'text'      => $this->language->get('text_home'),
-			'href'      => $this->url->link('common/home', 'user_token=' . $this->session->data['user_token'], 'SSL')
-		);
-		$data['breadcrumbs'][] = array(
-			'text'      => $this->language->get('text_shipping'),
-			'href'      => $this->url->link('extension/shipping', 'user_token=' . $this->session->data['user_token'], 'SSL')
-		);
-		$data['breadcrumbs'][] = array(
-			'text'      => $this->language->get('heading_title'),
-			'href'      => $this->url->link('extension/shipping/cargus', 'user_token=' . $this->session->data['user_token'], 'SSL')
-		);
+        $data['breadcrumbs'] = array();
+        $data['breadcrumbs'][] = array(
+            'text'      => $this->language->get('text_home'),
+            'href'      => $this->url->link('common/home', 'user_token=' . $this->session->data['user_token'], 'SSL')
+        );
+        $data['breadcrumbs'][] = array(
+            'text'      => $this->language->get('text_shipping'),
+            'href'      => $this->url->link('extension/shipping', 'user_token=' . $this->session->data['user_token'], 'SSL')
+        );
+        $data['breadcrumbs'][] = array(
+            'text'      => $this->language->get('heading_title'),
+            'href'      => $this->url->link('extension/shipping/cargus', 'user_token=' . $this->session->data['user_token'], 'SSL')
+        );
 
-		$data['action'] = $this->url->link('extension/shipping/cargus', 'user_token=' . $this->session->data['user_token'], 'SSL');
-		$data['cancel'] = $this->url->link('extension/shipping', 'user_token=' . $this->session->data['user_token'], 'SSL');
+        $data['action'] = $this->url->link('extension/shipping/cargus', 'user_token=' . $this->session->data['user_token'], 'SSL');
+        $data['cancel'] = $this->url->link('extension/shipping', 'user_token=' . $this->session->data['user_token'], 'SSL');
 
         if (isset($this->request->post['cargus_api_url'])) {
-			$data['cargus_api_url'] = $this->request->post['cargus_api_url'];
-		} else {
-			$data['cargus_api_url'] = $this->config->get('cargus_api_url');
-		}
+            $data['cargus_api_url'] = $this->request->post['cargus_api_url'];
+        } else {
+            $data['cargus_api_url'] = $this->config->get('cargus_api_url');
+        }
 
         if (isset($this->request->post['cargus_api_key'])) {
-			$data['cargus_api_key'] = $this->request->post['cargus_api_key'];
-		} else {
-			$data['cargus_api_key'] = $this->config->get('cargus_api_key');
-		}
+            $data['cargus_api_key'] = $this->request->post['cargus_api_key'];
+        } else {
+            $data['cargus_api_key'] = $this->config->get('cargus_api_key');
+        }
 
         if (isset($this->request->post['cargus_username'])) {
-			$data['cargus_username'] = $this->request->post['cargus_username'];
-		} else {
-			$data['cargus_username'] = $this->config->get('cargus_username');
-		}
+            $data['cargus_username'] = $this->request->post['cargus_username'];
+        } else {
+            $data['cargus_username'] = $this->config->get('cargus_username');
+        }
 
         if (isset($this->request->post['cargus_password'])) {
-			$data['cargus_password'] = $this->request->post['cargus_password'];
-		} else {
-			$data['cargus_password'] = $this->config->get('cargus_password');
-		}
+            $data['cargus_password'] = $this->request->post['cargus_password'];
+        } else {
+            $data['cargus_password'] = $this->config->get('cargus_password');
+        }
 
         if (isset($this->request->post['cargus_tax_class_id'])) {
-			$data['cargus_tax_class_id'] = $this->request->post['cargus_tax_class_id'];
-		} else {
-			$data['cargus_tax_class_id'] = $this->config->get('cargus_tax_class_id');
-		}
+            $data['cargus_tax_class_id'] = $this->request->post['cargus_tax_class_id'];
+        } else {
+            $data['cargus_tax_class_id'] = $this->config->get('cargus_tax_class_id');
+        }
 
         $this->load->model('localisation/tax_class');
-		$data['tax_classes'] = $this->model_localisation_tax_class->getTaxClasses();
+        $data['tax_classes'] = $this->model_localisation_tax_class->getTaxClasses();
 
-		if (isset($this->request->post['cargus_geo_zone_id'])) {
-			$data['cargus_geo_zone_id'] = $this->request->post['cargus_geo_zone_id'];
-		} else {
-			$data['cargus_geo_zone_id'] = $this->config->get('cargus_geo_zone_id');
-		}
+        if (isset($this->request->post['cargus_geo_zone_id'])) {
+            $data['cargus_geo_zone_id'] = $this->request->post['cargus_geo_zone_id'];
+        } else {
+            $data['cargus_geo_zone_id'] = $this->config->get('cargus_geo_zone_id');
+        }
 
-		$this->load->model('localisation/geo_zone');
-		$data['geo_zones'] = $this->model_localisation_geo_zone->getGeoZones();
+        $this->load->model('localisation/geo_zone');
+        $data['geo_zones'] = $this->model_localisation_geo_zone->getGeoZones();
 
-		if (isset($this->request->post['cargus_status'])) {
-			$data['cargus_status'] = $this->request->post['cargus_status'];
-		} else {
-			$data['cargus_status'] = $this->config->get('cargus_status');
-		}
+        if (isset($this->request->post['cargus_status'])) {
+            $data['cargus_status'] = $this->request->post['cargus_status'];
+        } else {
+            $data['cargus_status'] = $this->config->get('cargus_status');
+        }
 
-		if (isset($this->request->post['cargus_sort_order'])) {
-			$data['cargus_sort_order'] = $this->request->post['cargus_sort_order'];
-		} else {
-			$data['cargus_sort_order'] = $this->config->get('cargus_sort_order');
-		}
+        if (isset($this->request->post['cargus_sort_order'])) {
+            $data['cargus_sort_order'] = $this->request->post['cargus_sort_order'];
+        } else {
+            $data['cargus_sort_order'] = $this->config->get('cargus_sort_order');
+        }
 
         $data['header'] = $this->load->controller('common/header');
         $data['column_left'] = $this->load->controller('common/column_left');
         $data['footer'] = $this->load->controller('common/footer');
 
-		$this->response->setOutput($this->load->view('extension/shipping/cargus', $data));
-	}
+        $this->response->setOutput($this->load->view('extension/shipping/cargus', $data));
+    }
 
-	protected function validate() {
-		if (!$this->user->hasPermission('modify', 'extension/shipping/cargus')) {
-			$this->error['warning'] = $this->language->get('error_permission');
-		}
+    protected function validate() {
+        if (!$this->user->hasPermission('modify', 'extension/shipping/cargus')) {
+            $this->error['warning'] = $this->language->get('error_permission');
+        }
 
-		return !$this->error;
-	}
+        return !$this->error;
+    }
 
     public function addAwb()
     {
@@ -439,7 +439,7 @@ class ControllerExtensionShippingCargus extends Controller {
     public function install() {
         $this->load->model('user/user_group');
 
-        $this->log->write('admin ship cargus install23');
+        $this->log->write('admin ship cargus install26');
 
         $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/shipping/cargus');
         $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/shipping/cargus');
@@ -461,6 +461,12 @@ class ControllerExtensionShippingCargus extends Controller {
         $this->model_setting_event->addEvent(
             $this->codename,
             'catalog/view/checkout/guest/after',
+            'extension/module/cargus/viewGuestAfter'
+        );
+
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'catalog/view/checkout/guest_shipping/after',
             'extension/module/cargus/viewGuestAfter'
         );
     }

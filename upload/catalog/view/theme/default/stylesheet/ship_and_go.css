@@ -1,3 +1,6 @@
+/*@import url("https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css");*/
+@import "jquery-ui.min.css";
+
 .d-none {
     display: none !important;
 }

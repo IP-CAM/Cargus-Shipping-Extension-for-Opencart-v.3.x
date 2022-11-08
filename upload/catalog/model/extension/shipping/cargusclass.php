@@ -61,6 +61,7 @@ class ModelExtensionShippingCargusClass extends Model {
             $headers
         );
 
+
         $result = curl_exec($this->curl);
         $header = curl_getinfo($this->curl);
 

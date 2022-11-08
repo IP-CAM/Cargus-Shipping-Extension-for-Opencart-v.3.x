@@ -80,4 +80,78 @@ $(function () {
     $(document).on('change', 'select[name="zone_id"]:in-viewport:visible', function () {
         do_replace();
     });
+
+    $.cargusGuestAddressForm = function() {
+
+        const company = $("#input-payment-company").parent();
+
+        $("#input-payment-city").parent().insertAfter(company);
+        $("#input-payment-zone").parent().insertAfter(company);
+
+        $("#input-payment-address-1").parent().hide();
+
+        const companyShipping = $("#input-shipping-company").parent().parent();
+
+        $("#input-shipping-city").parent().parent().insertAfter(companyShipping);
+        $("#input-shipping-zone").parent().parent().insertAfter(companyShipping);
+
+        $("#input-shipping-address-1").parent().parent().hide();
+
+
+        //trim the inputs
+        $("#input-payment-custom-field9001").val( $("#input-payment-custom-field9001").val().trim() );
+        $("#input-payment-custom-field9002").val( $("#input-payment-custom-field9002").val().trim() );
+
+        if ($("#input-shipping-custom-field9001").length > 0) {
+            $("#input-shipping-custom-field9001").val($("#input-shipping-custom-field9001").val().trim());
+            $("#input-shipping-custom-field9002").val($("#input-shipping-custom-field9002").val().trim());
+        }
+
+        addScriptOrStyle('/catalog/view/javascript/cargus/jquery-ui.min.js', function() {
+
+            jQuery.uniqueSort = jQuery.uniqueSort ? jQuery.uniqueSort : jQuery.unique;
+
+            const tags = [ "test1", "test2" ];
+
+            $("#input-payment-custom-field9001").autocomplete({
+                source: tags
+            });
+
+            if ($("#input-shipping-custom-field9001").length > 0) {
+                $("#input-shipping-custom-field9001").autocomplete({
+                    source: tags
+                });
+            }
+
+            function updateAddress() {
+                const str = $("#input-payment-custom-field9001").val();
+                const strNr = $("#input-payment-custom-field9002").val();
+
+                $("#input-payment-address-1").val(str + ' ' + strNr);
+
+                if ($("#input-shipping-custom-field9001").length > 0) {
+                    const str2 = $("#input-shipping-custom-field9001").val();
+                    const strNr2 = $("#input-shipping-custom-field9002").val();
+
+                    $("#input-shipping-address-1").val(str2 + ' ' + strNr2);
+                }
+
+                console.log('updateAddress');
+            }
+
+            $("#input-payment-custom-field9001").on('keyup', function() {
+                updateAddress();
+            });
+            $("#input-payment-custom-field9002").on('keyup', function() {
+                updateAddress();
+            });
+            $("#input-shipping-custom-field9001").on('keyup', function() {
+                updateAddress();
+            });
+            $("#input-shipping-custom-field9002").on('keyup', function() {
+                updateAddress();
+            });
+        });
+    };
+
 });

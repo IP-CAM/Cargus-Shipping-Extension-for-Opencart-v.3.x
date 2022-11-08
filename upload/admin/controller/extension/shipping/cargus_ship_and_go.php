@@ -368,8 +368,6 @@ class ControllerExtensionShippingCargusShipAndGo extends Controller {
     public function install() {
         $this->load->model('user/user_group');
 
-        $this->log->write('admin ship&go cargus install');
-
         $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/shipping/cargus');
         $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/shipping/cargus');
     }
