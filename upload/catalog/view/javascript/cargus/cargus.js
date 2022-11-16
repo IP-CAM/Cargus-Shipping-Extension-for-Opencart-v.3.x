@@ -1,6 +1,10 @@
 ﻿(function ($) { $.belowthefold = function (element, settings) { var fold = $(window).height() + $(window).scrollTop(); return fold <= $(element).offset().top - settings.threshold; }; $.abovethetop = function (element, settings) { var top = $(window).scrollTop(); return top >= $(element).offset().top + $(element).height() - settings.threshold; }; $.rightofscreen = function (element, settings) { var fold = $(window).width() + $(window).scrollLeft(); return fold <= $(element).offset().left - settings.threshold; }; $.leftofscreen = function (element, settings) { var left = $(window).scrollLeft(); return left >= $(element).offset().left + $(element).width() - settings.threshold; }; $.inviewport = function (element, settings) { return !$.rightofscreen(element, settings) && !$.leftofscreen(element, settings) && !$.belowthefold(element, settings) && !$.abovethetop(element, settings); }; $.extend($.expr[':'], { "below-the-fold": function (a, i, m) { return $.belowthefold(a, { threshold: 0 }); }, "above-the-top": function (a, i, m) { return $.abovethetop(a, { threshold: 0 }); }, "left-of-screen": function (a, i, m) { return $.leftofscreen(a, { threshold: 0 }); }, "right-of-screen": function (a, i, m) { return $.rightofscreen(a, { threshold: 0 }); }, "in-viewport": function (a, i, m) { return $.inviewport(a, { threshold: 0 }); } }); })(jQuery);
 
 $(function () {
+    addScriptOrStyle('/catalog/view/javascript/cargus/jquery-ui.min.js', function() {
+        jQuery.uniqueSort = jQuery.uniqueSort ? jQuery.uniqueSort : jQuery.unique;
+    });
+
     async function getCities(input) {
         //check required field state
         if (
@@ -73,69 +77,65 @@ $(function () {
 
         if (element != null) {
             if ($('select[name="country_id"]:in-viewport:visible').val() == 175 && $('select[name="zone_id"]:in-viewport:visible').val()) {
-
                 //autocomplete
-                addScriptOrStyle('/catalog/view/javascript/cargus/jquery-ui.min.js', function() {
+                element.autocomplete({
+                    delay: 350,
+                    minLength: 1,
+                    source: async function(request, response) {
+                        let result = await filterCities(request, 'select[name="zone_id"]:in-viewport:visible');
 
-                    jQuery.uniqueSort = jQuery.uniqueSort ? jQuery.uniqueSort : jQuery.unique;
-
-                    element.autocomplete({
-                        delay: 350,
-                        minLength: 1,
-                        source: async function(request, response) {
-                            let result = await filterCities(request, 'select[name="zone_id"]:in-viewport:visible');
-
-                            response(result);
-                        },
-                        select: function(event, ui) {
-                            element.data('cid', ui.item.extra.cid);
-                            element.data('zip', ui.item.extra.zip);
-                            element.attr('km', ui.item.extra.km);
-                            element.trigger('change');
-                        }
-                    });
+                        response(result);
+                    },
+                    select: function(event, ui) {
+                        element.data('cid', ui.item.extra.cid);
+                        element.data('zip', ui.item.extra.zip);
+                        element.attr('km', ui.item.extra.km);
+                        element.trigger('change');
+                    }
                 });
-
-                /*$.post('index.php?route=extension/module/cargus/localitati&judet=' + $('select[name="zone_id"]:in-viewport:visible').val() + '&val=' + value, function (data) {
-                    element.replaceWith('<select name="' + attr_name + '" placeholder="' + placeholder + '" class="' + attr_class + '" id="' + attr_id + '">' + data + '</select>');
-                });*/
 
                 return true;
             }
+
             if (window._QuickCheckoutData !== undefined && window['_QuickCheckoutData'].order_data.shipping_country_id == 175 && $('select[id="input-payment-zone"]:in-viewport:visible').val()) {
-                $('#input-payment-zoneclone').remove();
+                $('#input-payment-city').autocomplete({
+                    delay: 350,
+                    minLength: 1,
+                    source: async function(request, response) {
+                        let result = await filterCities(request, 'select[id="input-payment-zone"]:in-viewport:visible');
 
-                $.post('index.php?route=extension/module/cargus/localitati&judet=' + $('select[id="input-payment-zone"]:in-viewport:visible').val() + '&val=' + value, function (data) {
-                    $('#input-payment-city').hide();
-                    $('#input-payment-city').parent().append('<select name="' + attr_name + 'clone" placeholder="' + placeholder + '" class="' + attr_class + '" id="input-payment-zoneclone">' + data + '</select>');
-
-                    $('#input-payment-zoneclone').on('change', function(){
+                        response(result);
+                    },
+                    select: function(event, ui) {
+                        $('#input-payment-city').val(ui.item.value);
                         if (window['_QuickCheckoutData'].same_address) {
-                            window['_QuickCheckoutData'].order_data.payment_city = $('#input-payment-zoneclone option:selected').text();
-                            window['_QuickCheckoutData'].order_data.shipping_city = $('#input-payment-zoneclone option:selected').text();
+                            window['_QuickCheckoutData'].order_data.payment_city = $('#input-payment-city').val();
+                            window['_QuickCheckoutData'].order_data.shipping_city = $('#input-payment-city').val();
                         } else {
-                            window['_QuickCheckoutData'].order_data.payment_city = $('#input-payment-zoneclone option:selected').text();
+                            window['_QuickCheckoutData'].order_data.payment_city = $('#input-payment-city').val();
                         }
-                    });
-                    $('#input-payment-zoneclone').trigger('change');
+                    }
                 });
             }
+
             if (window._QuickCheckoutData !== undefined && window['_QuickCheckoutData'].order_data.shipping_country_id == 175 && $('select[id="input-shipping-zone"]:in-viewport:visible').val()) {
-                $('#input-shipping-zoneclone').remove();
+                $('#input-shipping-city').autocomplete({
+                    delay: 350,
+                    minLength: 1,
+                    source: async function(request, response) {
+                        let result = await filterCities(request, 'select[id="input-shipping-zone"]:in-viewport:visible');
 
-                $.post('index.php?route=extension/module/cargus/localitati&judet=' + $('select[id="input-shipping-zone"]:in-viewport:visible').val() + '&val=' + value, function (data) {
-                    $('#input-shipping-city').hide();
-                    $('#input-shipping-city').parent().append('<select name="' + attr_name + 'clone" placeholder="' + placeholder + '" class="' + attr_class + '" id="input-shipping-zoneclone">' + data + '</select>');
-
-                    $('#input-shipping-zoneclone').on('change', function() {
+                        response(result);
+                    },
+                    select: function(event, ui) {
+                        $('#input-shipping-city').val(ui.item.value);
                         if (window['_QuickCheckoutData'].same_address) {
-                            window['_QuickCheckoutData'].order_data.payment_city = $('#input-shipping-zoneclone option:selected').text();
-                            window['_QuickCheckoutData'].order_data.shipping_city = $('#input-shipping-zoneclone option:selected').text();
+                            window['_QuickCheckoutData'].order_data.payment_city = $('#input-shipping-city').val();
+                            window['_QuickCheckoutData'].order_data.shipping_city = $('#input-shipping-city').val();
                         } else {
-                            window['_QuickCheckoutData'].order_data.shipping_city = $('#input-shipping-zoneclone option:selected').text();
+                            window['_QuickCheckoutData'].order_data.shipping_city = $('#input-shipping-city').val();
                         }
-                    });
-                    $('#input-shipping-zoneclone').trigger('change');
+                    }
                 });
             }
         }
@@ -305,9 +305,9 @@ $(function () {
         });
 
 
-        addScriptOrStyle('/catalog/view/javascript/cargus/jquery-ui.min.js', function() {
+        //addScriptOrStyle('/catalog/view/javascript/cargus/jquery-ui.min.js', function() {
 
-            jQuery.uniqueSort = jQuery.uniqueSort ? jQuery.uniqueSort : jQuery.unique;
+            // jQuery.uniqueSort = jQuery.uniqueSort ? jQuery.uniqueSort : jQuery.unique;
 
             async function getStreets(input) {
                 //check required field city
@@ -473,7 +473,7 @@ $(function () {
             $("#input-custom-field9002").on('keyup', function() {
                 updateAddress();
             });
-        });
+        //});
     };
 
 });
