@@ -1,4 +1,6 @@
 <?php
+require_once(DIR_CATALOG.'model/extension/shipping/cargusclass.php');
+
 class ControllerExtensionShippingCargus extends Controller {
     private $codename = 'cargus_events';
     private $error = array();
@@ -65,8 +67,7 @@ class ControllerExtensionShippingCargus extends Controller {
                 ]
             );
             // instantiez clasa cargus
-            require_once(DIR_CATALOG.'model/extension/shipping/cargusclass.php');
-            $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass();
+            $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass($this->registry);
 
             // setez url si key
             $this->model_shipping_cargusclass->SetKeys($this->request->post['cargus_api_url'], $this->request->post['cargus_api_key']);
@@ -379,7 +380,8 @@ class ControllerExtensionShippingCargus extends Controller {
 
             // check if we have pudo_location_id
             $pudo_location_id = (!empty($order['shipping_custom_field'])) ? $order['shipping_custom_field'] : null;
-            if (is_null($pudo_location_id)) {
+
+            if (is_null($pudo_location_id) || !isset($pudo_location_id['pudo_location_id'])) {
                 $pudo_location_id = (!empty($order['custom_field'])) ? $order['custom_field'] : null;
             }
             if ($pudo_location_id && isset($pudo_location_id['pudo_location_id'])) {
@@ -439,7 +441,7 @@ class ControllerExtensionShippingCargus extends Controller {
     public function install() {
         $this->load->model('user/user_group');
 
-        $this->log->write('admin ship cargus install32');
+        $this->log->write('admin ship cargus install35');
 
         $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/shipping/cargus');
         $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/shipping/cargus');
@@ -467,6 +469,21 @@ class ControllerExtensionShippingCargus extends Controller {
                 'catalog/view/checkout/guest_shipping/after',
                 'extension/module/cargus/viewGuestAfter'
             );
+
+            $this->model_setting_event->addEvent(
+                $this->codename,
+                'catalog/view/account/address_form/after',
+                'extension/module/cargus/viewGuestAfter'
+            );
+
+            //public_html/catalog/view/theme/default/template/checkout/payment_address.twig
+            $this->model_setting_event->addEvent(
+                $this->codename,
+                'catalog/view/checkout/payment_address/after',
+                'extension/module/cargus/viewGuestAfter'
+            );
+
+            //public_html/catalog/view/theme/default/template/checkout/shipping_address.twig
         }
     }
 

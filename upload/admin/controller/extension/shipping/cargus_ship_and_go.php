@@ -1,4 +1,6 @@
 <?php
+require_once(DIR_CATALOG . 'model/extension/shipping/cargusclass.php');
+
 class ControllerExtensionShippingCargusShipAndGo extends Controller {
 	private $error = array();
 
@@ -60,8 +62,7 @@ class ControllerExtensionShippingCargusShipAndGo extends Controller {
 
 
             // instantiez clasa cargus
-            require(DIR_CATALOG.'model/extension/shipping/cargusclass.php');
-            $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass();
+            $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass($this->registry);
 
             // setez url si key
             $this->model_shipping_cargusclass->SetKeys($this->request->post['cargus_api_url'], $this->request->post['cargus_api_key']);

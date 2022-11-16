@@ -1,4 +1,6 @@
 <?php
+require_once(DIR_CATALOG . 'model/extension/shipping/cargusclass.php');
+
 class ControllerExtensionCargusPreferinte extends Controller {
     private $error = array();
 
@@ -37,9 +39,7 @@ class ControllerExtensionCargusPreferinte extends Controller {
         $data['text_envelope'] = $this->language->get('text_envelope');
 
         //load cargus class from catalog
-        require_once(DIR_CATALOG . 'model/extension/shipping/cargusclass.php');
-
-        $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass();
+        $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass($this->registry);
 
         // setez url si key
         $this->model_shipping_cargusclass->SetKeys($this->config->get('cargus_api_url'), $this->config->get('cargus_api_key'));

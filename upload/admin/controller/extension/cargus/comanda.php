@@ -1,4 +1,5 @@
 <?php
+require_once(DIR_CATALOG . 'model/extension/shipping/cargusclass.php');
 
 class ControllerExtensionCargusComanda extends Controller
 {
@@ -36,8 +37,7 @@ class ControllerExtensionCargusComanda extends Controller
         }
 
         // instantiez clasa cargus
-        require_once(DIR_CATALOG . 'model/extension/shipping/cargusclass.php');
-        $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass();
+        $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass($this->registry);
 
         // setez url si key
         $this->model_shipping_cargusclass->SetKeys(
@@ -267,8 +267,7 @@ class ControllerExtensionCargusComanda extends Controller
     public function print_awbs()
     {
         // instantiez clasa cargus
-        require_once(DIR_CATALOG . 'model/extension/shipping/cargusclass.php');
-        $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass();
+        $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass($this->registry);
 
         // setez url si key
         $this->model_shipping_cargusclass->SetKeys(
@@ -463,8 +462,7 @@ class ControllerExtensionCargusComanda extends Controller
     {
         if ($this->request->server['REQUEST_METHOD'] == 'POST') {
             // instantiez clasa cargus
-            require_once(DIR_CATALOG . 'model/extension/shipping/cargusclass.php');
-            $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass();
+            $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass($this->registry);
 
             // setez url si key
             $this->model_shipping_cargusclass->SetKeys(
@@ -509,8 +507,7 @@ class ControllerExtensionCargusComanda extends Controller
     {
         if ($this->request->get['order_id']) {
             // instantiez clasa cargus
-            require_once(DIR_CATALOG . 'model/extension/shipping/cargusclass.php');
-            $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass();
+            $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass($this->registry);
 
             // setez url si key
             $this->model_shipping_cargusclass->SetKeys(
@@ -556,8 +553,7 @@ class ControllerExtensionCargusComanda extends Controller
 
         $this->language->load('cargus/comanda');
 
-        require_once(DIR_CATALOG . 'model/extension/shipping/cargusclass.php');
-        $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass();
+        $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass($this->registry);
 
         // setez url si key
         $this->model_shipping_cargusclass->SetKeys(

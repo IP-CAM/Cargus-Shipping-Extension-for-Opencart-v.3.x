@@ -10,9 +10,7 @@ class ControllerExtensionModuleCargus extends Controller
             return null;
         }
 
-        error_log('viewGuestAfter='. $route);
-
-        //we add our custom code in guest.twig
+        //we add our custom code in twig
         $output .= '<script>';
         $output .= '$(document).ready(function(){ $.cargusGuestAddressForm(); });';
         $output .= '</script>';
@@ -56,9 +54,6 @@ class ControllerExtensionModuleCargus extends Controller
 
         $output[] = $street;
         $output[] = $streetNr;
-
-//        $this->log->write('Output final: ');
-//        $this->log->write($output);
     }
 
     public function event($route, &$args, &$output)
@@ -82,22 +77,13 @@ class ControllerExtensionModuleCargus extends Controller
 
     public function localitati()
     {
-        // instantiez clasa cargus
-        require_once(DIR_APPLICATION.'model/extension/shipping/cargusclass.php');
-        $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass();
+        error_reporting(E_ALL);
+        ini_set('display_errors', '0');
+        ini_set('log_errors', '1');
 
-        // setez url si key
-        $this->model_shipping_cargusclass->SetKeys(
-            $this->config->get('cargus_api_url'),
-            $this->config->get('cargus_api_key')
-        );
+        // load cargus class
+        $this->load->model('extension/shipping/cargus_cache');
 
-        // UC login user
-        $fields = array(
-            'UserName' => $this->config->get('cargus_username'),
-            'Password' => $this->config->get('cargus_password')
-        );
-        $token = $this->model_shipping_cargusclass->CallMethod('LoginUser', $fields, 'POST');
 
         // extrag datele judetului intern pe baza id-ului
         $this->load->model('localisation/zone');
@@ -105,21 +91,17 @@ class ControllerExtensionModuleCargus extends Controller
 
         // obtin lista de judete din api
         $judete = array();
-        $dataJudete = $this->model_shipping_cargusclass->CallMethod('Counties?countryId=1', array(), 'GET', $token);
+        $dataJudete = $this->model_extension_shipping_cargus_cache->getCounties();
+
         foreach ($dataJudete as $val) {
             $judete[strtolower($val['Abbreviation'])] = $val['CountyId'];
         }
 
         // obtin lista de localitati pe baza abrevierii judetului
-        $localitati = $this->model_shipping_cargusclass->CallMethod(
-            'Localities?countryId=1&countyId='.$judete[strtolower($judet['code'])],
-            array(),
-            'GET',
-            $token
-        );
+        $localitati = $this->model_extension_shipping_cargus_cache->getLocalities($judete[strtolower($judet['code'])]);
 
         // generez options pentru dropdown
-        if (count($localitati) > 1) {
+        if (!empty($localitati)) {
             echo '<option value="" km="0">-</option>'."\n";
         }
         foreach ($localitati as $row) {
@@ -132,6 +114,7 @@ class ControllerExtensionModuleCargus extends Controller
                          ' selected="selected"' :
                          ''
                  ).
+                 ' data-zip="'. $row['PostalCode'] .'"'.
                  ' data-cid="'. $row['LocalityId'] .'"'.
                  ' km="'. $km .'">'.$row['Name'].
                  '</option>'."\n";
@@ -140,11 +123,74 @@ class ControllerExtensionModuleCargus extends Controller
 
     public function streets()
     {
-        //
-        error_log(__CLASS__ . ' ' . __FUNCTION__);
+        $city = null;
+
+        if (isset($this->request->post['city'])) {
+            $city = $this->request->post['city'];
+        }
 
         $this->load->model('extension/shipping/cargus_cache');
 
-        $this->model_extension_shipping_cargus_cache->test();
+        $json = $this->model_extension_shipping_cargus_cache->getStreets($city);
+
+        $this->response->addHeader('Content-Type: application/json');
+
+        //data is already json
+        $this->response->setOutput($json);
+    }
+
+    public function cities()
+    {
+        error_reporting(E_ALL);
+        ini_set('display_errors', '0');
+        ini_set('log_errors', '1');
+
+        $state = null;
+
+        if (isset($this->request->post['state'])) {
+            $state = $this->request->post['state'];
+        }
+
+        // load cargus class
+        $this->load->model('extension/shipping/cargus_cache');
+
+
+        // extrag datele judetului intern pe baza id-ului
+        $this->load->model('localisation/zone');
+        $judet = $this->model_localisation_zone->getZone($state);
+
+        // obtin lista de judete din api
+        $judete = array();
+        $dataJudete = $this->model_extension_shipping_cargus_cache->getCounties();
+
+        foreach ($dataJudete as $val) {
+            $judete[strtolower($val['Abbreviation'])] = $val['CountyId'];
+        }
+
+        // obtin lista de localitati pe baza abrevierii judetului
+        $json = $this->model_extension_shipping_cargus_cache->getLocalities($judete[strtolower($judet['code'])]);
+
+//        var_dump($json);
+
+        $this->response->addHeader('Content-Type: application/json');
+
+        //data is already json
+        $this->response->setOutput($json);
+
+        // generez options pentru dropdown
+        /*if (!empty($localitati)) {
+            echo '<option value="" km="0">-</option>'."\n";
+        }
+        foreach ($localitati as $row) {
+            $extraKm = (!$row['ExtraKm'] ? 0 : $row['ExtraKm']);
+            $km = ($row['InNetwork'] ? 0 : $extraKm);
+
+            echo '<option'.
+
+                 ' data-zip="'. $row['PostalCode'] .'"'.
+                 ' data-cid="'. $row['LocalityId'] .'"'.
+                 ' km="'. $km .'">'.$row['Name'].
+                 '</option>'."\n";
+        }*/
     }
 }
