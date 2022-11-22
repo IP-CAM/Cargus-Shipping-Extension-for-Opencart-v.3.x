@@ -448,7 +448,7 @@ class ControllerExtensionShippingCargus extends Controller {
     public function install() {
         $this->load->model('user/user_group');
 
-        $this->log->write('admin ship cargus install35');
+        $this->log->write('Shipping cargus install');
 
         $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/shipping/cargus');
         $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/shipping/cargus');
@@ -483,29 +483,18 @@ class ControllerExtensionShippingCargus extends Controller {
                 'extension/module/cargus/viewGuestAfter'
             );
 
-            //public_html/catalog/view/theme/default/template/checkout/payment_address.twig
             $this->model_setting_event->addEvent(
                 $this->codename,
                 'catalog/view/checkout/payment_address/after',
                 'extension/module/cargus/viewGuestAfter'
             );
-
-            //public_html/catalog/view/theme/default/template/checkout/shipping_address.twig
         }
-    }
-
-    public function event($route, &$args, &$output) {
-        $this->log->write('admin mod');
-        $this->log->write('Route: ' . $route);
-        $this->log->write('Order Info: ');
-        $this->log->write($args);
-        $this->log->write('Order ID: ' . $output);
     }
 
     public function uninstall() {
         $this->load->model('setting/event');
         $this->model_setting_event->deleteEventByCode($this->codename);
-        $this->log->write('admin ship cargus uninstall');
+        $this->log->write('Shipping cargus uninstall');
     }
 
     /**

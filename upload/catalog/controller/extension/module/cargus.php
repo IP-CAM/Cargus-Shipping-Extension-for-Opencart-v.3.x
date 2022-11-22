@@ -155,11 +155,11 @@ class ControllerExtensionModuleCargus extends Controller
         $this->load->model('extension/shipping/cargus_cache');
 
 
-        // extrag datele judetului intern pe baza id-ului
+        // get county
         $this->load->model('localisation/zone');
         $judet = $this->model_localisation_zone->getZone($state);
 
-        // obtin lista de judete din api
+        // get list of counties
         $judete = array();
         $dataJudete = $this->model_extension_shipping_cargus_cache->getCounties();
 
@@ -167,30 +167,12 @@ class ControllerExtensionModuleCargus extends Controller
             $judete[strtolower($val['Abbreviation'])] = $val['CountyId'];
         }
 
-        // obtin lista de localitati pe baza abrevierii judetului
+        // get list of localities using county code
         $json = $this->model_extension_shipping_cargus_cache->getLocalities($judete[strtolower($judet['code'])]);
-
-//        var_dump($json);
 
         $this->response->addHeader('Content-Type: application/json');
 
         //data is already json
         $this->response->setOutput($json);
-
-        // generez options pentru dropdown
-        /*if (!empty($localitati)) {
-            echo '<option value="" km="0">-</option>'."\n";
-        }
-        foreach ($localitati as $row) {
-            $extraKm = (!$row['ExtraKm'] ? 0 : $row['ExtraKm']);
-            $km = ($row['InNetwork'] ? 0 : $extraKm);
-
-            echo '<option'.
-
-                 ' data-zip="'. $row['PostalCode'] .'"'.
-                 ' data-cid="'. $row['LocalityId'] .'"'.
-                 ' km="'. $km .'">'.$row['Name'].
-                 '</option>'."\n";
-        }*/
     }
 }
