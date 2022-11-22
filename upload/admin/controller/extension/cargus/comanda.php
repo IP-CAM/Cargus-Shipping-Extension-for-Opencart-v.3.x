@@ -662,6 +662,18 @@ class ControllerExtensionCargusComanda extends Controller
                         $fields['CashRepayment']     = 0;
                         $fields['ShipmentPayer']     = 1;
                         $fields['SaturdayDelivery']  = false;
+
+                        //remove client address
+                        unset( $fields['Recipient']['LocationId'] );
+                        unset( $fields['Recipient']['CountyId'] );
+                        unset( $fields['Recipient']['CountyName'] );
+                        unset( $fields['Recipient']['LocalityId'] );
+                        unset( $fields['Recipient']['LocalityName'] );
+                        unset( $fields['Recipient']['StreetId'] );
+                        unset( $fields['Recipient']['StreetName'] );
+                        unset( $fields['Recipient']['AddressText'] );
+                        unset( $fields['Recipient']['CodPostal'] );
+
                         unset( $fields['OpenPackage'] );
                     } elseif (in_array($this->config->get('cargus_preferinte_service_id'), array(34))) {
                         if ($row->row['weight'] <= 31) {

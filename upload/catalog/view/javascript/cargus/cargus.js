@@ -304,176 +304,170 @@ $(function () {
             }
         });
 
+        async function getStreets(input) {
+            //check required field city
+            if (
+                $(input).data("cid") !== undefined &&
+                $(input).data("zip").length != 6
+            ) {
+                let city = $(input).data("cid");
 
-        //addScriptOrStyle('/catalog/view/javascript/cargus/jquery-ui.min.js', function() {
+                //get json data
+                let result = await $.getJsonData('index.php?route=extension/module/cargus/streets', {'city': city}, 'POST');
 
-            // jQuery.uniqueSort = jQuery.uniqueSort ? jQuery.uniqueSort : jQuery.unique;
-
-            async function getStreets(input) {
-                //check required field city
-                if (
-                    $(input).data("cid") !== undefined &&
-                    $(input).data("zip").length != 6
-                ) {
-                    let city = $(input).data("cid");
-
-                    //get json data
-                    let result = await $.getJsonData('index.php?route=extension/module/cargus/streets', {'city': city}, 'POST');
-
-                    if (result !== false) {
-                        return result;
-                    }
+                if (result !== false) {
+                    return result;
                 }
-
-                return [];
             }
 
-            async function filterStreets(request, input, strNr = null) {
-                let data = await getStreets(input);
+            return [];
+        }
 
-                let search = request.term.toUpperCase();
-                let searchNr = 0;
+        async function filterStreets(request, input, strNr = null) {
+            let data = await getStreets(input);
 
-                if (strNr != null) {
-                    searchNr = parseInt(search);
-                    search = $(strNr).val().toUpperCase().trim();
+            let search = request.term.toUpperCase();
+            let searchNr = 0;
+
+            if (strNr != null) {
+                searchNr = parseInt(search);
+                search = $(strNr).val().toUpperCase().trim();
+            }
+
+            let result = [];
+            let i = 0;
+
+            $.each(data, function (key, obj) {
+                let name = obj.Name.toUpperCase();
+
+                let extra = null;
+
+                if (obj.PostalNumbers.length == 1) {
+                    extra = obj.PostalNumbers[0].PostalCode;
                 }
 
-                let result = [];
-                let i = 0;
+                if (name.indexOf(search) != -1) {
+                    if (strNr === null) {
+                        i++;
 
-                $.each(data, function (key, obj) {
-                    let name = obj.Name.toUpperCase();
+                        result.push({
+                            label: obj.Name, // Label for Display
+                            value: obj.Name, // Value
+                            extra: extra
+                        });
+                    } else {
+                        $.each(obj.PostalNumbers, function(j, objStr) {
+                            if (
+                                (
+                                    (parseInt(objStr.FromNo) <= searchNr && searchNr <= parseInt(objStr.ToNo)) ||
+                                    (parseInt(objStr.FromNo) == parseInt(objStr.ToNo) && parseInt(objStr.ToNo) == 0)
+                                ) &&
+                                objStr.PostalCode.length == 6
+                            ) {
+                                result.push({
+                                    label: obj.Name, // Label for Display
+                                    value: obj.Name, // Value
+                                    extra: objStr.PostalCode
+                                });
 
-                    let extra = null;
+                                i = 10;
 
-                    if (obj.PostalNumbers.length == 1) {
-                        extra = obj.PostalNumbers[0].PostalCode;
+                                return false;
+                            }
+                        });
                     }
+                }
 
-                    if (name.indexOf(search) != -1) {
-                        if (strNr === null) {
-                            i++;
+                if (i > 9) {
+                    return false;
+                }
+            });
 
-                            result.push({
-                                label: obj.Name, // Label for Display
-                                value: obj.Name, // Value
-                                extra: extra
-                            });
+            return result;
+        }
+
+        $(document).on('keyup keypress', '[name="custom_field[address][9001]"]:in-viewport:visible', function(e) {
+            if ($(this).data('ui-autocomplete') === undefined) {
+                $(this).autocomplete({
+                    delay: 350,
+                    minLength: 2,
+                    source: async function(request, response) {
+                        let result = await filterStreets(request, 'input[name="city"]:in-viewport:visible');
+
+                        response(result);
+                    },
+                    select: function(event, ui) {
+                        if (ui.item.extra != null) {
+                            $('input[name="postcode"]:in-viewport:visible').val(ui.item.extra);
                         } else {
-                            $.each(obj.PostalNumbers, function(j, objStr) {
-                                if (
-                                    (
-                                        (parseInt(objStr.FromNo) <= searchNr && searchNr <= parseInt(objStr.ToNo)) ||
-                                        (parseInt(objStr.FromNo) == parseInt(objStr.ToNo))
-                                    ) &&
-                                    objStr.PostalCode.length == 6
-                                ) {
-                                    result.push({
-                                        label: obj.Name, // Label for Display
-                                        value: obj.Name, // Value
-                                        extra: objStr.PostalCode
-                                    });
-
-                                    i = 10;
-
-                                    return false;
-                                }
-                            });
+                            $('input[name="postcode"]:in-viewport:visible').val("");
                         }
-                    }
-
-                    if (i > 9) {
-                        return false;
                     }
                 });
 
-                return result;
+                $(this).autocomplete("search");
+            }
+        });
+
+        $(document).on('blur', '[name="custom_field[address][9002]"]:in-viewport:visible', async function(){
+            if ($('input[name="city"]:in-viewport:visible').data('zip') !== undefined &&
+                $('input[name="city"]:in-viewport:visible').data('zip').length == 6
+            ) {
+                //city has postal code, no need for more searches
+                return true;
             }
 
-            $(document).on('keyup keypress', '[name="custom_field[address][9001]"]:in-viewport:visible', function(e) {
-                if ($(this).data('ui-autocomplete') === undefined) {
-                    $(this).autocomplete({
-                        delay: 350,
-                        minLength: 2,
-                        source: async function(request, response) {
-                            let result = await filterStreets(request, 'input[name="city"]:in-viewport:visible');
+            let strNr = $(this).val();
 
-                            response(result);
-                        },
-                        select: function(event, ui) {
-                            if (ui.item.extra != null) {
-                                $('input[name="postcode"]:in-viewport:visible').val(ui.item.extra);
-                            } else {
-                                $('input[name="postcode"]:in-viewport:visible').val("");
-                            }
-                        }
-                    });
+            let result = await filterStreets({'term': strNr}, 'input[name="city"]:in-viewport:visible', '[name="custom_field[address][9001]"]:in-viewport:visible');
 
-                    $(this).autocomplete("search");
-                }
-            });
-
-            $(document).on('blur', '[name="custom_field[address][9002]"]:in-viewport:visible', async function(){
-                if ($('input[name="city"]:in-viewport:visible').data('zip') !== undefined &&
-                    $('input[name="city"]:in-viewport:visible').data('zip').length == 6
-                ) {
-                    //city has postal code, no need for more searches
-                    return true;
-                }
-
-                let strNr = $(this).val();
-
-                let result = await filterStreets({'term': strNr}, 'input[name="city"]:in-viewport:visible', '[name="custom_field[address][9001]"]:in-viewport:visible');
-
-                if (result[0] !== undefined && result[0].extra != null) {
-                    $('input[name="postcode"]:in-viewport:visible').val(result[0].extra);
-                } else {
-                    $('input[name="postcode"]:in-viewport:visible').val("");
-                }
-            });
+            if (result[0] !== undefined && result[0].extra != null) {
+                $('input[name="postcode"]:in-viewport:visible').val(result[0].extra);
+            } else {
+                $('input[name="postcode"]:in-viewport:visible').val("");
+            }
+        });
 
 
-            function updateAddress() {
-                const str = $("#input-payment-custom-field9001").val();
-                const strNr = $("#input-payment-custom-field9002").val();
+        function updateAddress() {
+            const str = $("#input-payment-custom-field9001").val();
+            const strNr = $("#input-payment-custom-field9002").val();
 
-                $("#input-payment-address-1").val(str + ', nr. ' + strNr);
+            $("#input-payment-address-1").val(str + ', nr. ' + strNr);
 
-                if ($("#input-shipping-custom-field9001").length > 0) {
-                    const str2 = $("#input-shipping-custom-field9001").val();
-                    const strNr2 = $("#input-shipping-custom-field9002").val();
+            if ($("#input-shipping-custom-field9001").length > 0) {
+                const str2 = $("#input-shipping-custom-field9001").val();
+                const strNr2 = $("#input-shipping-custom-field9002").val();
 
-                    $("#input-shipping-address-1").val(str2 + ', nr. ' + strNr2);
-                }
-
-                if ($("#input-custom-field9001").length > 0) {
-                    const str2 = $("#input-custom-field9001").val();
-                    const strNr2 = $("#input-custom-field9002").val();
-
-                    $("#input-address-1").val(str2 + ', nr. ' + strNr2);
-                }
+                $("#input-shipping-address-1").val(str2 + ', nr. ' + strNr2);
             }
 
-            $("#input-payment-custom-field9001").on('keyup', function() {
-                updateAddress();
-            });
-            $("#input-payment-custom-field9002").on('keyup', function() {
-                updateAddress();
-            });
-            $("#input-shipping-custom-field9001").on('keyup', function() {
-                updateAddress();
-            });
-            $("#input-shipping-custom-field9002").on('keyup', function() {
-                updateAddress();
-            });
-            $("#input-custom-field9001").on('keyup', function() {
-                updateAddress();
-            });
-            $("#input-custom-field9002").on('keyup', function() {
-                updateAddress();
-            });
-        //});
+            if ($("#input-custom-field9001").length > 0) {
+                const str2 = $("#input-custom-field9001").val();
+                const strNr2 = $("#input-custom-field9002").val();
+
+                $("#input-address-1").val(str2 + ', nr. ' + strNr2);
+            }
+        }
+
+        $("#input-payment-custom-field9001").on('keyup', function() {
+            updateAddress();
+        });
+        $("#input-payment-custom-field9002").on('keyup', function() {
+            updateAddress();
+        });
+        $("#input-shipping-custom-field9001").on('keyup', function() {
+            updateAddress();
+        });
+        $("#input-shipping-custom-field9002").on('keyup', function() {
+            updateAddress();
+        });
+        $("#input-custom-field9001").on('keyup', function() {
+            updateAddress();
+        });
+        $("#input-custom-field9002").on('keyup', function() {
+            updateAddress();
+        });
     };
 
 });

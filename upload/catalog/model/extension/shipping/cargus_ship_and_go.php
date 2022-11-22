@@ -181,10 +181,15 @@ class ModelExtensionShippingCargusShipAndGo extends Model {
 
                 $calculate = $this->model_extension_shipping_cargusclass->CallMethod('ShippingCalculation', $fields, 'POST', $token);
 
-                if (is_null($calculate)) {
-                    echo '<pre>';
-                    print_r($fields);
-                    die();
+                if (is_null($calculate) || $calculate === false || isset($calculate['error'])) {
+                    //save log
+                    $message = __CLASS__.'::'.__FUNCTION__." error ShippingCalculation".
+                               (isset($calculate['error']) ? ": ".$calculate['error'] : "").
+                               ", fields: ".print_r($fields, true);
+
+                    $this->log->write($message);
+                    error_log($message);
+                    $calculate['Subtotal'] = 0;
                 }
 
                 $payer = $this->config->get('cargus_preferinte_payer');

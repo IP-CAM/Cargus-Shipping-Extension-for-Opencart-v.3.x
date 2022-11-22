@@ -230,7 +230,14 @@ class ControllerExtensionShippingCargus extends Controller {
         //validate awb
         $result = $this->load->controller('extension/cargus/comanda/validateAwb', array($awb['id']));
 
-        $this->response->redirect($this->url->link('extension/cargus/comanda', $this->addToken(), true));
+        if (!$result) {
+            //error validating awb
+            $this->response->redirect($this->url->link('extension/cargus/comanda', $this->addToken(), true));
+        }
+
+        //all ok
+        $this->session->data['success'] = '';
+        $this->response->redirect($this->url->link('sale/order/info', $this->addToken(array('order_id' => $orderInfo['order_id'])), true));
     }
 
     public function add() {

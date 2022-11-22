@@ -106,7 +106,16 @@ class ModelExtensionShippingCargusClass extends Model
 
             error_log($message);
             $this->log->write($message);
-            @ob_end_clean();
+
+            if (isset($data) && is_array($data) && !empty($data)) {
+                return array('error' => implode(', ', $data));
+            }
+            if (isset($data)) {
+                return array('error' => $data);
+            }
+
+            return false;
+            /*@ob_end_clean();
             echo '<pre>';
             echo 'Status<br/>';
             print_r(array(
@@ -124,7 +133,7 @@ class ModelExtensionShippingCargusClass extends Model
             echo 'CURL Result<br>';
             echo print_r($result, true);
             echo '</pre>';
-            die();
+            die();*/
         }
     }
 
