@@ -123,24 +123,23 @@ class ModelExtensionShippingCargusShipAndGo extends Model {
                 $total_weight = ceil($total_weight);
                 if ($total_weight == 0) {
                     $total_weight = 1;
-                } 
+                }
                 // instantiez clasa cargus
-                require_once(DIR_APPLICATION.'model/extension/shipping/cargusclass.php');
-                $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass();
+                $this->load->model('extension/shipping/cargusclass');
 
                 // setez url si key
-                $this->model_shipping_cargusclass->SetKeys($this->config->get('cargus_api_url'), $this->config->get('cargus_api_key'));
+                $this->model_extension_shipping_cargusclass->SetKeys($this->config->get('cargus_api_url'), $this->config->get('cargus_api_key'));
 
                 // UC login user
                 $fields = array(
                     'UserName' => $this->config->get('cargus_username'),
                     'Password' => $this->config->get('cargus_password')
                 );
-                $token = $this->model_shipping_cargusclass->CallMethod('LoginUser', $fields, 'POST');
+                $token = $this->model_extension_shipping_cargusclass->CallMethod('LoginUser', $fields, 'POST', 'useException');
 
                 // UC punctul de ridicare default
                 $location = array();
-                $pickups = $this->model_shipping_cargusclass->CallMethod('PickupLocations', array(), 'GET', $token);
+                $pickups = $this->model_extension_shipping_cargusclass->CallMethod('PickupLocations', array(), 'GET', $token);
                 if (is_null($pickups)) {
                     die('Nu exista niciun punct de ridicare asociat acestui cont!');
                 }
@@ -153,8 +152,8 @@ class ModelExtensionShippingCargusShipAndGo extends Model {
                 // UC shipping calculation
                 // TODO add ServiceId and DeliveryPudoPoint after API is ready
                 // 'ServiceId' => $this->config->get('cargus_shipping_preferinte_service_id'), // 38
-                // 'DeliveryPudoPoint'  => '114141' // this is 11 iunie location    
-                
+                // 'DeliveryPudoPoint'  => '114141' // this is 11 iunie location
+
 
 
                 $fields = array(
@@ -175,17 +174,22 @@ class ModelExtensionShippingCargusShipAndGo extends Model {
                     'PaymentInstrumentValue' => 0,
                     'SaturdayDelivery' => false,
                     'MorningDelivery' => $this->config->get('cargus_preferinte_morning') != 1 ? false : true,
-                    'ShipmentPayer' => 1 ,          
-                    'OpenPackage' => false,     
+                    'ShipmentPayer' => 1 ,
+                    'OpenPackage' => false,
                 );
-               
-                
-                $calculate = $this->model_shipping_cargusclass->CallMethod('ShippingCalculation', $fields, 'POST', $token);
 
-                if (is_null($calculate)) {
-                    echo '<pre>';
-                    print_r($fields);
-                    die();
+
+                $calculate = $this->model_extension_shipping_cargusclass->CallMethod('ShippingCalculation', $fields, 'POST', $token);
+
+                if (is_null($calculate) || $calculate === false || isset($calculate['error'])) {
+                    //save log
+                    $message = __CLASS__.'::'.__FUNCTION__." error ShippingCalculation".
+                               (isset($calculate['error']) ? ": ".$calculate['error'] : "").
+                               ", fields: ".print_r($fields, true);
+
+                    $this->log->write($message);
+                    error_log($message);
+                    $calculate['Subtotal'] = 0;
                 }
 
                 $payer = $this->config->get('cargus_preferinte_payer');
@@ -213,15 +217,15 @@ class ModelExtensionShippingCargusShipAndGo extends Model {
                     $cost = $calculate['Subtotal'];
                 }
 
-                // convert from RON to default website currency 
+                // convert from RON to default website currency
                 // transforma pretul din lei in moneda default
                 if (strtolower($this->config->get('config_currency')) != 'ron' && strtolower($this->config->get('config_currency')) != 'lei') {
                     $cost = $this->currency->convert($cost, $simbol_moneda, $this->config->get('config_currency'));
                 }
 
-                // adds shiping method to recepeint address 
+                // adds shiping method to recepeint address
                 // adauga metoda pentru livrare la adresa destinatarului
-                // format code {shiping method name}{code} as upload/catalog/model/extension/shipping/cargus_ship_and_go.php 
+                // format code {shiping method name}{code} as upload/catalog/model/extension/shipping/cargus_ship_and_go.php
                 // if you change this, please update also upload/catalog/view/javascript/cargus/ship_and_go.js :: isSippingRadioItem
                 $quote_data['ship_and_go'] = array(
                     'code'         => 'cargus_ship_and_go.ship_and_go',
@@ -230,7 +234,7 @@ class ModelExtensionShippingCargusShipAndGo extends Model {
                     'tax_class_id' => $this->config->get('cargus_tax_class_id'),
                     'text'         => $this->currency->format($this->tax->calculate($cost, $this->config->get('cargus_tax_class_id'), $this->config->get('config_tax')), $this->config->get('config_currency'))
                 );
- 
+
 
                 $method_data = array(
                     'code'       => 'cargus',
@@ -241,10 +245,15 @@ class ModelExtensionShippingCargusShipAndGo extends Model {
                 );
             }
         } catch (Exception $ex) {
-            ob_clean();
-            echo '<pre>';
-            print_r($ex);
-            die();
+            $message = __CLASS__.'::'.__FUNCTION__." address=".print_r($address, true).", cod=".print_r($cod, true)." , error: " . $ex->getMessage();
+
+            error_log($message);
+            $this->log->write($message);
+
+//            ob_clean();
+//            echo '<pre>';
+//            print_r($ex);
+//            die();
         }
 
 		return $method_data;

@@ -176,11 +176,31 @@
                                 {% for key, val in cargus_preferinte_service_id_options %}
                                    <option {% if cargus_preferinte_service_id == key %} selected="selected" {% endif %} value="{{key}}">
                                     {{ val }}
-                                    </option> 
+                                    </option>
                                 {% endfor %}
                             </select>
                         </div>
                     </div>
+                    {% if cargus_preferinte_postal_codes is defined %}
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="cargus_preferinte_postal_codes">
+                            <span data-toggle="tooltip" title="" data-original-title="{{ entry_postal_codes_details }}">{{ entry_postal_codes }}</span>
+                        </label>
+                        <div class="col-sm-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input
+                                            type="checkbox"
+                                            name="cargus_preferinte_postal_codes"
+                                            id="cargus_preferinte_postal_codes"
+                                            value="1"
+                                            {% if cargus_preferinte_postal_codes %} checked="checked" {% endif %}
+                                            class="form-control">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
                 </form>
                 {% endif %}
             </div>

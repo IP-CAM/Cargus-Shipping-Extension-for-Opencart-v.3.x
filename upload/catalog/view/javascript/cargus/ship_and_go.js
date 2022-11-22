@@ -6,7 +6,7 @@ function addScriptOrStyle(path, callback) {
     document.head.appendChild(script);
 };
 
-addScriptOrStyle('/catalog/view/javascript/cargus/widget.js?v=1', function() {
+addScriptOrStyle('https://app.urgentcargus.ro/map/widget.js', function() {
 });
 
 function renderMap() {
@@ -71,6 +71,34 @@ function renderMap() {
             Widget.instance.map.invalidateSize(true);
         }
     } );
+
+    widget.fetchPudoPoints = async function () {
+        const response = await fetch("index.php?route=extension/module/cargus_ship/getPudoPoints", {
+            method: 'GET',
+            cache: 'no-store',
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer',
+
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            console.error('fetchPudoPoints failed: ', response);
+            return false;
+        }
+
+        try {
+            const text = await response.text();
+            const data = JSON.parse(text);
+
+            return data;
+        } catch (err) {
+            console.error('fetchPudoPoints error: ', err);
+        }
+        return false;
+    };
 
     widget.onChanged = function (location) {
         // Location selection changed
