@@ -4,16 +4,10 @@ class ControllerExtensionModuleCargus extends Controller
 {
     public function carrierSaveAfter($route, &$args, &$output)
     {
-        $this->log->write(__CLASS__.'::'.__FUNCTION__);
-
-        $this->log->write($this->session->data['shipping_method']['code']);
-//        $this->log->write($this->session->data);
-
         //check if ship&go is selected and a delivery point was selected
         $error_message = 'Va rugam selectati un punct ship&go';
 
         if ($this->session->data['shipping_method']['code'] == 'cargus_ship_and_go.ship_and_go' &&
-            !isset($this->session->data['shipping_address']['custom_field']['pudo_location_id2']) &&
             isset($this->session->data['order_id'])
         ) {
             $order_id = $this->session->data['order_id'];
@@ -21,9 +15,9 @@ class ControllerExtensionModuleCargus extends Controller
             $this->load->model('checkout/order');
             $data = $this->model_checkout_order->getOrder($order_id);
 
-            $this->log->write($data);
-
-            if (!isset($data['custom_field']['pudo_location_id'])) {
+            if (!isset($data['custom_field']['pudo_location_id']) &&
+                !isset($data['shipping_custom_field']['pudo_location_id'])
+            ) {
                 $this->session->data['error'] = $error_message;
 
                 $json['redirect'] = $this->url->link('checkout/checkout', '', true);
@@ -113,11 +107,11 @@ class ControllerExtensionModuleCargus extends Controller
         $this->log->write('catalog ControllerExtensionModuleCargus event');
         $this->log->write('Route: ' . $route);
         $this->log->write('Args Info: ');
-        $this->log->write(print_r($args, true));
-//        $this->log->write($args);
+//        $this->log->write(print_r($args, true));
+        $this->log->write($args);
         $this->log->write('Output: ');
-//        $this->log->write($output);
-        $this->log->write(print_r($output, true));
+        $this->log->write($output);
+//        $this->log->write(print_r($output, true));
 //        . print_r($output, true));
     }
 
