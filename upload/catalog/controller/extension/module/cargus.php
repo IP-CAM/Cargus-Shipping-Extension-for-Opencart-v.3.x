@@ -6,8 +6,15 @@ class ControllerExtensionModuleCargus extends Controller
     {
         $this->log->write(__CLASS__.'::'.__FUNCTION__);
 
+        $this->log->write($this->session->data['shipping_method']['code']);
+
         //check if ship&go is selected and a delivery point was selected
         $error_message = 'Va rugam selectati un punct ship&go';
+
+        if ($this->session->data['shipping_method']['code'] == 'cargus_ship_and_go.ship_and_go') {
+            $error_message = 'DAAAA';
+        }
+
 
         $this->session->data['error'] = $error_message;
 
