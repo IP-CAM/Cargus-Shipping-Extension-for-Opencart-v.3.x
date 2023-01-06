@@ -2,6 +2,52 @@
 
 class ControllerExtensionModuleCargus extends Controller
 {
+    public function carrierSaveAfter($route, &$args, &$output)
+    {
+        //check if ship&go is selected and a delivery point was selected
+        $error_message = 'Va rugam selectati un punct ship&go';
+
+        if ($this->session->data['shipping_method']['code'] == 'cargus_ship_and_go.ship_and_go' &&
+            isset($this->session->data['order_id'])
+        ) {
+            $order_id = $this->session->data['order_id'];
+
+            $this->load->model('checkout/order');
+            $data = $this->model_checkout_order->getOrder($order_id);
+
+            if (!isset($data['custom_field']['pudo_location_id']) &&
+                !isset($data['shipping_custom_field']['pudo_location_id'])
+            ) {
+                $this->session->data['error'] = $error_message;
+
+                $json['redirect'] = $this->url->link('checkout/checkout', '', true);
+
+                $error['warning'] = $error_message;
+
+                $json['error'] = $error ? $error : null;
+
+                $status = 'success';
+
+                $data   = $json;
+                $output = json_encode(array(
+                    'error'    => $error,
+                    'status'   => $status,
+                    'response' => $data,
+                    'request'  => array(
+                        'url'  => $this->request->server['REQUEST_URI'],
+                        'get'  => $this->request->get,
+                        'post' => $this->request->post,
+                    ),
+                ));
+
+                $output = str_replace('&amp;', '&', $output);
+
+                $this->response->addHeader('Content-Type: application/json');
+                $this->response->setOutput($output);
+            }
+        }
+    }
+
     public function viewGuestAfter($route, &$args, &$output)
     {
         $enable = $this->config->get('cargus_preferinte_postal_codes');
@@ -61,9 +107,11 @@ class ControllerExtensionModuleCargus extends Controller
         $this->log->write('catalog ControllerExtensionModuleCargus event');
         $this->log->write('Route: ' . $route);
         $this->log->write('Args Info: ');
+//        $this->log->write(print_r($args, true));
         $this->log->write($args);
         $this->log->write('Output: ');
         $this->log->write($output);
+//        $this->log->write(print_r($output, true));
 //        . print_r($output, true));
     }
 
@@ -72,7 +120,7 @@ class ControllerExtensionModuleCargus extends Controller
         $this->log->write('catalog ControllerExtensionModuleCargus eventbefore');
         $this->log->write('Route: ' . $route);
         $this->log->write('Args Info: ');
-        $this->log->write($args);
+        $this->log->write(print_r($args, true));
     }
 
     public function localitati()

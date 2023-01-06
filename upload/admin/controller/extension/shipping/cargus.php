@@ -488,6 +488,19 @@ class ControllerExtensionShippingCargus extends Controller {
                 'catalog/view/checkout/payment_address/after',
                 'extension/module/cargus/viewGuestAfter'
             );
+
+            $this->model_setting_event->addEvent(
+                $this->codename,
+                'catalog/controller/checkout/shipping_method/save/after',
+                'extension/module/cargus/carrierSaveAfter'
+            );
+        } else {
+            //journal3 checkout
+            $this->model_setting_event->addEvent(
+                $this->codename,
+                'catalog/controller/journal3/checkout/save/after',
+                'extension/module/cargus/carrierSaveAfter'
+            );
         }
     }
 
