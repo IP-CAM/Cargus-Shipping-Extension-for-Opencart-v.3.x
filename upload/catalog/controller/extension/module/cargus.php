@@ -7,13 +7,13 @@ class ControllerExtensionModuleCargus extends Controller
         $this->log->write(__CLASS__.'::'.__FUNCTION__);
 
         //check if ship&go is selected and a delivery point was selected
+        $error_message = 'Va rugam selectati un punct ship&go';
 
-        $this->session->data['error'] = 'An internal error occurred3 !33999';
+        $this->session->data['error'] = $error_message;
 
         $json['redirect'] = $this->url->link('checkout/checkout', '', true);
 
-
-        $error['warning'] = 'testing123';
+        $error['warning'] = $error_message;
 
         $json['error'] = $error ? $error : null;
 
@@ -21,6 +21,7 @@ class ControllerExtensionModuleCargus extends Controller
 
         $data = $json;
         $output = json_encode(array(
+            'error' => $error,
             'status'   => $status,
             'response' => $data,
             'request'  => array(
