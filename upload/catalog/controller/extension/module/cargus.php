@@ -2,6 +2,15 @@
 
 class ControllerExtensionModuleCargus extends Controller
 {
+    public function carrierSaveAfter($route, &$args, &$output)
+    {
+        //check if ship&go is selected and a delivery point was selected
+
+        $json['error']['warning'] = 'testing12';
+
+        $this->response->setOutput(json_encode($json));
+    }
+
     public function viewGuestAfter($route, &$args, &$output)
     {
         $enable = $this->config->get('cargus_preferinte_postal_codes');
@@ -61,9 +70,11 @@ class ControllerExtensionModuleCargus extends Controller
         $this->log->write('catalog ControllerExtensionModuleCargus event');
         $this->log->write('Route: ' . $route);
         $this->log->write('Args Info: ');
-        $this->log->write($args);
+        $this->log->write(print_r($args, true));
+//        $this->log->write($args);
         $this->log->write('Output: ');
-        $this->log->write($output);
+//        $this->log->write($output);
+        $this->log->write(print_r($output, true));
 //        . print_r($output, true));
     }
 
@@ -72,7 +83,7 @@ class ControllerExtensionModuleCargus extends Controller
         $this->log->write('catalog ControllerExtensionModuleCargus eventbefore');
         $this->log->write('Route: ' . $route);
         $this->log->write('Args Info: ');
-        $this->log->write($args);
+        $this->log->write(print_r($args, true));
     }
 
     public function localitati()

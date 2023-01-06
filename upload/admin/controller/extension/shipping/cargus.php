@@ -489,6 +489,12 @@ class ControllerExtensionShippingCargus extends Controller {
                 'extension/module/cargus/viewGuestAfter'
             );
         }
+
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'catalog/controller/checkout/shipping_method/save/after',
+            'extension/module/cargus/carrierSaveAfter'
+        );
     }
 
     public function uninstall() {

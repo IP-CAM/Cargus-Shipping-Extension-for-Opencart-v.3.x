@@ -254,7 +254,7 @@ function toggleShipingMethodSave(show =  1) {
     if (show) {
         $("#button-shipping-method").removeAttr('disabled');
     } else {
-        $("#button-shipping-method").attr('disabled','disabled');
+        // $("#button-shipping-method").attr('disabled','disabled');
     }
 }
 function attachActionOnRadio(){
