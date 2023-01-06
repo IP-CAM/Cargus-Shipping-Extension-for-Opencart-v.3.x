@@ -7,41 +7,41 @@ class ControllerExtensionModuleCargus extends Controller
         $this->log->write(__CLASS__.'::'.__FUNCTION__);
 
         $this->log->write($this->session->data['shipping_method']['code']);
+        $this->log->write($this->session->data);
 
         //check if ship&go is selected and a delivery point was selected
         $error_message = 'Va rugam selectati un punct ship&go';
 
-        if ($this->session->data['shipping_method']['code'] == 'cargus_ship_and_go.ship_and_go') {
-            $error_message = 'DAAAA';
+        if ($this->session->data['shipping_method']['code'] == 'cargus_ship_and_go.ship_and_go' &&
+            !isset($this->session->data['shipping_address']['custom_field']['pudo_location_id'])
+        ) {
+            $this->session->data['error'] = $error_message;
+
+            $json['redirect'] = $this->url->link('checkout/checkout', '', true);
+
+            $error['warning'] = $error_message;
+
+            $json['error'] = $error ? $error : null;
+
+            $status = 'success';
+
+            $data = $json;
+            $output = json_encode(array(
+                'error' => $error,
+                'status'   => $status,
+                'response' => $data,
+                'request'  => array(
+                    'url'  => $this->request->server['REQUEST_URI'],
+                    'get'  => $this->request->get,
+                    'post' => $this->request->post,
+                ),
+            ));
+
+            $output = str_replace('&amp;', '&', $output);
+
+            $this->response->addHeader('Content-Type: application/json');
+            $this->response->setOutput($output);
         }
-
-
-        $this->session->data['error'] = $error_message;
-
-        $json['redirect'] = $this->url->link('checkout/checkout', '', true);
-
-        $error['warning'] = $error_message;
-
-        $json['error'] = $error ? $error : null;
-
-        $status = 'success';
-
-        $data = $json;
-        $output = json_encode(array(
-            'error' => $error,
-            'status'   => $status,
-            'response' => $data,
-            'request'  => array(
-                'url'  => $this->request->server['REQUEST_URI'],
-                'get'  => $this->request->get,
-                'post' => $this->request->post,
-            ),
-        ));
-
-        $output = str_replace('&amp;', '&', $output);
-
-        $this->response->addHeader('Content-Type: application/json');
-        $this->response->setOutput($output);
     }
 
     public function viewGuestAfter($route, &$args, &$output)
