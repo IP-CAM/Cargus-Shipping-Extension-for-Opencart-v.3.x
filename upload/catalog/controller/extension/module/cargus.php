@@ -4,11 +4,36 @@ class ControllerExtensionModuleCargus extends Controller
 {
     public function carrierSaveAfter($route, &$args, &$output)
     {
+        $this->log->write(__CLASS__.'::'.__FUNCTION__);
+
         //check if ship&go is selected and a delivery point was selected
 
-        $json['error']['warning'] = 'testing12';
+        $this->session->data['error'] = 'An internal error occurred3 !33999';
 
-        $this->response->setOutput(json_encode($json));
+        $json['redirect'] = $this->url->link('checkout/checkout', '', true);
+
+
+        $error['warning'] = 'testing123';
+
+        $json['error'] = $error ? $error : null;
+
+        $status = 'success';
+
+        $data = $json;
+        $output = json_encode(array(
+            'status'   => $status,
+            'response' => $data,
+            'request'  => array(
+                'url'  => $this->request->server['REQUEST_URI'],
+                'get'  => $this->request->get,
+                'post' => $this->request->post,
+            ),
+        ));
+
+        $output = str_replace('&amp;', '&', $output);
+
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput($output);
     }
 
     public function viewGuestAfter($route, &$args, &$output)
