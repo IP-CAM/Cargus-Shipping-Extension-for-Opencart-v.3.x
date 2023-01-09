@@ -34,18 +34,17 @@ class ControllerExtensionModuleCargusShip extends Controller
 
             $isUpdating = true;
 
-            require_once(DIR_APPLICATION . 'model/extension/shipping/cargusclass.php');
-            $cargus = new ModelExtensionShippingCargusClass();
+            $this->load->model('extension/shipping/cargusclass');
 
-            $cargus->SetKeys($this->config->get('cargus_api_url'), $this->config->get('cargus_api_key'));
+            $this->model_extension_shipping_cargusclass->SetKeys($this->config->get('cargus_api_url'), $this->config->get('cargus_api_key'));
 
             // UC login user
             $fields = array(
                 'UserName' => $this->config->get('cargus_username'),
                 'Password' => $this->config->get('cargus_password')
             );
-            $token = $cargus->CallMethod('LoginUser', $fields, 'POST');
-            $locations = $cargus->CallMethod('PudoPoints', array(), 'GET', $token);
+            $token = $this->model_extension_shipping_cargusclass->CallMethod('LoginUser', $fields, 'POST');
+            $locations = $this->model_extension_shipping_cargusclass->CallMethod('PudoPoints', array(), 'GET', $token);
 
             if ($locations) {
                 $this->computePudoLocationFile($locations);
@@ -144,4 +143,17 @@ class ControllerExtensionModuleCargusShip extends Controller
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+
+    public function getPudoPoints()
+    {
+        $this->load->model('extension/shipping/cargus_cache');
+
+        //PudoPoints
+        $json = $this->model_extension_shipping_cargus_cache->getPudoPoints();
+
+        $this->response->addHeader('Content-Type: application/json');
+
+        //data is already json
+        $this->response->setOutput($json);
+    }
 }

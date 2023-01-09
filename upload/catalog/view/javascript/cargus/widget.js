@@ -397,32 +397,32 @@ var Widget = (function () {
         }
         this.showPudoPoints();
     };
-    Widget.prototype.fetchPudoPoints = function () {
-        return new Promise((resolve, reject) => {
-            fetch("/catalog/view/javascript/cargus/locations/pudo_locations.json", {
-                method: 'GET',
-                headers: {
-                    'content-type': 'application/json',
-                },
-                cache: 'no-cache'
-            })
-                .then(function (response) { return response.json(); })
-                .then(function (json) {
-                    $.ajax({
-                        type: "GET",
-                        url: "index.php?route=extension/module/cargus_ship/cron",
-                        cache: false,
-                        async: true,
-                        success: function(data) {
-                        },
-                        error: function(data) {
-                        }
-                    });
+    Widget.prototype.fetchPudoPoints = async function () {
+        const response = await fetch("index.php?route=extension/module/cargus_ship/getPudoPoints", {
+            method: 'GET',
+            cache: 'no-store',
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer',
 
-                    resolve(json);
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
 
-                });
-        })
+        if (!response.ok) {
+            console.error('fetchPudoPoints failed: ', response);
+            return false;
+        }
+
+        try {
+            const text = await response.text();
+            const data = JSON.parse(text);
+
+            return data;
+        } catch (err) {
+            console.error('fetchPudoPoints error: ', err);
+        }
+        return false;
     }
     Widget.prototype.showPudoPoints = function () {
         var _this = this;

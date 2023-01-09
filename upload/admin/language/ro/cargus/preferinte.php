@@ -39,7 +39,8 @@ $_['entry_service_id_1']        = '1 Standard';
 $_['entry_service_id_34']       = '34 Economic Standard';
 $_['entry_service_id_39']       = '39 Multipiece';
 
-
+$_['entry_postal_codes']        = 'Nomenclator strazi/coduri postale';
+$_['entry_postal_codes_details'] = 'Completeaza automat codul postal in baza adresei introduse';
 
 // Error
 $_['error_permission']          = 'Atentie: Nu aveti permisiunea de a edita preferintele metodei de livrare Cargus!';

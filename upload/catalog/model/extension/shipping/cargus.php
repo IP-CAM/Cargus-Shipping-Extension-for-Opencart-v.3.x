@@ -126,22 +126,21 @@ class ModelExtensionShippingCargus extends Model {
                 }
 
                 // instantiez clasa cargus
-                require_once(DIR_APPLICATION.'model/extension/shipping/cargusclass.php');
-                $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass();
+                $this->load->model('extension/shipping/cargusclass');
 
                 // setez url si key
-                $this->model_shipping_cargusclass->SetKeys($this->config->get('cargus_api_url'), $this->config->get('cargus_api_key'));
+                $this->model_extension_shipping_cargusclass->SetKeys($this->config->get('cargus_api_url'), $this->config->get('cargus_api_key'));
 
                 // UC login user
                 $fields = array(
                     'UserName' => $this->config->get('cargus_username'),
                     'Password' => $this->config->get('cargus_password')
                 );
-                $token = $this->model_shipping_cargusclass->CallMethod('LoginUser', $fields, 'POST');
+                $token = $this->model_extension_shipping_cargusclass->CallMethod('LoginUser', $fields, 'POST', 'useException');
 
                 // UC punctul de ridicare default
                 $location = array();
-                $pickups = $this->model_shipping_cargusclass->CallMethod('PickupLocations', array(), 'GET', $token);
+                $pickups = $this->model_extension_shipping_cargusclass->CallMethod('PickupLocations', array(), 'GET', $token);
                 if (is_null($pickups)) {
                     die('Nu exista niciun punct de ridicare asociat acestui cont!');
                 }
@@ -189,12 +188,17 @@ class ModelExtensionShippingCargus extends Model {
                 }
 
 
-                $calculate = $this->model_shipping_cargusclass->CallMethod('ShippingCalculation', $fields, 'POST', $token);
+                $calculate = $this->model_extension_shipping_cargusclass->CallMethod('ShippingCalculation', $fields, 'POST', $token);
 
-                if (is_null($calculate)) {
-                    echo '<pre>';
-                    print_r($fields);
-                    die();
+                if (is_null($calculate) || $calculate === false || isset($calculate['error'])) {
+                    //save log
+                    $message = __CLASS__.'::'.__FUNCTION__." error ShippingCalculation".
+                               (isset($calculate['error']) ? ": ".$calculate['error'] : "").
+                               ", fields: ".print_r($fields, true);
+
+                    $this->log->write($message);
+                    error_log($message);
+                    $calculate['Subtotal'] = 0;
                 }
 
                 $payer = $this->config->get('cargus_preferinte_payer');
@@ -271,10 +275,15 @@ class ModelExtensionShippingCargus extends Model {
                 );
             }
         } catch (Exception $ex) {
-            ob_clean();
-            echo '<pre>';
-            print_r($ex);
-            die();
+            $message = __CLASS__.'::'.__FUNCTION__." address=".print_r($address, true).", cod=".print_r($cod, true)." , error: " . $ex->getMessage();
+
+            error_log($message);
+            $this->log->write($message);
+
+//            ob_clean();
+//            echo '<pre>';
+//            print_r($ex);
+//            die();
         }
 
 		return $method_data;

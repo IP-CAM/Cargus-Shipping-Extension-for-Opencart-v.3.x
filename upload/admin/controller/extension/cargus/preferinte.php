@@ -1,8 +1,13 @@
 <?php
+require_once(DIR_CATALOG . 'model/extension/shipping/cargusclass.php');
+
 class ControllerExtensionCargusPreferinte extends Controller {
     private $error = array();
 
-    public function index(){
+    public function index() {
+        error_reporting(E_ALL);
+        ini_set('display_errors', '0');
+        ini_set('log_errors', '1');
 
         $this->language->load('cargus/preferinte');
 
@@ -15,7 +20,7 @@ class ControllerExtensionCargusPreferinte extends Controller {
         $data['error_warning'] = '';
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			$this->model_setting_setting->editSetting('cargus_preferinte', $this->request->post);
-            
+
 			$data['success'] = $this->language->get('text_success');
 		}
 
@@ -33,9 +38,8 @@ class ControllerExtensionCargusPreferinte extends Controller {
         $data['text_parcel'] = $this->language->get('text_parcel');
         $data['text_envelope'] = $this->language->get('text_envelope');
 
-        // instantiez clasa cargus
-        require(DIR_CATALOG.'model/extension/shipping/cargusclass.php');
-        $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass();
+        //load cargus class from catalog
+        $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass($this->registry);
 
         // setez url si key
         $this->model_shipping_cargusclass->SetKeys($this->config->get('cargus_api_url'), $this->config->get('cargus_api_key'));
@@ -67,25 +71,26 @@ class ControllerExtensionCargusPreferinte extends Controller {
                 $data['error'] = $this->language->get('text_error').'Nu exista niciun punct de ridicare asociat acestui cont!';
             }
 
-            $data['entry_price'] = $this->language->get('entry_price');
-            $data['entry_pickup'] = $this->language->get('entry_pickup');
-            $data['entry_insurance'] = $this->language->get('entry_insurance');
-            $data['entry_saturday'] = $this->language->get('entry_saturday');
-            $data['entry_morning'] = $this->language->get('entry_morning');
-            $data['entry_openpackage'] = $this->language->get('entry_openpackage');
-            $data['entry_repayment'] = $this->language->get('entry_repayment');
-            $data['entry_payer'] = $this->language->get('entry_payer');
-            $data['entry_type'] = $this->language->get('entry_type');
-            $data['entry_noextrakm'] = $this->language->get('entry_noextrakm');
-            $data['entry_noextrakm_details'] = $this->language->get('entry_noextrakm_details');
-            $data['entry_free'] = $this->language->get('entry_free');
-            $data['entry_free_details'] = $this->language->get('entry_free_details');
-            $data['entry_fixed'] = $this->language->get('entry_fixed');
-            $data['entry_fixed_details'] = $this->language->get('entry_fixed_details');
-            $data['entry_service_id'] = $this->language->get('entry_service_id');
-            $data['entry_service_id_details'] = $this->language->get('entry_service_id_details');
+//            $data['entry_price'] = $this->language->get('entry_price');
+//            $data['entry_pickup'] = $this->language->get('entry_pickup');
+//            $data['entry_insurance'] = $this->language->get('entry_insurance');
+//            $data['entry_saturday'] = $this->language->get('entry_saturday');
+//            $data['entry_morning'] = $this->language->get('entry_morning');
+//            $data['entry_openpackage'] = $this->language->get('entry_openpackage');
+//            $data['entry_repayment'] = $this->language->get('entry_repayment');
+//            $data['entry_payer'] = $this->language->get('entry_payer');
+//            $data['entry_type'] = $this->language->get('entry_type');
+//            $data['entry_noextrakm'] = $this->language->get('entry_noextrakm');
+//            $data['entry_noextrakm_details'] = $this->language->get('entry_noextrakm_details');
+//            $data['entry_free'] = $this->language->get('entry_free');
+//            $data['entry_free_details'] = $this->language->get('entry_free_details');
+//            $data['entry_fixed'] = $this->language->get('entry_fixed');
+//            $data['entry_fixed_details'] = $this->language->get('entry_fixed_details');
+//            $data['entry_service_id'] = $this->language->get('entry_service_id');
+//            $data['entry_service_id_details'] = $this->language->get('entry_service_id_details');
+
             $data['cargus_preferinte_service_id_options'] = array(''=>'');
-            foreach(array(1,34,39) as $elm){    
+            foreach (array(1,34,39) as $elm) {
                 $data['cargus_preferinte_service_id_options'][$elm] = $this->language->get('entry_service_id_'.$elm);
             }
 
@@ -179,13 +184,25 @@ class ControllerExtensionCargusPreferinte extends Controller {
             } else {
                 $data['cargus_preferinte_noextrakm'] = $this->config->get('cargus_preferinte_noextrakm');
             }
-            
+
             if (isset($this->request->post['cargus_preferinte_service_id'])) {
                 $data['cargus_preferinte_service_id'] = $this->request->post['cargus_preferinte_service_id'];
             } else {
                 $data['cargus_preferinte_service_id'] = $this->config->get('cargus_preferinte_service_id');
             }
 
+            $theme = $this->config->get('config_theme');
+
+            if ($theme != 'journal3') {
+                $data['cargus_preferinte_postal_codes'] = $this->config->get( 'cargus_preferinte_postal_codes' );
+
+                if ( $this->request->server['REQUEST_METHOD'] == 'POST' ) {
+                    $data['cargus_preferinte_postal_codes'] = 0;
+                    if ( isset( $this->request->post['cargus_preferinte_postal_codes'] ) ) {
+                        $data['cargus_preferinte_postal_codes'] = $this->request->post['cargus_preferinte_postal_codes'];
+                    }
+                }
+            }
         }
 
         $data['breadcrumbs'] = array();

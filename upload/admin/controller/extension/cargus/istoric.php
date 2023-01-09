@@ -1,4 +1,6 @@
 <?php
+require_once(DIR_CATALOG . 'model/extension/shipping/cargusclass.php');
+
 class ControllerExtensionCargusIstoric extends Controller {
     private $error = array();
 
@@ -72,8 +74,7 @@ class ControllerExtensionCargusIstoric extends Controller {
         $data['view_url'] = $this->url->link('extension/cargus/istoric', 'user_token=' . $this->session->data['user_token'], 'SSL');
 
         // instantiez clasa cargus
-        require(DIR_CATALOG.'model/extension/shipping/cargusclass.php');
-        $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass();
+        $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass($this->registry);
 
         // setez url si key
         $this->model_shipping_cargusclass->SetKeys($this->config->get('cargus_api_url'), $this->config->get('cargus_api_key'));
