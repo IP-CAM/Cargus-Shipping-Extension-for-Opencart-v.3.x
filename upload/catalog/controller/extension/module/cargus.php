@@ -5,7 +5,7 @@ class ControllerExtensionModuleCargus extends Controller
     public function carrierSaveAfter($route, &$args, &$output)
     {
         //check if ship&go is selected and a delivery point was selected
-        $error_message = 'Va rugam selectati un punct ship&go';
+        $error_message = 'Va rugam selectati un punct Ship&Go';
 
         if ($this->session->data['shipping_method']['code'] == 'cargus_ship_and_go.ship_and_go' &&
             (
