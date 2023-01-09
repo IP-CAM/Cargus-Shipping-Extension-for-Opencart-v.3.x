@@ -5,18 +5,26 @@ class ControllerExtensionModuleCargus extends Controller
     public function carrierSaveAfter($route, &$args, &$output)
     {
         //check if ship&go is selected and a delivery point was selected
-        $error_message = 'Va rugam selectati un punct ship&go';
+        $error_message = 'Va rugam selectati un punct Ship&Go';
 
         if ($this->session->data['shipping_method']['code'] == 'cargus_ship_and_go.ship_and_go' &&
-            isset($this->session->data['order_id'])
+            (
+                isset($this->session->data['order_id']) ||
+                !isset($this->session->data['shipping_address']['custom_field']['pudo_location_id'])
+            )
         ) {
-            $order_id = $this->session->data['order_id'];
+            $data = array();
 
-            $this->load->model('checkout/order');
-            $data = $this->model_checkout_order->getOrder($order_id);
+            if (isset($this->session->data['order_id'])) {
+                $order_id = $this->session->data['order_id'];
+
+                $this->load->model('checkout/order');
+                $data = $this->model_checkout_order->getOrder($order_id);
+            }
 
             if (!isset($data['custom_field']['pudo_location_id']) &&
-                !isset($data['shipping_custom_field']['pudo_location_id'])
+                !isset($data['shipping_custom_field']['pudo_location_id']) &&
+                !isset($this->session->data['shipping_address']['custom_field']['pudo_location_id'])
             ) {
                 $this->session->data['error'] = $error_message;
 
@@ -107,12 +115,9 @@ class ControllerExtensionModuleCargus extends Controller
         $this->log->write('catalog ControllerExtensionModuleCargus event');
         $this->log->write('Route: ' . $route);
         $this->log->write('Args Info: ');
-//        $this->log->write(print_r($args, true));
         $this->log->write($args);
         $this->log->write('Output: ');
         $this->log->write($output);
-//        $this->log->write(print_r($output, true));
-//        . print_r($output, true));
     }
 
     public function eventbefore($route, &$args)
@@ -120,7 +125,7 @@ class ControllerExtensionModuleCargus extends Controller
         $this->log->write('catalog ControllerExtensionModuleCargus eventbefore');
         $this->log->write('Route: ' . $route);
         $this->log->write('Args Info: ');
-        $this->log->write(print_r($args, true));
+        $this->log->write($args);
     }
 
     public function localitati()
