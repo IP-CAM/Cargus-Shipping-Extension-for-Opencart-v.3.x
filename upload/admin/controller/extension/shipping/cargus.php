@@ -454,10 +454,9 @@ class ControllerExtensionShippingCargus extends Controller {
         $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/shipping/cargus');
 
         $theme = $this->config->get('config_theme');
+        $this->load->model('setting/event');
 
         if ($theme != 'journal3') {
-            $this->load->model( 'setting/event' );
-
             // List of events
             $this->model_setting_event->addEvent(
                 $this->codename,
