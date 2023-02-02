@@ -42,5 +42,24 @@ $_['entry_service_id_39']       = '39 Multipiece';
 $_['entry_postal_codes']        = 'Nomenclator strazi/coduri postale';
 $_['entry_postal_codes_details'] = 'Completeaza automat codul postal in baza adresei introduse';
 
+$_['entry_awb_retur']           = 'Retur cumparator';
+$_['entry_awb_retur_options_0']  = 'Nu';
+$_['entry_awb_retur_options_1']  = 'Cod retur';
+$_['entry_awb_retur_options_2']  = 'AWB Pre-tiparit';
+
+
+$_['entry_print_awb_retur']     = 'Print AWB retur';
+
+$_['entry_print_awb_retur_options_0'] = 'Nu';
+$_['entry_print_awb_retur_options_2'] = 'Da cu instructiuni';
+
+$_['entry_awb_retur_validitate'] = 'Validitate (zile)';
+$_['entry_awb_retur_validitate_error'] = 'Validitate (zile) trebuie sa fie un numar intreg intre 0 si 180';
+
+$_['entry_package_content_text'] = 'Text predefinit pentru continutul pachetului';
+$_['entry_package_content_text_tooltip'] = 'Daca acest camp este gol atunci continutul cosului de cumparaturi este trimis ca text in continutul pachetului.<br>'.
+                                           'Daca clientul are nevoie de confidentialitate, introduceti un text personalizat aici.';
+
+
 // Error
 $_['error_permission']          = 'Atentie: Nu aveti permisiunea de a edita preferintele metodei de livrare Cargus!';
