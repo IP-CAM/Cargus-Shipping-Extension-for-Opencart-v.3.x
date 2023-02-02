@@ -42,5 +42,24 @@ $_['entry_service_id_39']       = '39 Multipiece';
 $_['entry_postal_codes']        = 'Auto-complete postal code';
 $_['entry_postal_codes_details'] = 'Auto-complete postal code based on address';
 
+$_['entry_awb_retur']           = 'Buyer return';
+
+$_['entry_awb_retur_options_0']  = 'No';
+$_['entry_awb_retur_options_1']  = 'Return voucher';
+$_['entry_awb_retur_options_2']  = 'Pre-printed AWB';
+
+
+$_['entry_print_awb_retur']     = 'Print return AWB';
+
+$_['entry_print_awb_retur_options_0'] = 'No';
+$_['entry_print_awb_retur_options_2'] = 'Yes with instructions';
+
+$_['entry_awb_retur_validitate'] = 'Validity (days)';
+$_['entry_awb_retur_validitate_error'] = 'Validity (days) must be an integer between 0 and 180';
+
+$_['entry_package_content_text'] = 'Predefined text for package content';
+$_['entry_package_content_text_tooltip'] = 'If this is empty then the cart contents are sent as package content text.<br>If privacy is need for the client enter a custom text here.';
+
+
 // Error
 $_['error_permission']          = 'Warning: You do not have permission to modify Cargus shipping method preferences!';
