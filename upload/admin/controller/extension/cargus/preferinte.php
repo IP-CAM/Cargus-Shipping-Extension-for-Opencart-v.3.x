@@ -11,18 +11,18 @@ class ControllerExtensionCargusPreferinte extends Controller {
 
         $this->language->load('cargus/preferinte');
 
-		$this->document->setTitle($this->language->get('heading_title'));
+        $this->document->setTitle($this->language->get('heading_title'));
 
-		$this->load->model('setting/setting');
+        $this->load->model('setting/setting');
 
-		$data['success'] = '';
+        $data['success'] = '';
         $data['error'] = '';
         $data['error_warning'] = '';
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-			$this->model_setting_setting->editSetting('cargus_preferinte', $this->request->post);
+            $this->model_setting_setting->editSetting('cargus_preferinte', $this->request->post);
 
-			$data['success'] = $this->language->get('text_success');
-		}
+            $data['success'] = $this->language->get('text_success');
+        }
 
         $data['heading_title'] = $this->language->get('heading_title');
 
@@ -88,6 +88,17 @@ class ControllerExtensionCargusPreferinte extends Controller {
 //            $data['entry_fixed_details'] = $this->language->get('entry_fixed_details');
 //            $data['entry_service_id'] = $this->language->get('entry_service_id');
 //            $data['entry_service_id_details'] = $this->language->get('entry_service_id_details');
+
+            $data['cargus_preferinte_awb_retur_options'] = array(
+                '0' => $this->language->get('entry_awb_retur_options_0'),
+                '1' => $this->language->get('entry_awb_retur_options_1'),
+                '2' => $this->language->get('entry_awb_retur_options_2')
+            );
+
+            $data['cargus_preferinte_print_awb_retur_options'] = array(
+                '0' => $this->language->get('entry_print_awb_retur_options_0'),
+                '2' => $this->language->get('entry_print_awb_retur_options_2')
+            );
 
             $data['cargus_preferinte_service_id_options'] = array(''=>'');
             foreach (array(1,34,39) as $elm) {
@@ -203,6 +214,30 @@ class ControllerExtensionCargusPreferinte extends Controller {
                     }
                 }
             }
+
+            if (isset($this->request->post['cargus_preferinte_awb_retur_validitate'])) {
+                $data['cargus_preferinte_awb_retur_validitate'] = $this->request->post['cargus_preferinte_awb_retur_validitate'];
+            } else {
+                $data['cargus_preferinte_awb_retur_validitate'] = $this->config->get('cargus_preferinte_awb_retur_validitate');
+            }
+
+            if (isset($this->request->post['cargus_preferinte_awb_retur'])) {
+                $data['cargus_preferinte_awb_retur'] = $this->request->post['cargus_preferinte_awb_retur'];
+            } else {
+                $data['cargus_preferinte_awb_retur'] = $this->config->get('cargus_preferinte_awb_retur');
+            }
+
+            if (isset($this->request->post['cargus_preferinte_print_awb_retur'])) {
+                $data['cargus_preferinte_print_awb_retur'] = $this->request->post['cargus_preferinte_print_awb_retur'];
+            } else {
+                $data['cargus_preferinte_print_awb_retur'] = $this->config->get('cargus_preferinte_print_awb_retur');
+            }
+
+            if (isset($this->request->post['cargus_preferinte_package_content_text'])) {
+                $data['cargus_preferinte_package_content_text'] = $this->request->post['cargus_preferinte_package_content_text'];
+            } else {
+                $data['cargus_preferinte_package_content_text'] = $this->config->get('cargus_preferinte_package_content_text');
+            }
         }
 
         $data['breadcrumbs'] = array();
@@ -227,10 +262,17 @@ class ControllerExtensionCargusPreferinte extends Controller {
     }
 
     protected function validate() {
-		if (!$this->user->hasPermission('modify', 'extension/cargus/preferinte')) {
-			$this->error['warning'] = $this->language->get('error_permission');
-		}
+        if (!$this->user->hasPermission('modify', 'extension/cargus/preferinte')) {
+            $this->error['warning'] = $this->language->get('error_permission');
+        }
 
-		return !$this->error;
-	}
+        if (!empty($this->request->post['cargus_preferinte_awb_retur_validitate'])) {
+            //must be integer
+            if (!filter_var($this->request->post['cargus_preferinte_awb_retur_validitate'], FILTER_VALIDATE_INT, array('options' => array('min_range' => 0, 'max_range' => 180)))) {
+                $this->error['warning'] = $this->language->get('entry_awb_retur_validitate_error');
+            }
+        }
+
+        return !$this->error;
+    }
 }

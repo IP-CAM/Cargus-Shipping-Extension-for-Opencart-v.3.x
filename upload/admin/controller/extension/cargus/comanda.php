@@ -282,9 +282,12 @@ class ControllerExtensionCargusComanda extends Controller
         );
         $token = $this->model_shipping_cargusclass->CallMethod('LoginUser', $fields, 'POST');
 
+        $printConsumerReturn = $this->config->get('cargus_preferinte_print_awb_retur');
+
         // UC print
         $print = $this->model_shipping_cargusclass->CallMethod(
-            'AwbDocuments?type=PDF&format=' . $this->request->get['format'] . '&barCodes=' . $this->request->get['bar_codes'],
+            'AwbDocuments?type=PDF&format=' . $this->request->get['format'] . '&barCodes=' .
+            $this->request->get['bar_codes'] . '&printReturn=' . $printConsumerReturn,
             array(),
             'GET',
             $token
@@ -595,6 +598,13 @@ class ControllerExtensionCargusComanda extends Controller
                 }
 
                 if ($row->num_rows > 0) {
+                    $cargus_preferinte_package_content_text = $this->config->get('cargus_preferinte_package_content_text');
+
+                    //privacy is needed so override packagecontent sent
+                    if (!empty($cargus_preferinte_package_content_text)) {
+                        $row->row['contents'] = $cargus_preferinte_package_content_text;
+                    }
+
                     $fields = array(
                         'Sender' => array(
                             'LocationId' => $row->row['pickup_id']
@@ -631,6 +641,9 @@ class ControllerExtensionCargusComanda extends Controller
                         'CustomString' => $row->row['order_id']
                     );
 
+                    $fields['ConsumerReturnType'] = $this->config->get('cargus_preferinte_awb_retur');
+                    $fields['ReturnCodeExpirationDays'] = $this->config->get('cargus_preferinte_awb_retur_validitate');
+
                     for ($i = 1; $i <= $row->row['parcels']; $i++) {
                         $fields['ParcelCodes'][] = array(
                             'Code' => 'C' . $i,
@@ -655,7 +668,7 @@ class ControllerExtensionCargusComanda extends Controller
                     }
 
                     if ($row->row['shipping_code'] == 'cargus_ship_and_go.ship_and_go') {
-                        if(!empty($row->row['pudo_location_id'])){
+                        if (!empty($row->row['pudo_location_id'])) {
                             $fields['DeliveryPudoPoint'] = $row->row['pudo_location_id'];
                         }
                         $fields['ServiceId'] = 38;// $this->config->get('cargus_shipping_preferinte_service_id'); //38
@@ -684,6 +697,8 @@ class ControllerExtensionCargusComanda extends Controller
                             $fields['ServiceId'] = 36;
                         }
                     }
+
+                    //$this->log->write('Create AWB, data:' . print_r($fields, true));
 
                     $cod_bara = $this->model_shipping_cargusclass->CallMethod(
                         'Awbs',

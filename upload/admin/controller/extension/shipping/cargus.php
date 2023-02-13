@@ -80,7 +80,7 @@ class ControllerExtensionShippingCargus extends Controller {
             $token = $this->model_shipping_cargusclass->CallMethod('LoginUser', $fields, 'POST');
 
             if (is_array($token)) {
-                $this->error['warning'] = $this->language->get('text_error').$token['data'];
+                $this->error['warning'] = $this->language->get('text_error').print_r($token, true);
             } else {
                 $this->session->data['success'] = $this->language->get('text_success');
                 $this->response->redirect($this->url->link('extension/shipping/cargus', 'user_token=' . $this->session->data['user_token'], 'SSL'));
@@ -501,6 +501,15 @@ class ControllerExtensionShippingCargus extends Controller {
                 'extension/module/cargus/carrierSaveAfter'
             );
         }
+
+        /*
+        //order_list.twig modify event
+        //admin/view/template/sale/order_list.twig
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'admin/view/sale/order_list/after',
+            'extension/module/cargus/orderListAfter'
+        );*/
     }
 
     public function uninstall() {

@@ -37,6 +37,8 @@ class ModelExtensionShippingCargusClass extends Model
 
         $json = json_encode($parameters);
 
+        //$this->log->write('API Call ' . $function);
+
 //        error_log(__CLASS__.'::'.__FUNCTION__." url=$this->cargusapiurl,function=$function");
 
         curl_setopt($this->cargusapicurl, CURLOPT_POSTFIELDS, $json);
