@@ -2,16 +2,6 @@
 
 class ControllerExtensionModuleCargus extends Controller
 {
-    /*public function orderListAfter($route, &$args, &$output)
-    {
-        $this->log->write(__CLASS__.'::'.__FUNCTION__);
-        $this->log->write('Route: ' . $route);
-        $this->log->write('Args Info: ');
-        $this->log->write($args);
-        $this->log->write('Output: ');
-        $this->log->write($output);
-    }*/
-
     public function carrierSaveAfter($route, &$args, &$output)
     {
         //check if ship&go is selected and a delivery point was selected

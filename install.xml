@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <modification>
     <name>Cargus</name>
-    <version>4.9.2</version>
+    <version>4.9.3</version>
     <author>Cargus S.A.</author>
     <link>https://www.cargus.ro/</link>
     <code>Cargus Shipping</code>
@@ -24,67 +24,6 @@
           $_['text_cargus_ship_and_go_index'] = 'Cargus Ship and Go';
           $_['text_cargus_ship_and_go_preferinte'] = 'Preferinte';
         ]]></add>
-        </operation>
-    </file>
-
-    <file path="admin/controller/common/column_left.php">
-        <operation>
-            <search><![CDATA[ // Stats ]]></search>
-            <add position="before"><![CDATA[
-			// Cargus
-			$cargus = array();
-
-            $cargus[] = array(
-                'name'	   => $this->language->get('text_cargus_comanda'),
-                'href'     => $this->url->link('extension/cargus/comanda', 'user_token=' . $this->session->data['user_token'], true),
-                'children' => array()
-            );
-
-            $cargus[] = array(
-                'name'	   => $this->language->get('text_cargus_istoric'),
-                'href'     => $this->url->link('extension/cargus/istoric', 'user_token=' . $this->session->data['user_token'], true),
-                'children' => array()
-            );
-
-            $cargus[] = array(
-                'name'	   => $this->language->get('text_cargus_preferinte'),
-                'href'     => $this->url->link('extension/cargus/preferinte', 'user_token=' . $this->session->data['user_token'], true),
-                'children' => array()
-            );
-
-            $cargus[] = array(
-                'name'	   => $this->language->get('text_cargus_setari'),
-                'href'     => $this->url->link('extension/shipping/cargus', 'user_token=' . $this->session->data['user_token'], true),
-                'children' => array()
-            );
-
-			if ($cargus) {
-				$data['menus'][] = array(
-					'id'       => 'menu-extension',
-					'icon'	   => 'fa-truck',
-					'name'	   => $this->language->get('text_cargus_index'),
-					'href'     => '',
-					'children' => $cargus
-				);
-			}
-            $cargus_ship[] = array(
-                'name'	   => $this->language->get('text_cargus_ship_and_go_preferinte'),
-                'href'     => $this->url->link('extension/cargus/ship_and_go', 'user_token=' . $this->session->data['user_token'], true),
-                'children' => array()
-            );
-
-            if ($cargus_ship) {
-				$data['menus'][] = array(
-					'id'       => 'menu-extension',
-					'icon'	   => 'fa-truck',
-					'name'	   => $this->language->get('text_cargus_ship_and_go_index'),
-					'href'     => '',
-					'children' => $cargus_ship
-				);
-			}
-
-
-                ]]></add>
         </operation>
     </file>
 
@@ -111,25 +50,6 @@
                 $data['cargus_istoric'] = $this->url->link('cargus/istoric', 'user_toke=' . (isset($this->session->data['user_toke']) ? $this->session->data['user_toke'] : ''), 'SSL');
                 $data['cargus_preferinte'] = $this->url->link('cargus/preferinte', 'user_toke=' . (isset($this->session->data['user_toke']) ? $this->session->data['user_toke'] : ''), 'SSL');
                 $data['cargus_setari'] = $this->url->link('shipping/cargus', 'user_toke=' . (isset($this->session->data['user_toke']) ? $this->session->data['user_toke'] : ''), 'SSL');
-                ]]></add>
-        </operation>
-    </file>
-
-    <file path="admin/view/template/sale/order_list.twig">
-        <operation>
-            <search><![CDATA[ <div class="pull-right"> ]]></search>
-            <add position="after"><![CDATA[
-			<a href="#" token="{{ opencart_token }}" id="add_cargus" class="btn btn-info">{{ add_to_cargus }}</a>
-                ]]></add>
-        </operation>
-    </file>
-
-    <file path="admin/controller/sale/order.php">
-        <operation>
-            <search><![CDATA[ $results = $this->model_sale_order->getOrders($filter_data); ]]></search>
-            <add position="after"><![CDATA[
-              $data['add_to_cargus'] = $this->language->get('add_to_cargus');
-              $data['opencart_token'] = (isset($this->session->data['user_token']) ? $this->session->data['user_token'] : '');
                 ]]></add>
         </operation>
     </file>
@@ -211,36 +131,4 @@
         </operation>
     </file>
 
-    <file path="admin/controller/sale/order.php">
-        <operation>
-            <search><![CDATA[
-                $data['tabs'] = array();
-            ]]></search>
-            <add position="after"><![CDATA[
-                $data['shipping_method_cargus'] = $this->load->controller('extension/shipping/cargus/info', $order_info);
-            ]]></add>
-        </operation>
-    </file>
-
-    <file path="admin/view/template/sale/order_info.twig">
-        <operation>
-            <search><![CDATA[
-                <td>{{ text_invoice }}</td>
-            ]]></search>
-            <add position="before"><![CDATA[
-                {% if shipping_method_cargus %}
-                    {% if (shipping_method_cargus.awb_number is null) %}
-                        <td class="text-left">Cargus AWB</td>
-                        <td class="text-center"></td>
-                        <td class="text-right"><a href="{{ shipping_method_cargus.buttonAddAwbLink }}" data-toggle="tooltip" title="{{ shipping_method_cargus.buttonAddAwb }}" class="btn btn-success btn-xs"><i class="fa fa-plus-circle"></i></a></td>
-                    {% else %}
-                        <td class="text-left"><strong>Cargus AWB</strong>&nbsp;&nbsp;<a href="{{ shipping_method_cargus.buttonShowAwbHistory }}">{{ shipping_method_cargus.awb_number }}</a></td>
-                        <td class="text-center"></td>
-                        <td class="text-right"><a href="{{ shipping_method_cargus.buttonShowAwbPdf }}" target="_blank" data-toggle="tooltip" title="{{ shipping_method_cargus.buttonShowAwb }}" class="btn btn-info btn-xs"><i class="fa fa-print"></i></a></td>
-                    {% endif %}
-                    </tr><tr>
-                {% endif %}
-            ]]></add>
-        </operation>
-    </file>
 </modification>

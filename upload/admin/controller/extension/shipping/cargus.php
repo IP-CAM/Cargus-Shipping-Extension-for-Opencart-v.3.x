@@ -502,14 +502,32 @@ class ControllerExtensionShippingCargus extends Controller {
             );
         }
 
-        /*
+        //add menu items
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'admin/view/common/column_left/before',
+            'extension/module/cargus/columnLeftBefore'
+        );
+
         //order_list.twig modify event
         //admin/view/template/sale/order_list.twig
         $this->model_setting_event->addEvent(
             $this->codename,
             'admin/view/sale/order_list/after',
             'extension/module/cargus/orderListAfter'
-        );*/
+        );
+
+        //admin/view/template/sale/order_info
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'admin/view/sale/order_info/before',
+            'extension/module/cargus/orderInfoBefore'
+        );
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'admin/view/sale/order_info/after',
+            'extension/module/cargus/orderInfoAfter'
+        );
     }
 
     public function uninstall() {
