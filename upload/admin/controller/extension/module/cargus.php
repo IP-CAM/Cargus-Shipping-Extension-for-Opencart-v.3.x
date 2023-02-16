@@ -4,7 +4,7 @@ class ControllerExtensionModuleCargus extends Controller
 {
     public function columnLeftBefore($route, &$args)
     {
-        $this->load->language('module/cargus');
+        $this->load->language('extension/shipping/cargus');
 
         $cargus = array();
         $cargusShip = array();
@@ -102,9 +102,6 @@ class ControllerExtensionModuleCargus extends Controller
 
     public function orderInfoBefore($route, &$args)
     {
-        $this->log->write(__CLASS__ . '::' . __FUNCTION__);
-        $this->log->write('Route: ' . $route);
-
         $orderInfo['order_id'] = $args['order_id'];
 
         $args['shipping_method_cargus'] = $this->load->controller('extension/shipping/cargus/info', $orderInfo);
@@ -112,7 +109,7 @@ class ControllerExtensionModuleCargus extends Controller
         return null;
     }
 
-        public function orderInfoAfter($route, &$args, &$output)
+    public function orderInfoAfter($route, &$args, &$output)
     {
         $textInvoice = $this->language->get('text_invoice');
 
@@ -160,5 +157,34 @@ class ControllerExtensionModuleCargus extends Controller
         $output = str_ireplace($search, $replace, $output);
 
         return null;
+    }
+
+    public function commonHeaderAfter($route, &$args, &$output)
+    {
+        //add in header
+        $content = '<link rel="stylesheet" type="text/css" href="view/stylesheet/cargus.css" />
+            <script type="text/javascript" src="view/javascript/cargus/cargus.js"></script>';
+
+        $search = '</head>
+<body>';
+
+        $replace = $content . $search;
+
+        $output = str_ireplace($search, $replace, $output);
+
+        return null;
+    }
+
+    public function permissionBefore($route, &$args)//, &$output)
+    {
+        $this->log->write(__CLASS__.'::'.__FUNCTION__);
+        $this->log->write($route);
+        $this->log->write(print_r($args, true));
+
+//        $output .= '<div style="position: relative; z-index: 999;color:red;">TESTTTTT</div>';
+
+//        $this->log->write($output);
+
+//        return null;
     }
 }

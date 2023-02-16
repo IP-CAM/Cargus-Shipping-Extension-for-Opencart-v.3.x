@@ -450,6 +450,11 @@ class ControllerExtensionShippingCargus extends Controller {
 
         $this->log->write('Shipping cargus install');
 
+        $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/cargus');
+        $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/cargus');
+
+        //extension/module/cargus
+
         $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/shipping/cargus');
         $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/shipping/cargus');
 
@@ -509,7 +514,6 @@ class ControllerExtensionShippingCargus extends Controller {
             'extension/module/cargus/columnLeftBefore'
         );
 
-        //order_list.twig modify event
         //admin/view/template/sale/order_list.twig
         $this->model_setting_event->addEvent(
             $this->codename,
@@ -527,6 +531,48 @@ class ControllerExtensionShippingCargus extends Controller {
             $this->codename,
             'admin/view/sale/order_info/after',
             'extension/module/cargus/orderInfoAfter'
+        );
+
+        //admin/view/template/common/header
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'admin/view/common/header/after',
+            'extension/module/cargus/commonHeaderAfter'
+        );
+
+        //admin/controller/startup/permission
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'admin/controller/startup/permission/before',
+            'extension/module/cargus/permissionBefore'
+        );
+
+        //catalog/controller/checkout/shipping_method
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'catalog/controller/checkout/shipping_method/before',
+            'extension/module/cargus/checkoutShippingMethodBefore'
+        );
+
+        //catalog/view/checkout/payment_method
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'catalog/view/checkout/payment_method/after',
+            'extension/module/cargus/checkoutPaymentMethodAfter'
+        );
+
+        //catalog/view/common/header
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'catalog/view/common/header/after',
+            'extension/module/cargus/commonHeaderAfter'
+        );
+
+        //catalog/view/checkout/shipping_method
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'catalog/view/checkout/shipping_method/after',
+            'extension/module/cargus/checkoutShippingMethodAfter'
         );
     }
 

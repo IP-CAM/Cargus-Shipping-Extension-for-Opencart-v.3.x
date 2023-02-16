@@ -2,6 +2,39 @@
 
 class ControllerExtensionModuleCargus extends Controller
 {
+    public function checkoutShippingMethodAfter($route, &$args, &$output)
+    {
+        $output .= '<script type="text/javascript">cargusCheckShipping();</script>';
+
+        return null;
+    }
+
+    public function commonHeaderAfter($route, &$args, &$output)
+    {
+        $content = '<script type="text/javascript" src="catalog/view/javascript/cargus/cargus.js"></script>
+            <link href="catalog/view/theme/default/stylesheet/ship_and_go.css" rel="stylesheet">
+            <script type="text/javascript" src="catalog/view/javascript/cargus/ship_and_go.js"></script>
+            ';
+
+        $search = '</head>';
+
+        $replace = $content . $search;
+
+        $output = str_ireplace($search, $replace, $output);
+
+        return null;
+    }
+
+    public function checkoutPaymentMethodAfter($route, &$args, &$output)
+    {
+        $output .= '<script type="text/javascript">checkPaymentMethod();</script>';
+    }
+
+    public function checkoutShippingMethodBefore($route, &$args)
+    {
+        $this->config->set('shipping_cargus_status', $this->config->get('cargus_status'));
+    }
+
     public function carrierSaveAfter($route, &$args, &$output)
     {
         //check if ship&go is selected and a delivery point was selected
