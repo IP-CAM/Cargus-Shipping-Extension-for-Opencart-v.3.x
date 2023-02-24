@@ -7,19 +7,4 @@
     <code>Cargus Shipping</code>
     <description>Shipping extension</description>
 
-
-
-
-
-
-    <file path="catalog/view/theme/*/template/journal3/checkout/checkout.twig">
-        <operation>
-            <search><![CDATA[ {{ footer }} ]]></search>
-            <add position="before"><![CDATA[
-            <script type="text/javascript">//window.onload = function(){cargusCheckShipping();};</script>
-            ]]>
-            </add>
-        </operation>
-    </file>
-
 </modification>

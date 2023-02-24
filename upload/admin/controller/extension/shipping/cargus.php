@@ -199,6 +199,7 @@ class ControllerExtensionShippingCargus extends Controller {
     public function addAwb()
     {
         $this->language->load('shipping/cargus');
+        $this->load->language('extension/shipping/cargus');
         $this->load->model('sale/order');
 
         if (!isset($this->request->get['order_id']) || !($orderInfo = $this->model_sale_order->getOrder($this->request->get['order_id']))) {
@@ -450,13 +451,22 @@ class ControllerExtensionShippingCargus extends Controller {
 
         $this->log->write('Shipping cargus install');
 
-        $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/cargus');
-        $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/cargus');
+        $user_group_id = $this->user->getGroupId();
+
+
+//        $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/cargus');
+//        $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/cargus');
+
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/cargus');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/cargus');
+
+//        $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'module/cargus');
+//        $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'module/cargus');
 
         //extension/module/cargus
 
-        $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/shipping/cargus');
-        $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/shipping/cargus');
+//        $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/shipping/cargus');
+//        $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/shipping/cargus');
 
         $theme = $this->config->get('config_theme');
         $this->load->model('setting/event');
@@ -499,11 +509,25 @@ class ControllerExtensionShippingCargus extends Controller {
                 'extension/module/cargus/carrierSaveAfter'
             );
         } else {
+            //catalog/view/journal3/checkout/checkout
+            $this->model_setting_event->addEvent(
+                $this->codename,
+                'catalog/view/journal3/checkout/checkout/after',
+                'extension/module/cargus/journal3CheckoutAfter'
+            );
+
             //journal3 checkout
             $this->model_setting_event->addEvent(
                 $this->codename,
                 'catalog/controller/journal3/checkout/save/after',
                 'extension/module/cargus/carrierSaveAfter'
+            );
+
+            //journal3 checkout
+            $this->model_setting_event->addEvent(
+                $this->codename,
+                'catalog/controller/journal3/checkout/save/before',
+                'extension/module/cargus/journal3CheckoutSaveBefore'
             );
         }
 
@@ -538,13 +562,6 @@ class ControllerExtensionShippingCargus extends Controller {
             $this->codename,
             'admin/view/common/header/after',
             'extension/module/cargus/commonHeaderAfter'
-        );
-
-        //admin/controller/startup/permission
-        $this->model_setting_event->addEvent(
-            $this->codename,
-            'admin/controller/startup/permission/before',
-            'extension/module/cargus/permissionBefore'
         );
 
         //catalog/controller/checkout/shipping_method

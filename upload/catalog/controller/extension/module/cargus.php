@@ -2,6 +2,22 @@
 
 class ControllerExtensionModuleCargus extends Controller
 {
+    public function journal3CheckoutSaveBefore($route, &$args)
+    {
+        $this->session->data['custom_field']['pudo_location_id'] = null;
+
+        if (isset($this->request->post['order_data']['custom_field']['pudo_location_id'])) {
+            $this->session->data['custom_field']['pudo_location_id'] = $this->request->post['order_data']['custom_field']['pudo_location_id'];
+        }
+    }
+
+    public function journal3CheckoutAfter($route, &$args, &$output)
+    {
+        $output .= '<script type="text/javascript">window.onload = function(){cargusCheckShipping();};</script>';
+
+        return null;
+    }
+
     public function checkoutShippingMethodAfter($route, &$args, &$output)
     {
         $output .= '<script type="text/javascript">cargusCheckShipping();</script>';
@@ -55,9 +71,32 @@ class ControllerExtensionModuleCargus extends Controller
                 $data = $this->model_checkout_order->getOrder($order_id);
             }
 
+            //journal3
+            if (isset($this->session->data['custom_field']['pudo_location_id']) &&
+                isset($this->session->data['j3_checkout_id']) &&
+                isset($this->session->data['order_id']) &&
+                $this->customer->isLogged()
+            ) {
+                $data['custom_field'] = $this->session->data['custom_field'];
+                $order_id = $this->session->data['order_id'];
+
+                //update order data
+                $this->db->query("UPDATE `" . DB_PREFIX . "order` SET custom_field = '" . $this->db->escape(json_encode($data['custom_field'])) . "' WHERE order_id = '" . (int)$order_id . "'");
+            }
+
+            $is_journal3_check_ok = true;
+
+            if (isset($this->session->data['j3_checkout_id']) &&
+                isset($this->request->get['confirm']) &&
+                $this->request->get['confirm'] !== true
+            ) {
+                $is_journal3_check_ok = false;
+            }
+
             if (!isset($data['custom_field']['pudo_location_id']) &&
                 !isset($data['shipping_custom_field']['pudo_location_id']) &&
-                !isset($this->session->data['shipping_address']['custom_field']['pudo_location_id'])
+                !isset($this->session->data['shipping_address']['custom_field']['pudo_location_id']) &&
+                !$is_journal3_check_ok
             ) {
                 $this->session->data['error'] = $error_message;
 

@@ -86,8 +86,7 @@ class ControllerExtensionModuleCargus extends Controller
     {
         $this->load->language('module/cargus');
 
-        $search = '<div id="content">
-<div class="page-header">
+        $search = '<div class="page-header">
   <div class="container-fluid">
     <div class="pull-right">';
 
