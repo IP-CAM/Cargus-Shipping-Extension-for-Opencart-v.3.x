@@ -4,12 +4,9 @@ class ControllerExtensionModuleCargus extends Controller
 {
     public function journal3CheckoutSaveBefore($route, &$args)
     {
-        $this->log->write(__CLASS__.'::'.__FUNCTION__);
-
         $this->session->data['custom_field']['pudo_location_id'] = null;
 
         if (isset($this->request->post['order_data']['custom_field']['pudo_location_id'])) {
-            $this->log->write('set pudo');
             $this->session->data['custom_field']['pudo_location_id'] = $this->request->post['order_data']['custom_field']['pudo_location_id'];
         }
     }
@@ -96,10 +93,10 @@ class ControllerExtensionModuleCargus extends Controller
                 $is_journal3_check_ok = false;
             }
 
-            if ((!isset($data['custom_field']['pudo_location_id']) &&
+            if (!isset($data['custom_field']['pudo_location_id']) &&
                 !isset($data['shipping_custom_field']['pudo_location_id']) &&
-                !isset($this->session->data['shipping_address']['custom_field']['pudo_location_id'])) ||
-                !$is_journal3_check_ok
+                !isset($this->session->data['shipping_address']['custom_field']['pudo_location_id']) &&
+                (!$is_journal3_check_ok && isset($this->session->data['j3_checkout_id']))
             ) {
                 $this->session->data['error'] = $error_message;
 
