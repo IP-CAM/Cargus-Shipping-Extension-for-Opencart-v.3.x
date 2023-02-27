@@ -15,8 +15,8 @@
 
 - In admin OpenCart se acceseaza `Extensions`, apoi `Extension Installer`
 - Prin click pe `Upload` se alege fisierul `cargus.ocmod.zip`, dupa care se apasa `Continue`
-- Dupa confirmarea instalarii extensiei, se acceseaza `Extensions`, apoi `Modifications`
-- Se da click pe butonul albastru `Refresh` din partea dreapta-sus a paginii
+- Dupa confirmarea instalarii extensiei, se acceseaza `Extensions`, apoi `Extensions` si se alege `Shipping` in lista `Choose the extension type`
+- Se da click pe butonul verde `Install` in dreptul modulului `Cargus` (si `Cargus Ship And Go` daca este folosit)
 - In menu-ul principal din partea stanga o sa apara o optinue noua, numita `Cargus`
 - Pentru instalarea extensiilor de livrare, mergi la  `Extensions` -> `Extensions`, alege Shipping de la `Extension type` si cauta `Cargus` si `Cargus Ship and Go` apoi da click pe install
 - Se acceseaza pagina `Cargus`, apoi `Configuration` si se completeaza formularul, dupa care se apasa butonul albastru `Save` din partea dreapta-sus a paginii
