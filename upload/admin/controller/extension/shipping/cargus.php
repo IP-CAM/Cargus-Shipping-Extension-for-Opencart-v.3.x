@@ -199,6 +199,7 @@ class ControllerExtensionShippingCargus extends Controller {
     public function addAwb()
     {
         $this->language->load('shipping/cargus');
+        $this->load->language('extension/shipping/cargus');
         $this->load->model('sale/order');
 
         if (!isset($this->request->get['order_id']) || !($orderInfo = $this->model_sale_order->getOrder($this->request->get['order_id']))) {
@@ -450,8 +451,28 @@ class ControllerExtensionShippingCargus extends Controller {
 
         $this->log->write('Shipping cargus install');
 
-        $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/shipping/cargus');
-        $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/shipping/cargus');
+        $user_group_id = $this->user->getGroupId();
+
+
+
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/cargus');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/cargus');
+
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/cargus/preferinte');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/cargus/preferinte');
+
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/cargus/ship_and_go');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/cargus/ship_and_go');
+
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/shipping/cargus');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/shipping/cargus');
+
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/cargus/comanda');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/cargus/comanda');
+
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/cargus/edit');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/cargus/edit');
+
 
         $theme = $this->config->get('config_theme');
         $this->load->model('setting/event');
@@ -494,22 +515,88 @@ class ControllerExtensionShippingCargus extends Controller {
                 'extension/module/cargus/carrierSaveAfter'
             );
         } else {
+            //catalog/view/journal3/checkout/checkout
+            $this->model_setting_event->addEvent(
+                $this->codename,
+                'catalog/view/journal3/checkout/checkout/after',
+                'extension/module/cargus/journal3CheckoutAfter'
+            );
+
             //journal3 checkout
             $this->model_setting_event->addEvent(
                 $this->codename,
                 'catalog/controller/journal3/checkout/save/after',
                 'extension/module/cargus/carrierSaveAfter'
             );
+
+            //journal3 checkout
+            $this->model_setting_event->addEvent(
+                $this->codename,
+                'catalog/controller/journal3/checkout/save/before',
+                'extension/module/cargus/journal3CheckoutSaveBefore'
+            );
         }
 
-        /*
-        //order_list.twig modify event
+        //add menu items
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'admin/view/common/column_left/before',
+            'extension/module/cargus/columnLeftBefore'
+        );
+
         //admin/view/template/sale/order_list.twig
         $this->model_setting_event->addEvent(
             $this->codename,
             'admin/view/sale/order_list/after',
             'extension/module/cargus/orderListAfter'
-        );*/
+        );
+
+        //admin/view/template/sale/order_info
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'admin/view/sale/order_info/before',
+            'extension/module/cargus/orderInfoBefore'
+        );
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'admin/view/sale/order_info/after',
+            'extension/module/cargus/orderInfoAfter'
+        );
+
+        //admin/view/template/common/header
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'admin/view/common/header/after',
+            'extension/module/cargus/commonHeaderAfter'
+        );
+
+        //catalog/controller/checkout/shipping_method
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'catalog/controller/checkout/shipping_method/before',
+            'extension/module/cargus/checkoutShippingMethodBefore'
+        );
+
+        //catalog/view/checkout/payment_method
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'catalog/view/checkout/payment_method/after',
+            'extension/module/cargus/checkoutPaymentMethodAfter'
+        );
+
+        //catalog/view/common/header
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'catalog/view/common/header/after',
+            'extension/module/cargus/commonHeaderAfter'
+        );
+
+        //catalog/view/checkout/shipping_method
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'catalog/view/checkout/shipping_method/after',
+            'extension/module/cargus/checkoutShippingMethodAfter'
+        );
     }
 
     public function uninstall() {
