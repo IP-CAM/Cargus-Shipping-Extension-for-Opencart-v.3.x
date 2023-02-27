@@ -96,7 +96,10 @@ class ControllerExtensionModuleCargus extends Controller
             if (!isset($data['custom_field']['pudo_location_id']) &&
                 !isset($data['shipping_custom_field']['pudo_location_id']) &&
                 !isset($this->session->data['shipping_address']['custom_field']['pudo_location_id']) &&
-                (!$is_journal3_check_ok && isset($this->session->data['j3_checkout_id']))
+                (
+                    (!$is_journal3_check_ok && isset($this->session->data['j3_checkout_id'])) ||
+                    !isset($this->session->data['j3_checkout_id'])
+                )
             ) {
                 $this->session->data['error'] = $error_message;
 
