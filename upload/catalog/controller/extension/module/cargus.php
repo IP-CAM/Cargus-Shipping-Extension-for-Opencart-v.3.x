@@ -4,9 +4,12 @@ class ControllerExtensionModuleCargus extends Controller
 {
     public function journal3CheckoutSaveBefore($route, &$args)
     {
+        $this->log->write(__CLASS__.'::'.__FUNCTION__);
+
         $this->session->data['custom_field']['pudo_location_id'] = null;
 
         if (isset($this->request->post['order_data']['custom_field']['pudo_location_id'])) {
+            $this->log->write('set pudo');
             $this->session->data['custom_field']['pudo_location_id'] = $this->request->post['order_data']['custom_field']['pudo_location_id'];
         }
     }
