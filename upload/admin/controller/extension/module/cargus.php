@@ -86,9 +86,7 @@ class ControllerExtensionModuleCargus extends Controller
     {
         $this->load->language('module/cargus');
 
-        $search = '<div class="page-header">
-  <div class="container-fluid">
-    <div class="pull-right">';
+        $search = '<div class="pull-right">';
 
         $replace = $search .
                    '<span token="'.$this->session->data['user_token'].'" id="add_cargus" class="btn btn-info">'.
@@ -164,8 +162,7 @@ class ControllerExtensionModuleCargus extends Controller
         $content = '<link rel="stylesheet" type="text/css" href="view/stylesheet/cargus.css" />
             <script type="text/javascript" src="view/javascript/cargus/cargus.js"></script>';
 
-        $search = '</head>
-<body>';
+        $search = '</head>';
 
         $replace = $content . $search;
 

@@ -454,19 +454,25 @@ class ControllerExtensionShippingCargus extends Controller {
         $user_group_id = $this->user->getGroupId();
 
 
-//        $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/cargus');
-//        $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/cargus');
 
         $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/cargus');
         $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/cargus');
 
-//        $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'module/cargus');
-//        $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'module/cargus');
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/cargus/preferinte');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/cargus/preferinte');
 
-        //extension/module/cargus
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/cargus/ship_and_go');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/cargus/ship_and_go');
 
-//        $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/shipping/cargus');
-//        $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/shipping/cargus');
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/shipping/cargus');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/shipping/cargus');
+
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/cargus/comanda');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/cargus/comanda');
+
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/cargus/edit');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/cargus/edit');
+
 
         $theme = $this->config->get('config_theme');
         $this->load->model('setting/event');
