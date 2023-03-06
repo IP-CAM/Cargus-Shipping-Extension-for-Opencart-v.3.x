@@ -2,15 +2,54 @@
 
 class ControllerExtensionModuleCargus extends Controller
 {
-    /*public function orderListAfter($route, &$args, &$output)
+    public function journal3CheckoutSaveBefore($route, &$args)
     {
-        $this->log->write(__CLASS__.'::'.__FUNCTION__);
-        $this->log->write('Route: ' . $route);
-        $this->log->write('Args Info: ');
-        $this->log->write($args);
-        $this->log->write('Output: ');
-        $this->log->write($output);
-    }*/
+        $this->session->data['custom_field']['pudo_location_id'] = null;
+
+        if (isset($this->request->post['order_data']['custom_field']['pudo_location_id'])) {
+            $this->session->data['custom_field']['pudo_location_id'] = $this->request->post['order_data']['custom_field']['pudo_location_id'];
+        }
+    }
+
+    public function journal3CheckoutAfter($route, &$args, &$output)
+    {
+        $output .= '<script type="text/javascript">window.onload = function(){cargusCheckShipping();};</script>';
+
+        return null;
+    }
+
+    public function checkoutShippingMethodAfter($route, &$args, &$output)
+    {
+        $output .= '<script type="text/javascript">cargusCheckShipping();</script>';
+
+        return null;
+    }
+
+    public function commonHeaderAfter($route, &$args, &$output)
+    {
+        $content = '<script type="text/javascript" src="catalog/view/javascript/cargus/cargus.js"></script>
+            <link href="catalog/view/theme/default/stylesheet/ship_and_go.css" rel="stylesheet">
+            <script type="text/javascript" src="catalog/view/javascript/cargus/ship_and_go.js"></script>
+            ';
+
+        $search = '</head>';
+
+        $replace = $content . $search;
+
+        $output = str_ireplace($search, $replace, $output);
+
+        return null;
+    }
+
+    public function checkoutPaymentMethodAfter($route, &$args, &$output)
+    {
+        $output .= '<script type="text/javascript">checkPaymentMethod();</script>';
+    }
+
+    public function checkoutShippingMethodBefore($route, &$args)
+    {
+        $this->config->set('shipping_cargus_status', $this->config->get('cargus_status'));
+    }
 
     public function carrierSaveAfter($route, &$args, &$output)
     {
@@ -32,9 +71,35 @@ class ControllerExtensionModuleCargus extends Controller
                 $data = $this->model_checkout_order->getOrder($order_id);
             }
 
+            //journal3
+            if (isset($this->session->data['custom_field']['pudo_location_id']) &&
+                isset($this->session->data['j3_checkout_id']) &&
+                isset($this->session->data['order_id']) &&
+                $this->customer->isLogged()
+            ) {
+                $data['custom_field'] = $this->session->data['custom_field'];
+                $order_id = $this->session->data['order_id'];
+
+                //update order data
+                $this->db->query("UPDATE `" . DB_PREFIX . "order` SET custom_field = '" . $this->db->escape(json_encode($data['custom_field'])) . "' WHERE order_id = '" . (int)$order_id . "'");
+            }
+
+            $is_journal3_check_ok = true;
+
+            if (isset($this->session->data['j3_checkout_id']) &&
+                isset($this->request->get['confirm']) &&
+                $this->request->get['confirm'] !== true
+            ) {
+                $is_journal3_check_ok = false;
+            }
+
             if (!isset($data['custom_field']['pudo_location_id']) &&
                 !isset($data['shipping_custom_field']['pudo_location_id']) &&
-                !isset($this->session->data['shipping_address']['custom_field']['pudo_location_id'])
+                !isset($this->session->data['shipping_address']['custom_field']['pudo_location_id']) &&
+                (
+                    (!$is_journal3_check_ok && isset($this->session->data['j3_checkout_id'])) ||
+                    !isset($this->session->data['j3_checkout_id'])
+                )
             ) {
                 $this->session->data['error'] = $error_message;
 

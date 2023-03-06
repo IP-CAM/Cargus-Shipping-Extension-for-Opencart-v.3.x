@@ -26,11 +26,11 @@ class ControllerExtensionModuleCargusShip extends Controller
 
         if (!file_exists(self::LOCATION_FILE_NAME) || (time() - filemtime(self::LOCATION_FILE_NAME) >= 1 * self::FILE_THRESHOLD_SECONDS && !$isUpdating)) {
             $result = file_put_contents(self::LOCATION_FILE_NAME_TMP, "", FILE_APPEND);
-	        if ($result === false) {
-		        $this->message['error'] = true;
-		        $this->message['message'] = "Can't write to file ".self::LOCATION_FILE_NAME_TMP;
-		        return $this->showResponse();
-	        }
+            if ($result === false) {
+                $this->message['error'] = true;
+                $this->message['message'] = "Can't write to file ".self::LOCATION_FILE_NAME_TMP;
+                return $this->showResponse();
+            }
 
             $isUpdating = true;
 
@@ -60,11 +60,11 @@ class ControllerExtensionModuleCargusShip extends Controller
 
     private function computePudoLocationFile($locations)
     {
-		if (!is_writable(self::LOCATION_FILE_NAME_TMP)) {
-			$this->message['error'] = true;
-			$this->message['message'] = "Can't write to file ".self::LOCATION_FILE_NAME_TMP;
-			return false;
-		}
+        if (!is_writable(self::LOCATION_FILE_NAME_TMP)) {
+            $this->message['error'] = true;
+            $this->message['message'] = "Can't write to file ".self::LOCATION_FILE_NAME_TMP;
+            return false;
+        }
 
         // can be null or false so we won't update pudo json file
         $locationsJson = '[';
@@ -94,10 +94,10 @@ class ControllerExtensionModuleCargusShip extends Controller
             unlink(self::LOCATION_FILE_NAME);
         }
         if (rename(self::LOCATION_FILE_NAME_TMP, self::LOCATION_FILE_NAME)) {
-	        $this->message['message'] = "File was updated"; /*  */
+            $this->message['message'] = "File was updated"; /*  */
         } else {
-			$this->message['message'] = "Error updating file";
-			$this->message['error'] = true;
+            $this->message['message'] = "Error updating file";
+            $this->message['error'] = true;
         }
     }
 
@@ -107,42 +107,46 @@ class ControllerExtensionModuleCargusShip extends Controller
         return true;
     }
 
-	public function location()
-	{
-		$json = array();
+    public function location()
+    {
+        $json = array();
 
-		// Validate if shipping is required. If not the customer should not have reached this page.
-		if (!$this->cart->hasShipping()) {
-			$json['redirect'] = $this->url->link('checkout/checkout', '', true);
-		}
+        // Validate if shipping is required. If not the customer should not have reached this page.
+        if (!$this->cart->hasShipping()) {
+            $json['redirect'] = $this->url->link('checkout/checkout', '', true);
+        }
 
-		// Validate if shipping address has been set.
-		if (!isset($this->session->data['shipping_address'])) {
-			$json['redirect'] = $this->url->link('checkout/checkout', '', true);
-		}
+        // Validate if shipping address has been set.
+        if (!isset($this->session->data['shipping_address'])) {
+            $json['redirect'] = $this->url->link('checkout/checkout', '', true);
+        }
 
-		// Validate cart has products and has stock.
-		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
-			$json['redirect'] = $this->url->link('checkout/cart');
-		}
+        // Validate cart has products and has stock.
+        if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
+            $json['redirect'] = $this->url->link('checkout/cart');
+        }
 
-		if (!$json) {
-			$pudo_location_id = $this->request->post['location_id'];
+        if (!$json) {
+            $pudo_location_id = $this->request->post['location_id'];
 
-			if (!isset($this->session->data['shipping_address']['custom_field']['pudo_location_id'])) {
-				$this->session->data['shipping_address']['custom_field'] = array(
-					'pudo_location_id' => $pudo_location_id
-				);
-			} else {
-				$this->session->data['shipping_address']['custom_field']['pudo_location_id'] = $pudo_location_id;
-			}
+            if (!isset($this->session->data['shipping_address']['custom_field']['pudo_location_id'])) {
+                $this->session->data['shipping_address']['custom_field'] = array(
+                    'pudo_location_id' => $pudo_location_id
+                );
+            } else {
+                $this->session->data['shipping_address']['custom_field']['pudo_location_id'] = $pudo_location_id;
+            }
 
-			$json['responseText'] = 'ok';
-		}
+            //journal3
+            $this->session->data['custom_field']['pudo_location_id'] = $pudo_location_id;
 
-		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode($json));
-	}
+
+            $json['responseText'] = 'ok';
+        }
+
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($json));
+    }
 
     public function getPudoPoints()
     {

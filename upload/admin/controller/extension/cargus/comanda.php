@@ -282,7 +282,9 @@ class ControllerExtensionCargusComanda extends Controller
         );
         $token = $this->model_shipping_cargusclass->CallMethod('LoginUser', $fields, 'POST');
 
-        $printConsumerReturn = $this->config->get('cargus_preferinte_print_awb_retur');
+        $printConsumerReturn = is_null($this->config->get('cargus_preferinte_print_awb_retur')) ?
+            0:
+            $this->config->get('cargus_preferinte_print_awb_retur');
 
         // UC print
         $print = $this->model_shipping_cargusclass->CallMethod(
@@ -641,7 +643,10 @@ class ControllerExtensionCargusComanda extends Controller
                         'CustomString' => $row->row['order_id']
                     );
 
-                    $fields['ConsumerReturnType'] = $this->config->get('cargus_preferinte_awb_retur');
+                    $fields['ConsumerReturnType'] = is_null($this->config->get('cargus_preferinte_awb_retur')) ?
+                        0 :
+                        $this->config->get('cargus_preferinte_awb_retur');
+
                     $fields['ReturnCodeExpirationDays'] = $this->config->get('cargus_preferinte_awb_retur_validitate');
 
                     for ($i = 1; $i <= $row->row['parcels']; $i++) {
