@@ -31,7 +31,7 @@ class ControllerExtensionCargusShipAndGo extends Controller
 
         $data['entry_status'] = $this->language->get('entry_status');
         $data['entry_status_details'] = $this->language->get('entry_status_details');
-        
+
 
 
         $data['entry_free'] = $this->language->get('entry_free');
@@ -104,11 +104,11 @@ class ControllerExtensionCargusShipAndGo extends Controller
 
     private function alterTable(){
         try{
-             $sql = "ALTER TABLE awb_cargus ADD COLUMN pudo_location_id INT AFTER shipping_code";
+            $sql = "ALTER TABLE awb_cargus ADD COLUMN pudo_location_id INT AFTER shipping_code";
             $this->db->query($sql);
         }catch(Exception $e){
-            // whe need to avoid DB error 
+            // whe need to avoid DB error
+            //$this->log->write('Error alter table: ' . $e->getMessage());
         }
-           
     }
 }

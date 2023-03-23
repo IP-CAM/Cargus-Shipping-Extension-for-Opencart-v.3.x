@@ -135,7 +135,7 @@ class ControllerExtensionCargusComanda extends Controller
                                 'DELETE',
                                 $token
                             );
-                            $this->db->query("UPDATE awb_cargus SET barcode = '0' WHERE barcode = '" . $barcode . "'");
+                            $this->db->query("UPDATE `awb_cargus` SET `barcode` = '0',`ReturnAwb`=NULL,`ReturnCode`=NULL WHERE barcode = '" . $barcode . "'");
                         }
                         $this->session->data['success'] = $this->language->get('text_success_delvalidated');
                     } else {
@@ -703,16 +703,22 @@ class ControllerExtensionCargusComanda extends Controller
                         }
                     }
 
-                    //$this->log->write('Create AWB, data:' . print_r($fields, true));
+//                    $this->log->write('Create AWB, data:' . print_r($fields, true));
 
+                    //Awbs
+                    //Awbs/WithGetAwb
                     $cod_bara = $this->model_shipping_cargusclass->CallMethod(
-                        'Awbs',
+                        'Awbs/WithGetAwb',
                         $fields,
                         'POST',
                         $token
                     );
 
-                    if (is_array($cod_bara)) {
+//                    $this->log->write('Return AWB data: ' . print_r($cod_bara, true));
+
+                    if (is_array($cod_bara) && isset($cod_bara['error'])) {
+                        $this->log->write('Create AWB error, array branch, return data:' . print_r($cod_bara, true));
+
                         if (isset($cod_bara['error'])) {
                             $this->log->write('Create AWB error, data:' . print_r($fields, true));
                             $errors[] = $this->language->get(
@@ -720,15 +726,26 @@ class ControllerExtensionCargusComanda extends Controller
                                 ) . ' ' . $row->row['parcels'] . ': ' . $cod_bara['error'];
                         }
                     } else {
-                        if ($cod_bara != '') {
-                            $this->db->query(
-                                "UPDATE awb_cargus SET barcode = '" . $cod_bara . "' WHERE id = '" . addslashes(
+                        if (!empty($cod_bara[0]['BarCode'])) {
+                            $barcode = $cod_bara[0]['BarCode'];
+                            $returnCode = $cod_bara[0]['ReturnCode'];
+                            $returnAwb = $cod_bara[0]['ReturnAwb'];
+
+                            if ($this->db->query(
+                                "UPDATE awb_cargus SET barcode = '" . $barcode . "', ReturnAwb='" . $returnAwb .
+                                "', ReturnCode='" . $returnCode . "' WHERE id = '" . addslashes(
                                     $id
                                 ) . "'"
-                            );
-                            $successes[] = $cod_bara;
+                            )) {
+                                $successes[] = $cod_bara;
+                            } else {
+                                $this->log->write('Create AWB error, data:' . print_r($fields, true));
+                                $this->log->write('Error update awb, data: ' . print_r($cod_bara, true));
+                                $errors[] = 'Unknown update awb error!';
+                            }
                         } else {
                             $this->log->write('Create AWB error, data:' . print_r($fields, true));
+                            $this->log->write('Return awb api call, data: ' . print_r($cod_bara, true));
                             $errors[] = 'Unknown error!';
                         }
                     }
