@@ -30,6 +30,10 @@ class ControllerExtensionModuleCargus extends Controller
             return null;
         }
 
+        if (!($this->config->get('cargus_preferinte_awb_retur') > 0)) {
+            return null;
+        }
+
         $returnCode = $args['shipping_method_cargus']['ReturnCode'];
         $returnAwb = $args['shipping_method_cargus']['ReturnAwb'];
 

@@ -153,7 +153,9 @@ class ControllerExtensionModuleCargus extends Controller
 
         $output = str_ireplace($search, $replace, $output);
 
-        if (isset($args['shipping_method_cargus']['ReturnCode']) || isset($args['shipping_method_cargus']['ReturnAwb'])) {
+        if ((isset($args['shipping_method_cargus']['ReturnCode']) || isset($args['shipping_method_cargus']['ReturnAwb'])) &&
+            $this->config->get('cargus_preferinte_awb_retur') > 0
+        ) {
             $returnCode = $args['shipping_method_cargus']['ReturnCode'];
             $returnAwb = $args['shipping_method_cargus']['ReturnAwb'];
 
