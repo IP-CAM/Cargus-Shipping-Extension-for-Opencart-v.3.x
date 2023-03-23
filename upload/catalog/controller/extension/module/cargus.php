@@ -2,6 +2,110 @@
 
 class ControllerExtensionModuleCargus extends Controller
 {
+    public function orderInfoBefore($route, &$args)
+    {
+        $orderInfo['order_id'] = $args['order_id'];
+        $data = array();
+
+        $this->language->load('shipping/cargus');
+        $this->load->model('extension/shipping/cargus');
+
+        $awb = $this->model_extension_shipping_cargus->getAwbForOrderId($orderInfo['order_id']);
+
+        if (isset($awb['ReturnCode']) && !empty($awb['ReturnCode'])) {
+            $data['ReturnCode'] = $awb['ReturnCode'];
+        }
+
+        if (isset($awb['ReturnAwb']) && !empty($awb['ReturnAwb'])) {
+            $data['ReturnAwb'] = $awb['ReturnAwb'];
+        }
+
+        $args['shipping_method_cargus'] = $data;
+
+        return null;
+    }
+    public function orderInfoAfter($route, &$args, &$output)
+    {
+        if (!isset($args['shipping_method_cargus']['ReturnCode']) && !isset($args['shipping_method_cargus']['ReturnAwb'])) {
+            return null;
+        }
+
+        if (!($this->config->get('cargus_preferinte_awb_retur') > 0)) {
+            return null;
+        }
+
+        $returnCode = $args['shipping_method_cargus']['ReturnCode'];
+        $returnAwb = $args['shipping_method_cargus']['ReturnAwb'];
+
+        switch ($this->config->get('cargus_preferinte_awb_retur')) {
+            case 1:
+                //voucher
+                $showQr = $returnCode;
+                $showText = 'Voucher retur comanda';
+                break;
+
+            default:
+                //awb return
+                $showQr = $returnAwb;
+                $showText = 'AWB retur comanda';
+                break;
+        }
+
+        $text_payment_address = $this->language->get('text_payment_address');
+
+        $search = '/<table class="table table-bordered table-hover">\s+<thead>\s+<tr>\s+<td class="text-left" style="width: 50%; vertical-align: top;">'.$text_payment_address.'<\/td>/mi';
+        $searchText = '<table class="table table-bordered table-hover"><thead><tr><td class="text-left" style="width: 50%; vertical-align: top;">'.$text_payment_address.'</td>';
+
+        $content = '<table class="table table-bordered table-hover">';
+            $content .= '<thead>';
+                $content .= '<tr>';
+                $content .= '<td class="text-left">Cargus</td>';
+                $content .= '</tr>';
+            $content .= '</thead>';
+            $content .= '<tbody>';
+                $content .= '<tr>';
+                $content .= '<td class="text-left">'.$showText.':<br>';
+
+        $content .= $showQr;
+        $content .= '<div id="qrcode-container"></div>
+<script src="catalog/view/javascript/qrcode.js"></script>
+<script>	
+	var opts = {
+  errorCorrectionLevel: \'H\',
+  type: \'image/jpeg\',
+  quality: 0.3,
+  margin: 2,
+  scale: 4,
+  width: 128,
+  color: {
+    dark:"#000000ff",
+    light:"#ffffffff"
+  }
+}
+
+QRCode.toDataURL(\''.$showQr.'\', opts, function (err, url) {
+  if (err) throw err
+
+  
+  let img = document.createElement(\'img\');
+	img.alt = \'QRCode\';
+	img.src = url
+	
+	document.getElementById(\'qrcode-container\').appendChild(img);
+})
+</script>';
+                $content .= '</td>';
+                $content .= '</tr>';
+            $content .= '</tbody>';
+        $content .= '</table>';
+
+        $replace = $content . $searchText;
+
+        $output = preg_replace($search, $replace, $output);
+
+        return null;
+    }
+
     public function journal3CheckoutSaveBefore($route, &$args)
     {
         $this->session->data['custom_field']['pudo_location_id'] = null;
