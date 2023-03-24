@@ -12,6 +12,10 @@ class ControllerExtensionModuleCargus extends Controller
 
         $awb = $this->model_extension_shipping_cargus->getAwbForOrderId($orderInfo['order_id']);
 
+        if (isset($awb['barcode']) && !empty($awb['barcode'])) {
+            $data['awb_number'] = $awb['barcode'];
+        }
+
         if (isset($awb['ReturnCode']) && !empty($awb['ReturnCode'])) {
             $data['ReturnCode'] = $awb['ReturnCode'];
         }
@@ -26,6 +30,36 @@ class ControllerExtensionModuleCargus extends Controller
     }
     public function orderInfoAfter($route, &$args, &$output)
     {
+        $text_payment_address = $this->language->get('text_payment_address');
+
+        $search = '/<table class="table table-bordered table-hover">\s*<thead>\s*<tr>\s*<td class="text-left" style="width: 50%; vertical-align: top;">'.$text_payment_address.'<\/td>/mi';
+        $searchText = '<table class="table table-bordered table-hover"><thead><tr><td class="text-left" style="width: 50%; vertical-align: top;">'.$text_payment_address.'</td>';
+
+        if (isset($args['shipping_method_cargus']['awb_number']) && !empty($args['shipping_method_cargus']['awb_number'])) {
+            $trackAwb = $args['shipping_method_cargus']['awb_number'];
+
+            $content = '<table class="table table-bordered table-hover">';
+            $content .= '<thead>';
+            $content .= '<tr>';
+            $content .= '<td class="text-left"><img src="catalog/view/theme/default/image/cargus/logosg-30x30.jpg" style="width: 20px; height: 20px;">Cargus</td>';
+            $content .= '</tr>';
+            $content .= '</thead>';
+            $content .= '<tbody>';
+            $content .= '<tr>';
+            $content .= '<td class="text-left">';
+
+            $content .= '<a href="https://www.cargus.ro/tracking-romanian/?t='.$trackAwb.'" target="_blank" class="btn btn-primary">Urmărește coletul</a>';
+
+            $content .= '</td>';
+            $content .= '</tr>';
+            $content .= '</tbody>';
+            $content .= '</table>';
+
+            $replace = $content . "\n\n" . $searchText;
+
+            $output = preg_replace($search, $replace, $output, 1);
+        }
+
         if (!isset($args['shipping_method_cargus']['ReturnCode']) && !isset($args['shipping_method_cargus']['ReturnAwb'])) {
             return null;
         }
@@ -51,15 +85,11 @@ class ControllerExtensionModuleCargus extends Controller
                 break;
         }
 
-        $text_payment_address = $this->language->get('text_payment_address');
-
-        $search = '/<table class="table table-bordered table-hover">\s+<thead>\s+<tr>\s+<td class="text-left" style="width: 50%; vertical-align: top;">'.$text_payment_address.'<\/td>/mi';
-        $searchText = '<table class="table table-bordered table-hover"><thead><tr><td class="text-left" style="width: 50%; vertical-align: top;">'.$text_payment_address.'</td>';
 
         $content = '<table class="table table-bordered table-hover">';
             $content .= '<thead>';
                 $content .= '<tr>';
-                $content .= '<td class="text-left">Cargus</td>';
+                $content .= '<td class="text-left"><img src="catalog/view/theme/default/image/cargus/logosg-30x30.jpg" style="width: 20px; height: 20px;">Cargus</td>';
                 $content .= '</tr>';
             $content .= '</thead>';
             $content .= '<tbody>';
@@ -101,7 +131,7 @@ QRCode.toDataURL(\''.$showQr.'\', opts, function (err, url) {
 
         $replace = $content . $searchText;
 
-        $output = preg_replace($search, $replace, $output);
+        $output = preg_replace($search, $replace, $output, 1);
 
         return null;
     }
