@@ -153,6 +153,75 @@ class ControllerExtensionModuleCargus extends Controller
 
         $output = str_ireplace($search, $replace, $output);
 
+        if ((isset($args['shipping_method_cargus']['ReturnCode']) || isset($args['shipping_method_cargus']['ReturnAwb'])) &&
+            $this->config->get('cargus_preferinte_awb_retur') > 0
+        ) {
+            $returnCode = $args['shipping_method_cargus']['ReturnCode'];
+            $returnAwb = $args['shipping_method_cargus']['ReturnAwb'];
+
+            switch ($this->config->get('cargus_preferinte_awb_retur')) {
+                case 1:
+                    //voucher
+                    $showQr = $returnCode;
+                    $showText = 'Voucher retur comanda';
+                    break;
+
+                default:
+                    //awb return
+                    $showQr = $returnAwb;
+                    $showText = 'AWB retur comanda';
+                    break;
+            }
+
+            $search = '/<div class="panel panel-default">\s+<div class="panel-heading">\s+<h3 class="panel-title"><i class="fa fa-info-circle"><\/i>/mi';
+            $searchText = '<div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"><i class="fa fa-info-circle"></i>';
+
+            $content = '<div class="panel panel-default">';
+                $content .= '<div class="panel-heading">';
+                $content .= '<h3 class="panel-title">';
+                $content .= '<i class="fa fa-info-circle"></i>Cargus';
+                $content .= '</h3>';
+                $content .= '</div>';
+
+                $content .= '<div class="panel-body">';
+                $content .= $showText.': <br>';
+                $content .= $showQr;
+            $content .= '<div id="qrcode-container"></div>
+<script src="view/javascript/qrcode.js"></script>
+<script>	
+	var opts = {
+  errorCorrectionLevel: \'H\',
+  type: \'image/jpeg\',
+  quality: 0.3,
+  margin: 2,
+  scale: 4,
+  width: 128,
+  color: {
+    dark:"#000000ff",
+    light:"#ffffffff"
+  }
+}
+
+QRCode.toDataURL(\''.$showQr.'\', opts, function (err, url) {
+  if (err) throw err
+
+  
+  let img = document.createElement(\'img\');
+	img.alt = \'QRCode\';
+	img.src = url
+	
+	document.getElementById(\'qrcode-container\').appendChild(img);
+})
+</script>';
+                $content .= '</div>';
+
+            $content .= '</div>';
+
+            $replace = $content . $searchText;
+
+            $output = preg_replace($search, $replace, $output);
+        }
+
         return null;
     }
 

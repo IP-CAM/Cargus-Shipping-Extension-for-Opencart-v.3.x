@@ -53,6 +53,8 @@ class ControllerExtensionShippingCargus extends Controller {
                         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;";
             $this->db->query($install);
 
+            $this->alterTable();
+
             $deleteExtension = "DELETE FROM `" . DB_PREFIX . "extension` WHERE `type` = 'shipping' AND `code` = 'cargus' ";
             $this->db->query($deleteExtension);
 
@@ -441,6 +443,8 @@ class ControllerExtensionShippingCargus extends Controller {
         } else {
             error_log('cargus_preferinte_pickup is empty? value='.$this->config->get('cargus_preferinte_pickup'));
 
+            $this->log->write('cargus_preferinte_pickup is empty? value='.$this->config->get('cargus_preferinte_pickup'));
+
 //            echo 'err';
             return false;
         }
@@ -597,6 +601,21 @@ class ControllerExtensionShippingCargus extends Controller {
             'catalog/view/checkout/shipping_method/after',
             'extension/module/cargus/checkoutShippingMethodAfter'
         );
+
+        //catalog/view/account/order_info
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'catalog/view/account/order_info/before',
+            'extension/module/cargus/orderInfoBefore'
+        );
+        $this->model_setting_event->addEvent(
+            $this->codename,
+            'catalog/view/account/order_info/after',
+            'extension/module/cargus/orderInfoAfter'
+        );
+
+
+        $this->alterTable();
     }
 
     public function uninstall() {
@@ -629,6 +648,8 @@ class ControllerExtensionShippingCargus extends Controller {
             $data['awb_number'] = $awb['barcode'];
         }
 
+
+
         $data = array(
             'buttonAddAwb' => $this->language->get('text_cargus_button_add_awb'),
 //            'buttonDeleteAwb' => $this->language->get('text_button_delete_awb'),
@@ -654,6 +675,14 @@ class ControllerExtensionShippingCargus extends Controller {
             $data['awb_number'] = $awb['barcode'];
         }
 
+        if (isset($awb['ReturnCode']) && !empty($awb['ReturnCode'])) {
+            $data['ReturnCode'] = $awb['ReturnCode'];
+        }
+
+        if (isset($awb['ReturnAwb']) && !empty($awb['ReturnAwb'])) {
+            $data['ReturnAwb'] = $awb['ReturnAwb'];
+        }
+
         return $data;
     }
 
@@ -673,5 +702,19 @@ class ControllerExtensionShippingCargus extends Controller {
         }
 
         return $parts;
+    }
+
+    private function alterTable()
+    {
+        try {
+            $sql = "ALTER TABLE awb_cargus ADD COLUMN ReturnCode VARCHAR(50) AFTER shipping_code";
+            $this->db->query($sql);
+
+            $sql = "ALTER TABLE awb_cargus ADD COLUMN ReturnAwb VARCHAR(50) AFTER shipping_code";
+            $this->db->query($sql);
+        } catch (Exception $e) {
+            // whe need to avoid DB error
+//            $this->log->write('Error alter table: ' . $e->getMessage());
+        }
     }
 }
