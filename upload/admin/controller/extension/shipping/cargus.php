@@ -7,7 +7,7 @@ class ControllerExtensionShippingCargus extends Controller {
 
     public function index() {
 
-        $this->language->load('shipping/cargus');
+        $this->load->language('shipping/cargus');
 
         $this->document->setTitle($this->language->get('heading_title'));
 
@@ -19,7 +19,7 @@ class ControllerExtensionShippingCargus extends Controller {
         }
 
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-            $install = "CREATE TABLE IF NOT EXISTS `awb_cargus` (
+            $install = "CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "awb_cargus` (
                             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                             `order_id` int(11) NOT NULL,
                             `pickup_id` int(11) NOT NULL,
@@ -85,26 +85,9 @@ class ControllerExtensionShippingCargus extends Controller {
                 $this->error['warning'] = $this->language->get('text_error').print_r($token, true);
             } else {
                 $this->session->data['success'] = $this->language->get('text_success');
-                $this->response->redirect($this->url->link('extension/shipping/cargus', 'user_token=' . $this->session->data['user_token'], 'SSL'));
+                $this->response->redirect($this->url->link('extension/shipping/cargus', 'user_token=' . $this->session->data['user_token'], true));
             }
         }
-
-        $data['heading_title'] = $this->language->get('heading_title');
-        $data['text_edit'] = $this->language->get('text_edit');
-        $data['text_enabled'] = $this->language->get('text_enabled');
-        $data['text_disabled'] = $this->language->get('text_disabled');
-        $data['text_all_zones'] = $this->language->get('text_all_zones');
-        $data['text_none'] = $this->language->get('text_none');
-        $data['entry_api_url'] = $this->language->get('entry_api_url');
-        $data['entry_api_key'] = $this->language->get('entry_api_key');
-        $data['entry_username'] = $this->language->get('entry_username');
-        $data['entry_password'] = $this->language->get('entry_password');
-        $data['entry_tax_class'] = $this->language->get('entry_tax_class');
-        $data['entry_geo_zone'] = $this->language->get('entry_geo_zone');
-        $data['entry_status'] = $this->language->get('entry_status');
-        $data['entry_sort_order'] = $this->language->get('entry_sort_order');
-        $data['button_save'] = $this->language->get('button_save');
-        $data['button_cancel'] = $this->language->get('button_cancel');
 
         if (isset($this->error['warning'])) {
             $data['error_warning'] = $this->error['warning'];
@@ -113,21 +96,24 @@ class ControllerExtensionShippingCargus extends Controller {
         }
 
         $data['breadcrumbs'] = array();
+
         $data['breadcrumbs'][] = array(
-            'text'      => $this->language->get('text_home'),
-            'href'      => $this->url->link('common/home', 'user_token=' . $this->session->data['user_token'], 'SSL')
-        );
-        $data['breadcrumbs'][] = array(
-            'text'      => $this->language->get('text_shipping'),
-            'href'      => $this->url->link('extension/shipping', 'user_token=' . $this->session->data['user_token'], 'SSL')
-        );
-        $data['breadcrumbs'][] = array(
-            'text'      => $this->language->get('heading_title'),
-            'href'      => $this->url->link('extension/shipping/cargus', 'user_token=' . $this->session->data['user_token'], 'SSL')
+            'text' => $this->language->get('text_home'),
+            'href' => $this->url->link('common/home', 'user_token=' . $this->session->data['user_token'], true)
         );
 
-        $data['action'] = $this->url->link('extension/shipping/cargus', 'user_token=' . $this->session->data['user_token'], 'SSL');
-        $data['cancel'] = $this->url->link('extension/shipping', 'user_token=' . $this->session->data['user_token'], 'SSL');
+        $data['breadcrumbs'][] = array(
+            'text' => $this->language->get('text_extension'),
+            'href' => $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'], true)
+        );
+
+        $data['breadcrumbs'][] = array(
+            'text' => $this->language->get('heading_title'),
+            'href' => $this->url->link('extension/shipping/cargus', 'user_token=' . $this->session->data['user_token'], true)
+        );
+
+        $data['action'] = $this->url->link('extension/shipping/cargus', 'user_token=' . $this->session->data['user_token'], true);
+        $data['cancel'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'], true);
 
         if (isset($this->request->post['cargus_api_url'])) {
             $data['cargus_api_url'] = $this->request->post['cargus_api_url'];
@@ -160,6 +146,7 @@ class ControllerExtensionShippingCargus extends Controller {
         }
 
         $this->load->model('localisation/tax_class');
+
         $data['tax_classes'] = $this->model_localisation_tax_class->getTaxClasses();
 
         if (isset($this->request->post['cargus_geo_zone_id'])) {
@@ -169,6 +156,7 @@ class ControllerExtensionShippingCargus extends Controller {
         }
 
         $this->load->model('localisation/geo_zone');
+
         $data['geo_zones'] = $this->model_localisation_geo_zone->getGeoZones();
 
         if (isset($this->request->post['cargus_status'])) {
@@ -456,7 +444,6 @@ class ControllerExtensionShippingCargus extends Controller {
         $this->log->write('Shipping cargus install');
 
         $user_group_id = $this->user->getGroupId();
-
 
 
         $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/cargus');
