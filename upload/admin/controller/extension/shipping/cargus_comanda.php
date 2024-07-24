@@ -1,20 +1,18 @@
 <?php
 require_once(DIR_CATALOG . 'model/extension/shipping/cargusclass.php');
 
-class ControllerExtensionCargusComanda extends Controller
-{
+class ControllerExtensionShippingCargusCargusComanda extends Controller {
     private $error = array();
 
-    public function index()
-    {
-        $this->language->load('cargus/comanda');
+    public function index() {
+        $this->load->language('extension/cargus/cargus_comanda');
 
         $this->document->setTitle($this->language->get('heading_title'));
 
         if (isset($_GET['LocationId'])) {
             $pickup = $this->request->get['LocationId'];
         } else {
-            $pickup = $this->config->get('cargus_preferinte_pickup');
+            $pickup = $this->config->get('shipping_cargus_preferinte_pickup');
         }
 
         if (isset($this->session->data['success'])) {
@@ -23,12 +21,14 @@ class ControllerExtensionCargusComanda extends Controller
         } else {
             $data['success'] = '';
         }
+
         if (isset($this->session->data['error'])) {
             $data['error'] = $this->session->data['error'];
             $this->session->data['error'] = '';
         } else {
             $data['error'] = '';
         }
+
         if (isset($this->session->data['error_warning'])) {
             $data['error_warning'] = $this->session->data['error_warning'];
             $this->session->data['error_warning'] = '';
@@ -41,14 +41,14 @@ class ControllerExtensionCargusComanda extends Controller
 
         // setez url si key
         $this->model_shipping_cargusclass->SetKeys(
-            $this->config->get('cargus_api_url'),
-            $this->config->get('cargus_api_key')
+            $this->config->get('shipping_cargus_api_url'),
+            $this->config->get('shipping_cargus_api_key')
         );
 
         // UC login user
         $fields = array(
-            'UserName' => $this->config->get('cargus_username'),
-            'Password' => $this->config->get('cargus_password')
+            'UserName' => $this->config->get('shipping_cargus_username'),
+            'Password' => $this->config->get('shipping_cargus_password')
         );
         $token = $this->model_shipping_cargusclass->CallMethod('LoginUser', $fields, 'POST');
 
@@ -60,7 +60,9 @@ class ControllerExtensionCargusComanda extends Controller
 
             // obtine lista punctelor de ridicare
             $data['pickups'] = array();
+
             $pickups = $this->model_shipping_cargusclass->CallMethod('PickupLocations', array(), 'GET', $token);
+
             if (is_null($pickups)) {
                 $data['valid'] = false;
                 $data['error'] = $this->language->get(
@@ -102,15 +104,12 @@ class ControllerExtensionCargusComanda extends Controller
             $ord = $this->db->query("SELECT * FROM awb_cargus WHERE barcode = '0' ORDER BY id ASC");
 
             $data['listaAsteptare'] = $ord;
+
             foreach ($data['listaAsteptare']->rows as $key => $row) {
-                $data['listaAsteptare']->rows[$key]['edit_link'] = $this->url->link(
-                    'extension/cargus/edit',
-                    'user_token=' . $this->session->data['user_token'] . '&awb=' . $row['id'],
-                    'SSL'
-                );
+                $data['listaAsteptare']->rows[$key]['edit_link'] = $this->url->link('extension/shipping/cargus/cargus_edit', 'user_token=' . $this->session->data['user_token'] . '&awb=' . $row['id'], true);
             }
 
-            $data['cargus_preferinte_pickup'] = $this->config->get('cargus_preferinte_pickup');
+            $data['shipping_cargus_preferinte_pickup'] = $this->config->get('shipping_cargus_preferinte_pickup');
 
             if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
                 // sterg awb-urile selectate din lista in asteptare
@@ -152,87 +151,32 @@ class ControllerExtensionCargusComanda extends Controller
                         $this->session->data['error'] = $this->language->get('text_no_selection');
                     }
                 }
-                $this->response->redirect(
-                    $this->url->link(
-                        'extension/cargus/comanda',
-                        'user_token=' . $this->session->data['user_token'],
-                        'SSL'
-                    )
-                );
+                $this->response->redirect($this->url->link('extension/shipping/cargus/cargus_comanda', 'user_token=' . $this->session->data['user_token'], true));
             }
         }
 
-        $data['url_print'] = $this->url->link(
-            'extension/cargus/comanda/print_awbs',
-            'user_token=' . $this->session->data['user_token'],
-            'SSL'
-        );
-        $data['url_order'] = $this->url->link(
-            'extension/cargus/comanda/validate_order',
-            'user_token=' . $this->session->data['user_token'],
-            'SSL'
-        );
-        $data['text_no_selection'] = $this->language->get('text_no_selection');
+        $data['url_print'] = $this->url->link('extension/shipping/cargus/cargus_comanda/print_awbs', 'user_token=' . $this->session->data['user_token'], true);
 
-        $data['form_action'] = $this->url->link(
-            'extension/cargus/comanda',
-            'user_token=' . $this->session->data['user_token'],
-            'SSL'
-        );
-        $data['form_filter_action'] = $this->url->link(
-            'extension/cargus/comanda/change_pickup',
-            'user_token=' . $this->session->data['user_token'],
-            'SSL'
-        );
-        $data['heading_title'] = $this->language->get('heading_title');
-        $data['text_shipping'] = $this->language->get('text_shipping');
-        $data['text_edit'] = $this->language->get('text_edit');
-        $data['text_pending'] = $this->language->get('text_pending');
-        $data['text_validated'] = $this->language->get('text_validated');
-        $data['text_idcomanda'] = $this->language->get('text_idcomanda');
-        $data['text_punctridicare'] = $this->language->get('text_punctridicare');
-        $data['text_numedestinatar'] = $this->language->get('text_numedestinatar');
-        $data['text_localitatedestinatar'] = $this->language->get('text_localitatedestinatar');
-        $data['text_plicuri'] = $this->language->get('text_plicuri');
-        $data['text_colete'] = $this->language->get('text_colete');
-        $data['text_greutate'] = $this->language->get('text_greutate');
-        $data['text_ramburscash'] = $this->language->get('text_ramburscash');
-        $data['text_ramburscont'] = $this->language->get('text_ramburscont');
-        $data['text_platitor'] = $this->language->get('text_platitor');
-        $data['text_codbara'] = $this->language->get('text_codbara');
-        $data['text_costexpeditie'] = $this->language->get('text_costexpeditie');
-        $data['text_status'] = $this->language->get('text_status');
-        $data['text_pending_validate'] = $this->language->get('text_pending_validate');
-        $data['text_pending_delete'] = $this->language->get('text_pending_delete');
-        $data['text_pending_none'] = $this->language->get('text_pending_none');
-        $data['text_validated_print'] = $this->language->get('text_validated_print');
-        $data['text_validated_invalidate'] = $this->language->get('text_validated_invalidate');
-        $data['text_validated_send'] = $this->language->get('text_validated_send');
-        $data['text_validated_none'] = $this->language->get('text_validated_none');
-        $data['text_expeditor'] = $this->language->get('text_expeditor');
-        $data['text_destinatar'] = $this->language->get('text_destinatar');
-        $data['text_changepickup'] = $this->language->get('text_changepickup');
-        $data['text_pickup'] = $this->language->get('text_pickup');
+        $data['url_order'] = $this->url->link('extension/shipping/cargus/cargus_comanda/validate_order', 'user_token=' . $this->session->data['user_token'], true);
+
+        $data['form_action'] = $this->url->link('extension/shipping/cargus/cargus_comanda', 'user_token=' . $this->session->data['user_token'], true);
+        $data['form_filter_action'] = $this->url->link('extension/shipping/cargus/cargus_comanda/change_pickup', 'user_token=' . $this->session->data['user_token'], true);
 
         $data['breadcrumbs'] = array();
 
         $data['breadcrumbs'][] = array(
             'text' => $this->language->get('text_home'),
-            'href' => $this->url->link('common/home', 'user_token=' . $this->session->data['user_token'], 'SSL')
+            'href' => $this->url->link('common/home', 'user_token=' . $this->session->data['user_token'], true)
         );
 
         $data['breadcrumbs'][] = array(
-            'text' => $this->language->get('text_shipping'),
-            'href' => $this->url->link('extension/shipping', 'user_token=' . $this->session->data['user_token'], 'SSL')
+            'text' => $this->language->get('text_extension'),
+            'href' => $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'], true)
         );
 
         $data['breadcrumbs'][] = array(
             'text' => $this->language->get('heading_title'),
-            'href' => $this->url->link(
-                'extension/cargus/comanda',
-                'user_token=' . $this->session->data['user_token'],
-                'SSL'
-            )
+            'href' => $this->url->link('extension/shipping/cargus/cargus_comanda', 'user_token=' . $this->session->data['user_token'], true)
         );
 
         $data['header'] = $this->load->controller('common/header');
@@ -242,9 +186,8 @@ class ControllerExtensionCargusComanda extends Controller
         $this->response->setOutput($this->load->view('extension/cargus/comanda', $data));
     }
 
-    protected function validate()
-    {
-        if (!$this->user->hasPermission('modify', 'extension/cargus/comanda')) {
+    protected function validate() {
+        if (!$this->user->hasPermission('modify', 'extension/shipping/cargus/cargus_comanda')) {
             $this->error['warning'] = $this->language->get('error_permission');
         }
 

@@ -59,25 +59,26 @@ class ControllerExtensionShippingCargus extends Controller {
             $this->db->query($deleteExtension);
 
             $addExtension = "INSERT INTO `" . DB_PREFIX . "extension` SET `type` = 'shipping', `code` = 'cargus' ";
+
             $this->db->query($addExtension);
 
             $this->model_setting_setting->editSetting('cargus', $this->request->post);
+
             $this->model_setting_setting->editSetting(
-                'shipping_cargus',
-                [
-                    'shipping_cargus_status' => $this->request->post['cargus_status']
+                'shipping_cargus_status', [
+                    'shipping_cargus_status' => $this->request->post['shipping_cargus_status']
                 ]
             );
             // instantiez clasa cargus
             $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass($this->registry);
 
             // setez url si key
-            $this->model_shipping_cargusclass->SetKeys($this->request->post['cargus_api_url'], $this->request->post['cargus_api_key']);
+            $this->model_shipping_cargusclass->SetKeys($this->request->post['shipping_cargus_api_url'], $this->request->post['shipping_cargus_api_key']);
 
             // UC login user
             $fields = array(
-                'UserName' => $this->request->post['cargus_username'],
-                'Password' => $this->request->post['cargus_password']
+                'UserName' => $this->request->post['shipping_cargus_username'],
+                'Password' => $this->request->post['shipping_cargus_password']
             );
             $token = $this->model_shipping_cargusclass->CallMethod('LoginUser', $fields, 'POST');
 
@@ -113,62 +114,63 @@ class ControllerExtensionShippingCargus extends Controller {
         );
 
         $data['action'] = $this->url->link('extension/shipping/cargus', 'user_token=' . $this->session->data['user_token'], true);
+
         $data['cancel'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'], true);
 
-        if (isset($this->request->post['cargus_api_url'])) {
-            $data['cargus_api_url'] = $this->request->post['cargus_api_url'];
+        if (isset($this->request->post['shipping_cargus_api_url'])) {
+            $data['shipping_cargus_api_url'] = $this->request->post['shipping_cargus_api_url'];
         } else {
-            $data['cargus_api_url'] = $this->config->get('cargus_api_url');
+            $data['shipping_cargus_api_url'] = $this->config->get('shipping_cargus_api_url');
         }
 
-        if (isset($this->request->post['cargus_api_key'])) {
-            $data['cargus_api_key'] = $this->request->post['cargus_api_key'];
+        if (isset($this->request->post['shipping_cargus_api_key'])) {
+            $data['shipping_cargus_api_key'] = $this->request->post['shipping_cargus_api_key'];
         } else {
-            $data['cargus_api_key'] = $this->config->get('cargus_api_key');
+            $data['shipping_cargus_api_key'] = $this->config->get('shipping_cargus_api_key');
         }
 
-        if (isset($this->request->post['cargus_username'])) {
-            $data['cargus_username'] = $this->request->post['cargus_username'];
+        if (isset($this->request->post['shipping_cargus_username'])) {
+            $data['shipping_cargus_username'] = $this->request->post['shipping_cargus_username'];
         } else {
-            $data['cargus_username'] = $this->config->get('cargus_username');
+            $data['shipping_cargus_username'] = $this->config->get('shipping_cargus_username');
         }
 
-        if (isset($this->request->post['cargus_password'])) {
-            $data['cargus_password'] = $this->request->post['cargus_password'];
+        if (isset($this->request->post['shipping_cargus_password'])) {
+            $data['shipping_cargus_password'] = $this->request->post['shipping_cargus_password'];
         } else {
-            $data['cargus_password'] = $this->config->get('cargus_password');
+            $data['shipping_cargus_password'] = $this->config->get('shipping_cargus_password');
         }
 
-        if (isset($this->request->post['cargus_tax_class_id'])) {
-            $data['cargus_tax_class_id'] = $this->request->post['cargus_tax_class_id'];
+        if (isset($this->request->post['shipping_cargus_tax_class_id'])) {
+            $data['shipping_cargus_tax_class_id'] = $this->request->post['shipping_cargus_tax_class_id'];
         } else {
-            $data['cargus_tax_class_id'] = $this->config->get('cargus_tax_class_id');
+            $data['shipping_cargus_tax_class_id'] = $this->config->get('shipping_cargus_tax_class_id');
         }
 
         $this->load->model('localisation/tax_class');
 
         $data['tax_classes'] = $this->model_localisation_tax_class->getTaxClasses();
 
-        if (isset($this->request->post['cargus_geo_zone_id'])) {
-            $data['cargus_geo_zone_id'] = $this->request->post['cargus_geo_zone_id'];
+        if (isset($this->request->post['shipping_cargus_geo_zone_id'])) {
+            $data['shipping_cargus_geo_zone_id'] = $this->request->post['shipping_cargus_geo_zone_id'];
         } else {
-            $data['cargus_geo_zone_id'] = $this->config->get('cargus_geo_zone_id');
+            $data['shipping_cargus_geo_zone_id'] = $this->config->get('shipping_cargus_geo_zone_id');
         }
 
         $this->load->model('localisation/geo_zone');
 
         $data['geo_zones'] = $this->model_localisation_geo_zone->getGeoZones();
 
-        if (isset($this->request->post['cargus_status'])) {
-            $data['cargus_status'] = $this->request->post['cargus_status'];
+        if (isset($this->request->post['shipping_cargus_status'])) {
+            $data['shipping_cargus_status'] = $this->request->post['shipping_cargus_status'];
         } else {
-            $data['cargus_status'] = $this->config->get('cargus_status');
+            $data['shipping_cargus_status'] = $this->config->get('shipping_cargus_status');
         }
 
-        if (isset($this->request->post['cargus_sort_order'])) {
-            $data['cargus_sort_order'] = $this->request->post['cargus_sort_order'];
+        if (isset($this->request->post['shipping_cargus_sort_order'])) {
+            $data['shipping_cargus_sort_order'] = $this->request->post['shipping_cargus_sort_order'];
         } else {
-            $data['cargus_sort_order'] = $this->config->get('cargus_sort_order');
+            $data['shipping_cargus_sort_order'] = $this->config->get('shipping_cargus_sort_order');
         }
 
         $data['header'] = $this->load->controller('common/header');
@@ -242,10 +244,11 @@ class ControllerExtensionShippingCargus extends Controller {
     }
 
     private function insertNewAwb($order_id) {
-        error_reporting(E_ALL);
-        ini_set('display_errors', '0');
-        ini_set('log_errors', '1');
-        if ($this->config->get('cargus_preferinte_pickup') != '') {
+        //error_reporting(E_ALL);
+        //ini_set('display_errors', '0');
+        //ini_set('log_errors', '1');
+
+        if ($this->config->get('shipping_cargus_preferinte_pickup') != '') {
             $this->load->model('sale/order');
             $this->load->model('catalog/product');
 
@@ -266,7 +269,7 @@ class ControllerExtensionShippingCargus extends Controller {
 //            $this->registry->set('tax', new Cart\Tax($this->registry));
 
             // calculez totalul transportului inclusiv taxele
-            $shipping_total = $this->tax->calculate($totals['shipping'], $this->config->get('cargus_tax_class_id'));
+            $shipping_total = $this->tax->calculate($totals['shipping'], $this->config->get('shipping_cargus_tax_class_id'));
 
             // transform totalul transportului in lei
             if ($this->config->get('config_currency') != 'RON') {
@@ -283,11 +286,16 @@ class ControllerExtensionShippingCargus extends Controller {
 
             // calculez greutatea totala a comenzii in kilograme
             $order_prodcts = $this->model_sale_order->getOrderProducts($order_id);
+
             $products = array();
+
             $weight = 0;
+
             $contents_array = array();
+
             foreach ($order_prodcts as $p) {
                 $product = $this->model_catalog_product->getProduct($p['product_id']);
+
                 if ($product['weight_class_id'] == 1) { // kilograms
                     $weight += $product['weight'];
                 } elseif ($product['weight_class_id'] == 2) { // grams
@@ -299,21 +307,27 @@ class ControllerExtensionShippingCargus extends Controller {
                 } else {
                     $weight += 1;
                 }
+
                 $products[] = $product;
 
                 $options_as_string = '';
                 $options_as_array = array();
+
                 $p_options = $this->model_sale_order->getOrderOptions($order_id, $p['order_product_id']);
+
                 if (is_array($p_options) && count($p_options) > 0) {
                     foreach ($p_options as $po) {
                         $options_as_array[] = trim($po['name']).': '.trim($po['value']);
                     }
                 }
+
                 if (count($options_as_array) > 0) {
                     $options_as_string = ' ('.implode(';', $options_as_array).')';
                 }
+
                 $contents_array[] = $p['quantity'].' x ' . trim($p['name']) . $options_as_string;
             }
+
             if ($weight == 0) {
                 $weight = 1;
             } else {
@@ -321,7 +335,7 @@ class ControllerExtensionShippingCargus extends Controller {
             }
 
             // determin valoarea declarata
-            if ($this->config->get('cargus_preferinte_insurance') == 1) {
+            if ($this->config->get('shipping_cargus_preferinte_insurance') == 1) {
                 $value = round($cart_total - $shipping_total, 2);
             } else {
                 $value = 0;
@@ -392,7 +406,7 @@ class ControllerExtensionShippingCargus extends Controller {
             // adaug awb-ul in baza de date
             $sql = "INSERT INTO awb_cargus SET
                                 order_id = '".addslashes($order_id)."',
-                                pickup_id = '".addslashes($this->config->get('cargus_preferinte_pickup'))."',
+                                pickup_id = '".addslashes($this->config->get('shipping_cargus_preferinte_pickup'))."',
                                 name = '".addslashes(htmlentities($order['shipping_company'] ? $order['shipping_company'] : implode(' ', array($order['shipping_firstname'], $order['shipping_lastname']))))."',
                                 locality_name = '".addslashes(htmlentities($order['shipping_city']))."',
                                 county_name = '".addslashes(htmlentities($order['shipping_zone_code']))."',
@@ -403,8 +417,8 @@ class ControllerExtensionShippingCargus extends Controller {
                                 contact = '".addslashes(htmlentities(implode(' ', array($order['shipping_firstname'], $order['shipping_lastname']))))."',
                                 phone = '".addslashes($order['telephone'])."',
                                 email = '".addslashes($order['email'])."',
-                                parcels = '".($this->config->get('cargus_preferinte_type') != 'envelope' ? 1 : 0)."',
-                                envelopes = '".($this->config->get('cargus_preferinte_type') == 'envelope' ? 1 : 0)."',
+                                parcels = '".($this->config->get('shipping_cargus_preferinte_type') != 'envelope' ? 1 : 0)."',
+                                envelopes = '".($this->config->get('shipping_cargus_preferinte_type') == 'envelope' ? 1 : 0)."',
                                 weight = '".addslashes($weight)."',
                                 value = '".addslashes($value)."',
                                 cash_repayment = '".addslashes($cash_repayment)."',
@@ -429,9 +443,9 @@ class ControllerExtensionShippingCargus extends Controller {
                 return false;
             }
         } else {
-            error_log('cargus_preferinte_pickup is empty? value='.$this->config->get('cargus_preferinte_pickup'));
+            error_log('shipping_cargus_preferinte_pickup is empty? value='.$this->config->get('shipping_cargus_preferinte_pickup'));
 
-            $this->log->write('cargus_preferinte_pickup is empty? value='.$this->config->get('cargus_preferinte_pickup'));
+            $this->log->write('shipping_cargus_preferinte_pickup is empty? value='.$this->config->get('shipping_cargus_preferinte_pickup'));
 
 //            echo 'err';
             return false;

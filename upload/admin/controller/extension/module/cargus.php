@@ -14,7 +14,7 @@ class ControllerExtensionModuleCargus extends Controller
         $cargus[] = array(
             'name'     => $this->language->get('text_cargus_comanda'),
             'href'     => $this->url->link(
-                'extension/cargus/comanda',
+                'extension/shipping/cargus/cargus_comanda',
                 $userToken,
                 true
             ),
@@ -24,7 +24,7 @@ class ControllerExtensionModuleCargus extends Controller
         $cargus[] = array(
             'name'     => $this->language->get('text_cargus_istoric'),
             'href'     => $this->url->link(
-                'extension/cargus/istoric',
+                'extension/shipping/cargus/cargus_istoric',
                 $userToken,
                 true
             ),
@@ -34,7 +34,7 @@ class ControllerExtensionModuleCargus extends Controller
         $cargus[] = array(
             'name'     => $this->language->get('text_cargus_preferinte'),
             'href'     => $this->url->link(
-                'extension/cargus/preferinte',
+                'extension/shipping_cargus/cargus_preferinte',
                 $userToken,
                 true
             ),
@@ -44,7 +44,7 @@ class ControllerExtensionModuleCargus extends Controller
         $cargus[] = array(
             'name'     => $this->language->get('text_cargus_setari'),
             'href'     => $this->url->link(
-                'extension/shipping/cargus',
+                'extension/extension/shipping/cargus',
                 $userToken,
                 true
             ),
@@ -64,7 +64,7 @@ class ControllerExtensionModuleCargus extends Controller
         $cargusShip[] = array(
             'name'     => $this->language->get('text_cargus_ship_and_go_preferinte'),
             'href'     => $this->url->link(
-                'extension/cargus/ship_and_go',
+                'extension/shipping/cargus/cargus_ship_and_go2',
                 $userToken,
                 true
             ),
@@ -82,9 +82,8 @@ class ControllerExtensionModuleCargus extends Controller
         }
     }
 
-    public function orderListAfter($route, &$args, &$output)
-    {
-        $this->load->language('module/cargus');
+    public function orderListAfter($route, &$args, &$output) {
+        $this->load->language('extension/module/cargus');
 
         $search = '<div class="pull-right">';
 
@@ -97,8 +96,7 @@ class ControllerExtensionModuleCargus extends Controller
         return null;
     }
 
-    public function orderInfoBefore($route, &$args)
-    {
+    public function orderInfoBefore($route, &$args) {
         $orderInfo['order_id'] = $args['order_id'];
 
         $args['shipping_method_cargus'] = $this->load->controller('extension/shipping/cargus/info', $orderInfo);
@@ -106,8 +104,7 @@ class ControllerExtensionModuleCargus extends Controller
         return null;
     }
 
-    public function orderInfoAfter($route, &$args, &$output)
-    {
+    public function orderInfoAfter($route, &$args, &$output) {
         $textInvoice = $this->language->get('text_invoice');
 
         $shippingMethodCargus = $args['shipping_method_cargus'];
@@ -154,12 +151,12 @@ class ControllerExtensionModuleCargus extends Controller
         $output = str_ireplace($search, $replace, $output);
 
         if ((isset($args['shipping_method_cargus']['ReturnCode']) || isset($args['shipping_method_cargus']['ReturnAwb'])) &&
-            $this->config->get('cargus_preferinte_awb_retur') > 0
+            $this->config->get('shipping_cargus_preferinte_awb_retur') > 0
         ) {
             $returnCode = $args['shipping_method_cargus']['ReturnCode'];
             $returnAwb = $args['shipping_method_cargus']['ReturnAwb'];
 
-            switch ($this->config->get('cargus_preferinte_awb_retur')) {
+            switch ($this->config->get('shipping_cargus_preferinte_awb_retur')) {
                 case 1:
                     //voucher
                     $showQr = $returnCode;
