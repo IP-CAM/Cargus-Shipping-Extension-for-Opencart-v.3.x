@@ -201,7 +201,7 @@ class ControllerExtensionShippingCargus extends Controller {
             // Already generated.
             $this->session->data['success'] = $this->language->get('text_cargus_already_awb');
 
-            $this->response->redirect($this->url->link('extension/shipping/cargus/cargus_comanda', $this->addToken(), true));
+            $this->response->redirect($this->url->link('extension/shipping/cargus_comanda', $this->addToken(), true));
         }
 
         $result = $this->insertNewAwb($this->request->get['order_id']);
@@ -216,11 +216,11 @@ class ControllerExtensionShippingCargus extends Controller {
         $awb = $this->model_extension_shipping_cargus->getAwbForOrderId($orderInfo['order_id']);
 
         //validate awb
-        $result = $this->load->controller('extension/shipping/cargus/cargus_comanda/validateAwb', array($awb['id']));
+        $result = $this->load->controller('extension/shipping/cargus_comanda/validateAwb', array($awb['id']));
 
         if (!$result) {
             //error validating awb
-            $this->response->redirect($this->url->link('extension/shipping/cargus/cargus_comanda', $this->addToken(), true));
+            $this->response->redirect($this->url->link('extension/shipping/cargus_comanda', $this->addToken(), true));
         }
 
         //all ok
@@ -458,20 +458,20 @@ class ControllerExtensionShippingCargus extends Controller {
         $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/shipping/cargus');
         $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/shipping/cargus');
 
-        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/shipping/cargus/cargus_preferinte');
-        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/shipping/cargus/cargus_preferinte');
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/shipping/cargus_preferinte');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/shipping/cargus_preferinte');
 
-        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/shipping/cargus/cargus_ship_and_go2');
-        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/shipping/cargus/cargus_ship_and_go2');
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/shipping/cargus_ship_and_go2');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/shipping/cargus_ship_and_go2');
 
-        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/shipping/cargus');
-        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/shipping/cargus');
+        //$this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/shipping/cargus');
+        //$this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/shipping/cargus');
 
-        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/shipping/cargus/cargus_comanda');
-        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/shipping/cargus/cargus_comanda');
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/shipping/cargus_comanda');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/shipping/cargus_comanda');
 
-        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/shipping/cargus/edit');
-        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/shipping/cargus/edit');
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/shipping/cargus_edit');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/shipping/cargus_edit');
 
 
         $theme = $this->config->get('config_theme');
@@ -662,7 +662,7 @@ class ControllerExtensionShippingCargus extends Controller {
                 true
             ),
 
-            'buttonShowAwbHistory' => $this->url->link('extension/shipping/cargus/cargus_comanda', $this->addToken(), true),
+            'buttonShowAwbHistory' => $this->url->link('extension/shipping/cargus_comanda', $this->addToken(), true),
 //            'buttonDeleteAwbLink' => $this->url->link('extension/shipping/sameday/deleteAwb', $this->addToken(array('order_id' => $orderInfo['order_id'])), true)
         );
 

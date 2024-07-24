@@ -6,7 +6,7 @@ class ControllerExtensionShippingCargusIstoric extends Controller {
 
     public function index(){
 
-        $this->load->language('extension/shipping/cargus/cargus_istoric');
+        $this->load->language('extension/shipping/cargus_istoric');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
@@ -24,7 +24,7 @@ class ControllerExtensionShippingCargusIstoric extends Controller {
 
         $data['user_token'] = $this->session->data['user_token'];
 
-        $data['view_url'] = $this->url->link('extension/shipping/cargus/cargus_istoric', 'user_token=' . $this->session->data['user_token'], true);
+        $data['view_url'] = $this->url->link('extension/shipping/cargus_istoric', 'user_token=' . $this->session->data['user_token'], true);
 
         // instantiez clasa cargus
         $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass($this->registry);
@@ -88,20 +88,20 @@ class ControllerExtensionShippingCargusIstoric extends Controller {
 
         $data['breadcrumbs'][] = array(
             'text' => $this->language->get('heading_title'),
-            'href' => $this->url->link('extension/shipping/cargus/cargus_istoric', 'user_token=' . $this->session->data['user_token'] . '&LocationId=' .$pickup, true)
+            'href' => $this->url->link('extension/shipping/cargus_istoric', 'user_token=' . $this->session->data['user_token'] . '&LocationId=' .$pickup, true)
         );
 
         if (isset($_GET['OrderId'])) {
             $data['breadcrumbs'][] = array(
                 'text' => $this->language->get('text_orderdetails'),
-                'href' => $this->url->link('extension/shipping/cargus/cargus_istoric', 'user_token=' . $this->session->data['user_token'] . '&LocationId=' .$pickup . '&OrderId=' . $this->request->get['OrderId'], true)
+                'href' => $this->url->link('extension/shipping/cargus_istoric', 'user_token=' . $this->session->data['user_token'] . '&LocationId=' .$pickup . '&OrderId=' . $this->request->get['OrderId'], true)
             );
         }
 
         if (isset($_GET['BarCode'])) {
             $data['breadcrumbs'][] = array(
                 'text'      => $this->language->get('text_awbdetails'),
-                'href'      => $this->url->link('extension/shipping/cargus/cargus_istoric', 'user_token=' . $this->session->data['user_token'] . '&LocationId=' .$pickup . '&OrderId=' . $this->request->get['OrderId'] . '&BarCode=' . $this->request->get['BarCode'], 'SSL')
+                'href'      => $this->url->link('extension/shipping/cargus_istoric', 'user_token=' . $this->session->data['user_token'] . '&LocationId=' .$pickup . '&OrderId=' . $this->request->get['OrderId'] . '&BarCode=' . $this->request->get['BarCode'], 'SSL')
             );
         }
 
@@ -109,13 +109,13 @@ class ControllerExtensionShippingCargusIstoric extends Controller {
         $data['column_left'] = $this->load->controller('common/column_left');
         $data['footer'] = $this->load->controller('common/footer');
 
-        $this->response->setOutput($this->load->view('extension/shipping/cargus/cargus_istoric', $data));
+        $this->response->setOutput($this->load->view('extension/shipping/cargus_istoric', $data));
     }
 
     protected function install() {
         $this->load->model('user/user_group');
 
-        $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/shipping/cargus/cargus_istoric');
-        $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/shipping/cargus/cargus_istoric');
+        $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/shipping/cargus_istoric');
+        $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/shipping/cargus_istoric');
     }
 }

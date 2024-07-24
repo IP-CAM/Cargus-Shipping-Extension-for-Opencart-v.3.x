@@ -5,7 +5,7 @@ class ControllerExtensionShippingCargusEdit extends Controller {
     private $error = array();
 
     public function index(){
-        $this->load->language('extension/shipping/cargus/cargus_edit');
+        $this->load->language('extension/shipping/cargus_edit');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
@@ -30,7 +30,7 @@ class ControllerExtensionShippingCargusEdit extends Controller {
             $data['error_warning'] = '';
         }
 
-        $data['cancel'] = $this->url->link('extension/shipping/cargus/cargus_comanda', 'user_token=' . $this->session->data['user_token'], true);
+        $data['cancel'] = $this->url->link('extension/shipping/cargus_comanda', 'user_token=' . $this->session->data['user_token'], true);
 
         // instantiez clasa cargus
         $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass($this->registry);
@@ -70,7 +70,7 @@ class ControllerExtensionShippingCargusEdit extends Controller {
         // obtin lista de localitati pe baza abrevierii judetului
         $data['localitati'] = $this->model_shipping_cargusclass->CallMethod('Localities?countryId=1&countyId='.$judete[strtolower($data['awb']->row['county_name'])], array(), 'GET', $token);
 
-        $data['action'] = $this->url->link('extension/shipping/cargus/cargus_edit/save', 'user_token=' . $this->session->data['user_token'].'&awb='.$this->request->get['awb'], true);
+        $data['action'] = $this->url->link('extension/shipping/cargus_edit/save', 'user_token=' . $this->session->data['user_token'].'&awb='.$this->request->get['awb'], true);
 
         $data['breadcrumbs'] = array();
 
@@ -86,23 +86,23 @@ class ControllerExtensionShippingCargusEdit extends Controller {
 
         $data['breadcrumbs'][] = array(
             'text' => $this->language->get('text_currentorder'),
-            'href' => $this->url->link('extension/shipping/cargus/cargus_comanda', 'user_token=' . $this->session->data['user_token'], true)
+            'href' => $this->url->link('extension/shipping/cargus_comanda', 'user_token=' . $this->session->data['user_token'], true)
         );
 
         $data['breadcrumbs'][] = array(
             'text' => $this->language->get('heading_title'),
-            'href' => $this->url->link('extension/shipping/cargus/cargus_edit', 'user_token=' . $this->session->data['user_token'].'&awb='.$this->request->get['awb'], true)
+            'href' => $this->url->link('extension/shipping/cargus_edit', 'user_token=' . $this->session->data['user_token'].'&awb='.$this->request->get['awb'], true)
         );
 
         $data['header'] = $this->load->controller('common/header');
         $data['column_left'] = $this->load->controller('common/column_left');
         $data['footer'] = $this->load->controller('common/footer');
 
-        $this->response->setOutput($this->load->view('extension/shipping/cargus/cargus_edit', $data));
+        $this->response->setOutput($this->load->view('extension/shipping/cargus_edit', $data));
     }
 
     protected function validate() {
-		if (!$this->user->hasPermission('modify', 'extension/shipping/cargus/cargus_edit')) {
+		if (!$this->user->hasPermission('modify', 'extension/shipping/cargus_edit')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
@@ -110,7 +110,7 @@ class ControllerExtensionShippingCargusEdit extends Controller {
 	}
 
     public function save(){
-        $this->load->language('extension/shipping/cargus/cargus_edit');
+        $this->load->language('extension/shipping/cargus_edit');
 
         $this->db->query("UPDATE
                                 `" . DB_PREFIX . "awb_cargus`
@@ -145,13 +145,13 @@ class ControllerExtensionShippingCargusEdit extends Controller {
 
 		$this->session->data['success'] = $this->language->get('text_success');
 
-        $this->response->redirect($this->url->link('extension/shipping/cargus/cargus_comanda', 'user_token=' . $this->session->data['user_token'], true));
+        $this->response->redirect($this->url->link('extension/shipping/cargus_comanda', 'user_token=' . $this->session->data['user_token'], true));
 	}
 
     protected function install() {
         $this->load->model('user/user_group');
 
-        $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/shipping/cargus/cargus_edit');
-        $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/shipping/cargus/cargus_edit');
+        $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/shipping/cargus_edit');
+        $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/shipping/cargus_edit');
     }
 }

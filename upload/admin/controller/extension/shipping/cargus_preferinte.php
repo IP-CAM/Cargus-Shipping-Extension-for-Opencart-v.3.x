@@ -9,7 +9,7 @@ class ControllerExtensionShippingCargusPreferinte extends Controller {
         ini_set('display_errors', '0');
         ini_set('log_errors', '1');
 
-        $this->load->language('extension/shipping/cargus/cargus_preferinte');
+        $this->load->language('extension/shipping/cargus_preferinte');
 
         $this->document->setTitle($this->language->get('heading_title'));
 
@@ -91,7 +91,7 @@ class ControllerExtensionShippingCargusPreferinte extends Controller {
                 $data['shipping_cargus_preferinte_service_id_options'][$elm] = $this->language->get('entry_service_id_'.$elm);
             }
 
-            $data['cancel'] = $this->url->link('extension/shipping/cargus/cargus_preferinte', 'user_token=' . $this->session->data['user_token'], true);
+            $data['cancel'] = $this->url->link('extension/shipping/cargus_preferinte', 'user_token=' . $this->session->data['user_token'], true);
 
             if (isset($this->error['warning'])) {
                 $data['error_warning'] = $this->error['warning'];
@@ -99,7 +99,7 @@ class ControllerExtensionShippingCargusPreferinte extends Controller {
                 $data['error_warning'] = '';
             }
 
-            $data['action'] = $this->url->link('extension/shipping/cargus/preferinte', 'user_token=' . $this->session->data['user_token'], true);
+            $data['action'] = $this->url->link('extension/shipping/cargus_preferinte', 'user_token=' . $this->session->data['user_token'], true);
 
             if (isset($this->request->post['shipping_cargus_preferinte_price'])) {
                $data['shipping_cargus_preferinte_price'] = $this->request->post['shipping_cargus_preferinte_price'];
@@ -237,18 +237,18 @@ class ControllerExtensionShippingCargusPreferinte extends Controller {
 
         $data['breadcrumbs'][] = array(
             'text' => $this->language->get('heading_title'),
-            'href' => $this->url->link('extension/shipping/cargus/cargus_preferinte', 'user_token=' . $this->session->data['user_token'], true)
+            'href' => $this->url->link('extension/shipping/cargus_preferinte', 'user_token=' . $this->session->data['user_token'], true)
         );
 
         $data['header'] = $this->load->controller('common/header');
         $data['column_left'] = $this->load->controller('common/column_left');
         $data['footer'] = $this->load->controller('common/footer');
 
-        $this->response->setOutput($this->load->view('extension/shipping/cargus/cargus_preferinte', $data));
+        $this->response->setOutput($this->load->view('extension/shipping/cargus_preferinte', $data));
     }
 
     protected function validate() {
-        if (!$this->user->hasPermission('modify', 'extension/shipping/cargus/cargus_preferinte')) {
+        if (!$this->user->hasPermission('modify', 'extension/shipping/cargus_preferinte')) {
             $this->error['warning'] = $this->language->get('error_permission');
         }
 
