@@ -110,7 +110,7 @@ class ControllerExtensionShippingCargusEdit extends Controller {
 	}
 
     public function save(){
-        $this->load->language('cargus/edit');
+        $this->load->language('extension/shipping/cargus/cargus_edit');
 
         $this->db->query("UPDATE
                                 `" . DB_PREFIX . "awb_cargus`

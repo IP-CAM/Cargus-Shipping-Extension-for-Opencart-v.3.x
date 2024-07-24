@@ -18,7 +18,7 @@ class ControllerExtensionShippingCargusShipAndGo extends Controller {
         }
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-            $install = "CREATE TABLE IF NOT EXISTS `awb_cargus` (
+            $install = "CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "awb_cargus` (
                             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                             `order_id` int(11) NOT NULL,
                             `pickup_id` int(11) NOT NULL,
@@ -326,7 +326,7 @@ class ControllerExtensionShippingCargusShipAndGo extends Controller {
             }
 
             // adaug awb-ul in baza de date
-            $sql = "INSERT INTO awb_cargus SET
+            $sql = "INSERT INTO `" . DB_PREFIX . "awb_cargus` SET
                                 order_id = '".addslashes($this->request->get['id'])."',
                                 pickup_id = '".addslashes($this->config->get('cargus_preferinte_pickup'))."',
                                 name = '".addslashes(htmlentities($order['shipping_company'] ? $order['shipping_company'] : implode(' ', array($order['shipping_firstname'], $order['shipping_lastname']))))."',

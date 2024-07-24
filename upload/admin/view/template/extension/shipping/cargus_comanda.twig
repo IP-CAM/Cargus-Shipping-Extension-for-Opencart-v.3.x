@@ -111,9 +111,9 @@
                             <form id="form_filter" method="post" action="{{ form_filter_action }}">
                                 <div class="form-group" style="margin-left: 0;">
                                     <label class="control-label" for="input-name" style="margin: 0 0 5px 0; padding:0;">{{ text_pickup }}</label>
-                                    <select name="LocationId" id="cargus_preferinte_pickup" class="form-control">
+                                    <select name="LocationId" id="shipping_cargus_preferinte_pickup" class="form-control">
                                         {% for pick in pickups %}
-                                            {% if pick.LocationId == cargus_preferinte_pickup %}
+                                            {% if pick.LocationId == shipping_cargus_preferinte_pickup %}
                                                 <option value="{{ pick.LocationId }}" selected="selected">{{ pick.Name ~' | ' ~ pick.LocalityName }}</option>
                                             {% else %}
                                                 <option value="{{ pick.LocationId }}">{{ pick.Name ~ ' | ' ~ pick.LocalityName }}</option>

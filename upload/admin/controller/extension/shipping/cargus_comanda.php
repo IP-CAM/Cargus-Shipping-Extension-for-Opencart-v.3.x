@@ -101,7 +101,7 @@ class ControllerExtensionShippingCargusComanda extends Controller {
             }
 
             // get comenzi in asteptare
-            $ord = $this->db->query("SELECT * FROM awb_cargus WHERE barcode = '0' ORDER BY id ASC");
+            $ord = $this->db->query("SELECT * FROM `" . DB_PREFIX . "awb_cargus` WHERE barcode = '0' ORDER BY id ASC");
 
             $data['listaAsteptare'] = $ord;
 
@@ -116,7 +116,7 @@ class ControllerExtensionShippingCargusComanda extends Controller {
                 if (isset($this->request->post['action']) && $this->request->post['action'] == 'pending_delete') {
                     if (isset($this->request->post['selected'])) {
                         $this->db->query(
-                            "DELETE FROM awb_cargus WHERE id IN(" . implode(',', $this->request->post['selected']) . ")"
+                            "DELETE FROM `" . DB_PREFIX . "awb_cargus` WHERE id IN(" . implode(',', $this->request->post['selected']) . ")"
                         );
                         $this->session->data['success'] = $this->language->get('text_success_delpending');
                     } else {
@@ -134,7 +134,7 @@ class ControllerExtensionShippingCargusComanda extends Controller {
                                 'DELETE',
                                 $token
                             );
-                            $this->db->query("UPDATE `awb_cargus` SET `barcode` = '0',`ReturnAwb`=NULL,`ReturnCode`=NULL WHERE barcode = '" . $barcode . "'");
+                            $this->db->query("UPDATE `" . DB_PREFIX . "awb_cargus` SET `barcode` = '0',`ReturnAwb`=NULL,`ReturnCode`=NULL WHERE barcode = '" . $barcode . "'");
                         }
                         $this->session->data['success'] = $this->language->get('text_success_delvalidated');
                     } else {
@@ -183,7 +183,7 @@ class ControllerExtensionShippingCargusComanda extends Controller {
         $data['column_left'] = $this->load->controller('common/column_left');
         $data['footer'] = $this->load->controller('common/footer');
 
-        $this->response->setOutput($this->load->view('extension/cargus/comanda', $data));
+        $this->response->setOutput($this->load->view('extension/shippin/cargus/cargus_comanda', $data));
     }
 
     protected function validate() {
@@ -198,12 +198,12 @@ class ControllerExtensionShippingCargusComanda extends Controller {
     {
         $this->load->model('setting/setting');
 
-        $sets = $this->model_setting_setting->getSetting('cargus_preferinte');
-        $sets['cargus_preferinte_pickup'] = $this->request->post['LocationId'];
+        $sets = $this->model_setting_setting->getSetting('shipping_cargus_preferinte');
+        $sets['shipping_cargus_preferinte_pickup'] = $this->request->post['LocationId'];
 
-        $this->model_setting_setting->editSetting('cargus_preferinte', $sets);
+        $this->model_setting_setting->editSetting('shipping_cargus_preferinte', $sets);
         $this->response->redirect(
-            $this->url->link('extension/cargus/comanda', 'user_token=' . $this->session->data['user_token'], 'SSL')
+            $this->url->link('extension/shipping/cargus/cargus_comanda', 'user_token=' . $this->session->data['user_token'], true)
         );
     }
 
@@ -214,20 +214,20 @@ class ControllerExtensionShippingCargusComanda extends Controller {
 
         // setez url si key
         $this->model_shipping_cargusclass->SetKeys(
-            $this->config->get('cargus_api_url'),
-            $this->config->get('cargus_api_key')
+            $this->config->get('shipping_cargus_api_url'),
+            $this->config->get('shipping_cargus_api_key')
         );
 
         // UC login user
         $fields = array(
-            'UserName' => $this->config->get('cargus_username'),
-            'Password' => $this->config->get('cargus_password')
+            'UserName' => $this->config->get('shipping_cargus_username'),
+            'Password' => $this->config->get('shipping_cargus_password')
         );
         $token = $this->model_shipping_cargusclass->CallMethod('LoginUser', $fields, 'POST');
 
-        $printConsumerReturn = is_null($this->config->get('cargus_preferinte_print_awb_retur')) ?
+        $printConsumerReturn = is_null($this->config->get('shipping_cargus_preferinte_print_awb_retur')) ?
             0:
-            $this->config->get('cargus_preferinte_print_awb_retur');
+            $this->config->get('shipping_cargus_preferinte_print_awb_retur');
 
         // UC print
         $print = $this->model_shipping_cargusclass->CallMethod(
@@ -243,23 +243,11 @@ class ControllerExtensionShippingCargusComanda extends Controller {
         die();
     }
 
-    public function validate_order()
-    {
-        $this->language->load('cargus/comanda');
-        $data['button_sendorder'] = $this->language->get('button_sendorder');
-        $data['choose_pickup_date'] = $this->language->get('choose_pickup_date');
-        $data['heading_title'] = $this->language->get('heading_title');
-
-        $data['url_send'] = $this->url->link(
-            'extension/cargus/comanda/send_order',
-            'user_token=' . $this->session->data['user_token'],
-            'SSL'
-        );
-        $data['url_validate'] = html_entity_decode($this->url->link(
-            'extension/cargus/comanda/validate_order',
-            'user_token=' . $this->session->data['user_token'],
-            'SSL'
-        ));
+    public function validate_order() {
+        $this->load->language('extension/shipping/cargus/cargus_comanda');
+		
+        $data['url_send'] = $this->url->link('extension/shipping/cargus/cargus_comanda/send_order', 'user_token=' . $this->session->data['user_token'], true);
+        $data['url_validate'] = html_entity_decode($this->url->link('extension/shipping/cargus/cargus_comanda/validate_order', 'user_token=' . $this->session->data['user_token'], true));
 
         $date = new DateTime();
         $date->setTimezone(new DateTimeZone('Europe/Bucharest'));
@@ -403,25 +391,24 @@ class ControllerExtensionShippingCargusComanda extends Controller {
         $data['column_left'] = $this->load->controller('common/column_left');
         $data['footer'] = $this->load->controller('common/footer');
 
-        $this->response->setOutput($this->load->view('extension/cargus/finalizare', $data));
+        $this->response->setOutput($this->load->view('extension/shipping/cargus/cargus_finalizare', $data));
     }
 
-    public function send_order()
-    {
+    public function send_order() {
         if ($this->request->server['REQUEST_METHOD'] == 'POST') {
             // instantiez clasa cargus
             $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass($this->registry);
 
             // setez url si key
             $this->model_shipping_cargusclass->SetKeys(
-                $this->config->get('cargus_api_url'),
-                $this->config->get('cargus_api_key')
+                $this->config->get('shipping_cargus_api_url'),
+                $this->config->get('shipping_cargus_api_key')
             );
 
             // UC login user
             $fields = array(
-                'UserName' => $this->config->get('cargus_username'),
-                'Password' => $this->config->get('cargus_password')
+                'UserName' => $this->config->get('shipping_cargus_username'),
+                'Password' => $this->config->get('shipping_cargus_password')
             );
             $token = $this->model_shipping_cargusclass->CallMethod('LoginUser', $fields, 'POST');
 
@@ -431,7 +418,7 @@ class ControllerExtensionShippingCargusComanda extends Controller {
 
             // UC send order
             $order_id = $this->model_shipping_cargusclass->CallMethod(
-                'Orders?locationId=' . $this->config->get('cargus_preferinte_pickup') . '&PickupStartDate=' . date(
+                'Orders?locationId=' . $this->config->get('shipping_cargus_preferinte_pickup') . '&PickupStartDate=' . date(
                     'Y-m-d%20H:i:s',
                     strtotime($from)
                 ) . '&PickupEndDate=' . date('Y-m-d%20H:i:s', strtotime($to)) . '&action=1',
@@ -440,11 +427,7 @@ class ControllerExtensionShippingCargusComanda extends Controller {
                 $token
             );
 
-            $url_borderou = $this->url->link(
-                'extension/cargus/comanda/print_summary',
-                'user_token=' . $this->session->data['user_token'],
-                'SSL'
-            );
+            $url_borderou = $this->url->link('extension/shipping/cargus/cargus_comanda/print_summary', 'user_token=' . $this->session->data['user_token'], true);
             echo '<script>window.opener.location.reload(); window.resizeTo(916, 669); window.location = "' . html_entity_decode(
                     $url_borderou
                 ) . '&order_id=' . $order_id . '";</script>';
@@ -459,14 +442,14 @@ class ControllerExtensionShippingCargusComanda extends Controller {
 
             // setez url si key
             $this->model_shipping_cargusclass->SetKeys(
-                $this->config->get('cargus_api_url'),
-                $this->config->get('cargus_api_key')
+                $this->config->get('shipping_cargus_api_url'),
+                $this->config->get('shipping_cargus_api_key')
             );
 
             // UC login user
             $fields = array(
-                'UserName' => $this->config->get('cargus_username'),
-                'Password' => $this->config->get('cargus_password')
+                'UserName' => $this->config->get('shipping_cargus_username'),
+                'Password' => $this->config->get('shipping_cargus_password')
             );
             $token = $this->model_shipping_cargusclass->CallMethod('LoginUser', $fields, 'POST');
 
@@ -484,12 +467,11 @@ class ControllerExtensionShippingCargusComanda extends Controller {
         }
     }
 
-    protected function install()
-    {
+    protected function install() {
         $this->load->model('user/user_group');
 
-        $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/cargus/comanda');
-        $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/cargus/comanda');
+        $this->model_user_user_group->addPermission($this->user->getId(), 'access', 'extension/shipping/cargus/cargus_comanda');
+        $this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'extension/shipping/cargus/cargus_comanda');
     }
 
     public function validateAwb($order_ids, $token = null) {
@@ -499,28 +481,28 @@ class ControllerExtensionShippingCargusComanda extends Controller {
         ini_set('display_errors', '0');
         ini_set('log_errors', '1');
 
-        $this->language->load('cargus/comanda');
+        $this->load->language('extension/shipping/cargus/cargus_comanda');
 
         $this->model_shipping_cargusclass = new ModelExtensionShippingCargusClass($this->registry);
 
         // setez url si key
         $this->model_shipping_cargusclass->SetKeys(
-            $this->config->get('cargus_api_url'),
-            $this->config->get('cargus_api_key')
+            $this->config->get('shipping_cargus_api_url'),
+            $this->config->get('shipping_cargus_api_key')
         );
 
         if (is_null($token)) {
             // UC login user
             $fields = array(
-                'UserName' => $this->config->get('cargus_username'),
-                'Password' => $this->config->get('cargus_password')
+                'UserName' => $this->config->get('shipping_cargus_username'),
+                'Password' => $this->config->get('shipping_cargus_password')
             );
             $token = $this->model_shipping_cargusclass->CallMethod('LoginUser', $fields, 'POST');
         }
 
         foreach ($order_ids as $id) {
             $row = $this->db->query(
-                "SELECT * FROM awb_cargus WHERE barcode = '0' AND id = '" . addslashes($id) . "'"
+                "SELECT * FROM `" . DB_PREFIX . "awb_cargus WHERE` barcode = '0' AND id = '" . addslashes($id) . "'"
             );
 
             if (!isset($row->row['postcode']) || !$row->row['postcode']) {
@@ -543,7 +525,7 @@ class ControllerExtensionShippingCargusComanda extends Controller {
                 }
 
                 if ($row->num_rows > 0) {
-                    $cargus_preferinte_package_content_text = $this->config->get('cargus_preferinte_package_content_text');
+                    $cargus_preferinte_package_content_text = $this->config->get('shipping_cargus_preferinte_package_content_text');
 
                     //privacy is needed so override packagecontent sent
                     if (!empty($cargus_preferinte_package_content_text)) {
@@ -576,7 +558,7 @@ class ControllerExtensionShippingCargusComanda extends Controller {
                         'CashRepayment' => $row->row['cash_repayment'],
                         'BankRepayment' => $row->row['bank_repayment'],
                         'OtherRepayment' => $row->row['other_repayment'],
-                        'PriceTableId' => $this->config->get('cargus_preferinte_price'),
+                        'PriceTableId' => $this->config->get('shipping_cargus_preferinte_price'),
                         'OpenPackage' => $row->row['openpackage'] == 1 ? true : false,
                         'ShipmentPayer' => $row->row['payer'],
                         'MorningDelivery' => $row->row['morning_delivery'] == 1 ? true : false,
@@ -586,11 +568,11 @@ class ControllerExtensionShippingCargusComanda extends Controller {
                         'CustomString' => $row->row['order_id']
                     );
 
-                    $fields['ConsumerReturnType'] = is_null($this->config->get('cargus_preferinte_awb_retur')) ?
+                    $fields['ConsumerReturnType'] = is_null($this->config->get('shipping_cargus_preferinte_awb_retur')) ?
                         0 :
-                        $this->config->get('cargus_preferinte_awb_retur');
+                        $this->config->get('shipping_cargus_preferinte_awb_retur');
 
-                    $fields['ReturnCodeExpirationDays'] = $this->config->get('cargus_preferinte_awb_retur_validitate');
+                    $fields['ReturnCodeExpirationDays'] = $this->config->get('shipping_cargus_preferinte_awb_retur_validitate');
 
                     for ($i = 1; $i <= $row->row['parcels']; $i++) {
                         $fields['ParcelCodes'][] = array(
@@ -611,15 +593,15 @@ class ControllerExtensionShippingCargusComanda extends Controller {
                     }
 
                     $fields['ServiceId'] = 0;
-                    if($this->config->get('cargus_preferinte_service_id')){
-                        $fields['ServiceId'] = $this->config->get('cargus_preferinte_service_id');
+                    if($this->config->get('shipping_cargus_preferinte_service_id')){
+                        $fields['ServiceId'] = $this->config->get('shipping_cargus_preferinte_service_id');
                     }
 
-                    if ($row->row['shipping_code'] == 'cargus_ship_and_go.ship_and_go') {
+                    if ($row->row['shipping_code'] == 'shipping_cargus_ship_and_go.ship_and_go') {
                         if (!empty($row->row['pudo_location_id'])) {
                             $fields['DeliveryPudoPoint'] = $row->row['pudo_location_id'];
                         }
-                        $fields['ServiceId'] = 38;// $this->config->get('cargus_shipping_preferinte_service_id'); //38
+                        $fields['ServiceId'] = 38;// $this->config->get('shipping_cargus_shipping_preferinte_service_id'); //38
                         $fields['CashRepayment']     = 0;
                         $fields['ShipmentPayer']     = 1;
                         $fields['SaturdayDelivery']  = false;
@@ -637,7 +619,7 @@ class ControllerExtensionShippingCargusComanda extends Controller {
 
                         unset( $fields['OpenPackage'] );
                     }
-                    /*elseif (in_array($this->config->get('cargus_preferinte_service_id'), array(34))) {
+                    /*elseif (in_array($this->config->get('shipping_cargus_preferinte_service_id'), array(34))) {
                         if ($row->row['weight'] <= 31) {
                             $fields['ServiceId'] = 34;
                         } elseif ($row->row['weight'] <= 50) {
@@ -676,7 +658,7 @@ class ControllerExtensionShippingCargusComanda extends Controller {
                             $returnAwb = $cod_bara[0]['ReturnAwb'];
 
                             if ($this->db->query(
-                                "UPDATE awb_cargus SET barcode = '" . $barcode . "', ReturnAwb='" . $returnAwb .
+                                "UPDATE `" . DB_PREFIX . "awb_cargus` SET barcode = '" . $barcode . "', ReturnAwb='" . $returnAwb .
                                 "', ReturnCode='" . $returnCode . "' WHERE id = '" . addslashes(
                                     $id
                                 ) . "'"

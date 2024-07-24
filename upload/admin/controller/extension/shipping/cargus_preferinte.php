@@ -188,7 +188,7 @@ class ControllerExtensionShippingCargusPreferinte extends Controller {
             $theme = $this->config->get('config_theme');
 
             if ($theme != 'journal3') {
-                $data['cargus_preferinte_postal_codes'] = $this->config->get( 'shipping_cargus_preferinte_postal_codes' );
+                $data['shipping_cargus_preferinte_postal_codes'] = $this->config->get( 'shipping_cargus_preferinte_postal_codes' );
 
                 if ( $this->request->server['REQUEST_METHOD'] == 'POST' ) {
                     $data['shipping_cargus_preferinte_postal_codes'] = 0;

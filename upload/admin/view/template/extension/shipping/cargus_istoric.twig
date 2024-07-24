@@ -48,12 +48,12 @@
                                         <div class="form-group" style="margin-left: 0;">
                                             <label class="control-label" for="input-name">{{ text_pickup }}</label>
 
-                                            <input type="hidden" name="route" value="extension/cargus/istoric"></input>
+                                            <input type="hidden" name="route" value="extension/shipping/cargus/cargus_istoric"></input>
                                             <input type="hidden" name="user_token" value="{{ user_token }}"></input>
-                                            <select name="LocationId" id="cargus_preferinte_pickup"
+                                            <select name="LocationId" id="shipping_cargus_preferinte_pickup"
                                                     class="form-control">
                                                 {% for pick in pickups %}
-                                                    {% if pick.LocationId == cargus_preferinte_pickup %}
+                                                    {% if pick.LocationId == shipping_cargus_preferinte_pickup %}
                                                         <option value="{{ pick.LocationId }}"
                                                                 selected="selected">{{ pick.Name ~ ' | ' ~ pick.LocalityName }}</option>
                                                     {% else %}
@@ -106,7 +106,7 @@
                                             <td class="text-left">{{ item.TotalWeight }} kg</td>
                                             <td class="text-left">{{ item.OrdStatus }}</td>
                                             <td class="text-right">
-                                                <a href="{{ view_url }}&LocationId={{ cargus_preferinte_pickup }}&OrderId={{ item.OrderId }}"
+                                                <a href="{{ view_url }}&LocationId={{ shipping_cargus_preferinte_pickup }}&OrderId={{ item.OrderId }}"
                                                    data-toggle="tooltip" title="" class="btn btn-info"
                                                    data-original-title="{{ text_view }}">
                                                     <i class="fa fa-eye"></i>
@@ -335,7 +335,7 @@
                                             <td class="text-left">{{ item.ValidationDate ? item.ValidationDate|date('d.m.Y') : '-' }}</td>
                                             <td class="text-left">{{ item.Status }}</td>
                                             <td class="text-right">
-                                                <a href="{{ view_url }}&LocationId={{ cargus_preferinte_pickup }}&OrderId={{ OrderId }}&BarCode={{ item.BarCode }}"
+                                                <a href="{{ view_url }}&LocationId={{ shipping_cargus_preferinte_pickup }}&OrderId={{ OrderId }}&BarCode={{ item.BarCode }}"
                                                    data-toggle="tooltip" title="" class="btn btn-info"
                                                    data-original-title="{{ text_viewawb }}">
                                                     <i class="fa fa-eye"></i>
