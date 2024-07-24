@@ -1,11 +1,11 @@
 <?php
 require_once(DIR_CATALOG . 'model/extension/shipping/cargusclass.php');
 
-class ControllerExtensionShippingCargusCargusComanda extends Controller {
+class ControllerExtensionShippingCargusComanda extends Controller {
     private $error = array();
 
     public function index() {
-        $this->load->language('extension/cargus/cargus_comanda');
+        $this->load->language('extension/shipping/cargus/cargus_comanda');
 
         $this->document->setTitle($this->language->get('heading_title'));
 

@@ -62,10 +62,10 @@ class ControllerExtensionShippingCargus extends Controller {
 
             $this->db->query($addExtension);
 
-            $this->model_setting_setting->editSetting('cargus', $this->request->post);
+            $this->model_setting_setting->editSetting('shipping_cargus', $this->request->post);
 
             $this->model_setting_setting->editSetting(
-                'shipping_cargus_status', [
+                'shipping_cargus', [
                     'shipping_cargus_status' => $this->request->post['shipping_cargus_status']
                 ]
             );
@@ -206,7 +206,7 @@ class ControllerExtensionShippingCargus extends Controller {
             // Already generated.
             $this->session->data['success'] = $this->language->get('text_cargus_already_awb');
 
-            $this->response->redirect($this->url->link('extension/cargus/comanda', $this->addToken(), true));
+            $this->response->redirect($this->url->link('extension/shipping/cargus/cargus_comanda', $this->addToken(), true));
         }
 
         $result = $this->insertNewAwb($this->request->get['order_id']);

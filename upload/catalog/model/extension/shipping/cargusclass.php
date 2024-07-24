@@ -144,8 +144,8 @@ class ModelExtensionShippingCargusClass extends Model
         //set vars if needed
         if (is_null($this->cargusapikey) || is_null($this->cargusapiurl)) {
             $this->SetKeys(
-                $this->config->get('cargus_api_url'),
-                $this->config->get('cargus_api_key')
+                $this->config->get('shipping_cargus_api_url'),
+                $this->config->get('shipping_cargus_api_key')
             );
         }
 
@@ -155,8 +155,8 @@ class ModelExtensionShippingCargusClass extends Model
 
         // login user
         $fields = array(
-            'UserName' => $this->config->get('cargus_username'),
-            'Password' => $this->config->get('cargus_password')
+            'UserName' => $this->config->get('shipping_cargus_username'),
+            'Password' => $this->config->get('shipping_cargus_password')
         );
 
         try {

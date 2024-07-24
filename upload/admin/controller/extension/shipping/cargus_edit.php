@@ -1,7 +1,7 @@
 <?php
 require_once(DIR_CATALOG . 'model/extension/shipping/cargusclass.php');
 
-class ControllerExtensionShippingCargusCargusEdit extends Controller {
+class ControllerExtensionShippingCargusEdit extends Controller {
     private $error = array();
 
     public function index(){
@@ -98,7 +98,7 @@ class ControllerExtensionShippingCargusCargusEdit extends Controller {
         $data['column_left'] = $this->load->controller('common/column_left');
         $data['footer'] = $this->load->controller('common/footer');
 
-        $this->response->setOutput($this->load->view('extension/cargus/edit', $data));
+        $this->response->setOutput($this->load->view('extension/shipping/cargus/cargus_edit', $data));
     }
 
     protected function validate() {
