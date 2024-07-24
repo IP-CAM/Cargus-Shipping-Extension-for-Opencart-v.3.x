@@ -34,7 +34,7 @@ class ControllerExtensionModuleCargus extends Controller
         $cargus[] = array(
             'name'     => $this->language->get('text_cargus_preferinte'),
             'href'     => $this->url->link(
-                'extension/shipping_cargus/cargus_preferinte',
+                'extension/shipping/cargus/cargus_preferinte',
                 $userToken,
                 true
             ),
@@ -44,7 +44,7 @@ class ControllerExtensionModuleCargus extends Controller
         $cargus[] = array(
             'name'     => $this->language->get('text_cargus_setari'),
             'href'     => $this->url->link(
-                'extension/extension/shipping/cargus',
+                'extension/shipping/cargus',
                 $userToken,
                 true
             ),

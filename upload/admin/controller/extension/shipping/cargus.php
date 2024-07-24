@@ -7,7 +7,7 @@ class ControllerExtensionShippingCargus extends Controller {
 
     public function index() {
 
-        $this->load->language('shipping/cargus');
+        $this->load->language('extension/shipping/cargus');
 
         $this->document->setTitle($this->language->get('heading_title'));
 
@@ -221,11 +221,11 @@ class ControllerExtensionShippingCargus extends Controller {
         $awb = $this->model_extension_shipping_cargus->getAwbForOrderId($orderInfo['order_id']);
 
         //validate awb
-        $result = $this->load->controller('extension/cargus/comanda/validateAwb', array($awb['id']));
+        $result = $this->load->controller('extension/shipping/cargus/cargus_comanda/validateAwb', array($awb['id']));
 
         if (!$result) {
             //error validating awb
-            $this->response->redirect($this->url->link('extension/cargus/comanda', $this->addToken(), true));
+            $this->response->redirect($this->url->link('extension/shipping/cargus/cargus_comanda', $this->addToken(), true));
         }
 
         //all ok
@@ -342,21 +342,21 @@ class ControllerExtensionShippingCargus extends Controller {
             }
 
             // determin livrarea sambata
-            if ($this->config->get('cargus_preferinte_saturday') == 1) {
+            if ($this->config->get('shipping_cargus_preferinte_saturday') == 1) {
                 $saturday = 1;
             } else {
                 $saturday = 0;
             }
 
             // determin livrarea dimineata
-            if ($this->config->get('cargus_preferinte_morning') == 1) {
+            if ($this->config->get('shipping_cargus_preferinte_morning') == 1) {
                 $morning = 1;
             } else {
                 $morning = 0;
             }
 
             // determin deschidere colet
-            if ($this->config->get('cargus_preferinte_openpackage') == 1) {
+            if ($this->config->get('shipping_cargus_preferinte_openpackage') == 1) {
                 $openpackage = 1;
             } else {
                 $openpackage = 0;
@@ -364,12 +364,12 @@ class ControllerExtensionShippingCargus extends Controller {
 
             // afla daca aceasta comanda a fost platita si daca nu determin rambursul si platitorul expeditiei
             if ($order['payment_code'] == 'cod') {
-                if ($this->config->get('cargus_preferinte_payer') == 'recipient') {
+                if ($this->config->get('shipping_cargus_preferinte_payer') == 'recipient') {
                     $payer = 2;
                 } else {
                     $payer = 1;
                 }
-                if ($this->config->get('cargus_preferinte_repayment') == 'bank') {
+                if ($this->config->get('shipping_cargus_preferinte_repayment') == 'bank') {
                     $cash_repayment = 0;
                     if ($payer == 1) {
                         $bank_repayment = round($cart_total, 2);
@@ -404,7 +404,7 @@ class ControllerExtensionShippingCargus extends Controller {
             }
 
             // adaug awb-ul in baza de date
-            $sql = "INSERT INTO awb_cargus SET
+            $sql = "INSERT INTO `" . DB_PREFIX . "awb_cargus` SET
                                 order_id = '".addslashes($order_id)."',
                                 pickup_id = '".addslashes($this->config->get('shipping_cargus_preferinte_pickup'))."',
                                 name = '".addslashes(htmlentities($order['shipping_company'] ? $order['shipping_company'] : implode(' ', array($order['shipping_firstname'], $order['shipping_lastname']))))."',
@@ -460,23 +460,23 @@ class ControllerExtensionShippingCargus extends Controller {
         $user_group_id = $this->user->getGroupId();
 
 
-        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/cargus');
-        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/cargus');
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/shipping/cargus');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/shipping/cargus');
 
-        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/cargus/preferinte');
-        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/cargus/preferinte');
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/shipping/cargus/cargus_preferinte');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/shipping/cargus/cargus_preferinte');
 
-        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/cargus/ship_and_go');
-        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/cargus/ship_and_go');
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/shipping/cargus/cargus_ship_and_go2');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/shipping/cargus/cargus_ship_and_go2');
 
         $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/shipping/cargus');
         $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/shipping/cargus');
 
-        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/cargus/comanda');
-        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/cargus/comanda');
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/shipping/cargus/cargus_comanda');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/shipping/cargus/cargus_comanda');
 
-        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/cargus/edit');
-        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/cargus/edit');
+        $this->model_user_user_group->addPermission($user_group_id, 'access', 'extension/shipping/cargus/edit');
+        $this->model_user_user_group->addPermission($user_group_id, 'modify', 'extension/shipping/cargus/edit');
 
 
         $theme = $this->config->get('config_theme');
@@ -621,7 +621,9 @@ class ControllerExtensionShippingCargus extends Controller {
 
     public function uninstall() {
         $this->load->model('setting/event');
+
         $this->model_setting_event->deleteEventByCode($this->codename);
+
         $this->log->write('Shipping cargus uninstall');
     }
 
@@ -632,13 +634,12 @@ class ControllerExtensionShippingCargus extends Controller {
      *
      * @return array|null
      */
-    public function info($orderInfo)
-    {
+    public function info($orderInfo) {
         if (!$orderInfo) {
             return null;
         }
 
-        $this->language->load('shipping/cargus');
+        $this->load->language('extension/shipping/cargus');
         $this->load->model('extension/shipping/cargus');
 
         $awb = $this->model_extension_shipping_cargus->getAwbForOrderId($orderInfo['order_id']);
@@ -661,12 +662,12 @@ class ControllerExtensionShippingCargus extends Controller {
                 true
             ),
             'buttonShowAwbPdf' => $this->url->link(
-                'extension/cargus/comanda/print_awbs',
+                'extension/cargus/cargus_comanda/print_awbs',
                 $this->addToken(array('bar_codes' => $data['awb_number'], 'format' => 0)),
                 true
             ),
 
-            'buttonShowAwbHistory' => $this->url->link('extension/cargus/comanda', $this->addToken(), true),
+            'buttonShowAwbHistory' => $this->url->link('extension/shipping/cargus/cargus_comanda', $this->addToken(), true),
 //            'buttonDeleteAwbLink' => $this->url->link('extension/shipping/sameday/deleteAwb', $this->addToken(array('order_id' => $orderInfo['order_id'])), true)
         );
 
@@ -705,13 +706,12 @@ class ControllerExtensionShippingCargus extends Controller {
         return $parts;
     }
 
-    private function alterTable()
-    {
+    private function alterTable() {
         try {
-            $sql = "ALTER TABLE awb_cargus ADD COLUMN ReturnCode VARCHAR(50) AFTER shipping_code";
+            $sql = "ALTER TABLE `" . DB_PREFIX . "awb_cargus` ADD COLUMN ReturnCode VARCHAR(50) AFTER shipping_code";
             $this->db->query($sql);
 
-            $sql = "ALTER TABLE awb_cargus ADD COLUMN ReturnAwb VARCHAR(50) AFTER shipping_code";
+            $sql = "ALTER TABLE `" . DB_PREFIX . "awb_cargus` ADD COLUMN ReturnAwb VARCHAR(50) AFTER shipping_code";
             $this->db->query($sql);
         } catch (Exception $e) {
             // whe need to avoid DB error
