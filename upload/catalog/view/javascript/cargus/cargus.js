@@ -63,10 +63,47 @@ $(function () {
     }
 
     function do_replace() {
+        
         if (window._QuickCheckoutData !== undefined && window['_QuickCheckoutData'].order_data.shipping_country_id == 175) {
             $('#input-payment-city').show();
             $('#input-shipping-city').show();
+            
         }
+
+        // $('#input-shipping-city').on('click', function() {
+        //     $(this).val('');
+        //     $(this).removeAttr('km'); // Remove the 'km' attribute
+        //   });
+
+        // $('#input-payment-city').on('click', function() {
+        //     $(this).val('');
+        //     $(this).removeAttr('km'); // Remove the 'km' attribute
+        //   });
+
+        // $('#input-payment-city').on('blur', function() {
+        //     const inputVal = $(this).val().toLowerCase();
+        //     const dropdownOptions = $(this).autocomplete('widget').find('li.ui-menu-item');
+        //     const kmAttr = $(this).attr('km');
+        //     if(!kmAttr) {
+        //         $(this).val('');
+        //     }
+        //   });
+
+        //   $('#input-shipping-city').on('blur', function() {
+        //     const inputVal = $(this).val().toLowerCase();
+        //     const dropdownOptions = $(this).autocomplete('widget').find('li.ui-menu-item');
+        //     const kmAttr = $(this).attr('km');
+        //     if(!kmAttr) {
+        //         $(this).val('');
+        //     }
+        //   });
+
+        //   $('#input-payment-zone').on('change', function() {
+        //     $('#input-payment-city').val('');
+        //     $('#input-payment-city').removeAttr('km');
+        //   });
+
+
         var element = $('[name="city"]:in-viewport:visible');
 
         var attr_name = element.attr('name');

@@ -162,10 +162,19 @@ QRCode.toDataURL(\''.$showQr.'\', opts, function (err, url) {
     public function commonHeaderAfter($route, &$args, &$output)
     {
         $content = '<script type="text/javascript" src="catalog/view/javascript/cargus/cargus.js"></script>
-            <link href="catalog/view/theme/default/stylesheet/ship_and_go.css" rel="stylesheet">
-            <script type="text/javascript" src="catalog/view/javascript/cargus/ship_and_go.js"></script>
-            ';
-
+        <link href="catalog/view/theme/default/stylesheet/ship_and_go.css" rel="stylesheet">
+        <link href="catalog/view/theme/default/stylesheet/leaflet.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap">
+        <script type="text/javascript" src="catalog/view/javascript/cargus/ship_and_go.js"></script>
+        <script src="catalog/view/javascript/cargus/src/libraries/fuse.min.js"></script>
+        <script src="catalog/view/javascript/cargus/src/libraries/bootstrap.bundle.min.js"></script>
+        <script src="catalog/view/javascript/cargus/src/libraries/hyperlist.min.js"></script>
+        <script src="catalog/view/javascript/cargus/src/libraries/leaflet.min.js"></script>
+        <script src="catalog/view/javascript/cargus/src/libraries/leaflet-canvas-markers.min.js"></script>
+        <script src="catalog/view/javascript/cargus/src/libraries/lodash.min.js"></script>
+        <script src="catalog/view/javascript/cargus/src/libraries/turf.min.js"></script>
+        <script src="catalog/view/javascript/cargus/cargusWidget.min.js" data-widget="cargus-widget" use-mockup-data="false"></script>';
+        
         $search = '</head>';
 
         $replace = $content . $search;

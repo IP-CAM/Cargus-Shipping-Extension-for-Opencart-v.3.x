@@ -5,3 +5,4 @@ $_['text_description_2'] = 'Ridicare de la cel mai apropiat depozit Cargus';
 $_['text_discount_urgent'] = 'Promotie valoare comanda';
 $_['cargus_checkout_street'] = 'Strada';
 $_['cargus_checkout_street_number'] = 'Numar strada';
+$_['cargus_error_shipping_unavailable'] = 'Cargus nu este disponibil pentru locația dvs.';

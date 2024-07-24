@@ -98,7 +98,7 @@ class ModelExtensionShippingCargus extends Model {
                 } else {
                     $valoare_declarata = 0;
                 }
-
+                
                 // stabileste suma ramburs
                 if ($cod == 0) {
                     $ramburs_cash = 0;
@@ -153,9 +153,9 @@ class ModelExtensionShippingCargus extends Model {
                 // UC shipping calculation
                 $fields = array(
                     'FromLocalityId' => $location['LocalityId'],
-                    'ToLocalityId' => 0,
-                    'FromCountyName' => '',
-                    'FromLocalityName' => '',
+                    // 'ToLocalityId' => 0,
+                    // 'FromCountyName' => '',
+                    // 'FromLocalityName' => '',
                     'ToCountyName' => $address['zone_code'],
                     'ToLocalityName' => $address['city'],
                     'Parcels' => $this->config->get('cargus_preferinte_type') != 'envelope' ? 1 : 0,
@@ -164,6 +164,7 @@ class ModelExtensionShippingCargus extends Model {
                     'DeclaredValue' => $valoare_declarata,
                     'CashRepayment' => $ramburs_cash,
                     'BankRepayment' => $ramburs_cont_colector,
+                    'PriceTableID' => $this->config->get('cargus_preferinte_price'),
                     'OtherRepayment' => '',
                     'PaymentInstrumentId' => 0,
                     'PaymentInstrumentValue' => 0,
@@ -172,6 +173,7 @@ class ModelExtensionShippingCargus extends Model {
                     'MorningDelivery' => $this->config->get('cargus_preferinte_morning') != 1 ? false : true,
                     'ShipmentPayer' => $this->config->get('cargus_preferinte_payer') != 'recipient' ? 1 : 2
                 );
+            
                 $fields['ServiceId'] = 0;
                 if($this->config->get('cargus_preferinte_service_id')){
                    $fields['ServiceId'] = $this->config->get('cargus_preferinte_service_id');
@@ -190,15 +192,25 @@ class ModelExtensionShippingCargus extends Model {
 
                 $calculate = $this->model_extension_shipping_cargusclass->CallMethod('ShippingCalculation', $fields, 'POST', $token);
 
-                if (is_null($calculate) || $calculate === false || isset($calculate['error'])) {
+                if ( is_null($calculate) || $calculate === false || isset($calculate['Error']) || !array_key_exists('GrandTotal', $calculate) ) {
                     //save log
                     $message = __CLASS__.'::'.__FUNCTION__." error ShippingCalculation".
                                (isset($calculate['error']) ? ": ".$calculate['error'] : "").
                                ", fields: ".print_r($fields, true);
 
                     $this->log->write($message);
-                    error_log($message);
-                    $calculate['Subtotal'] = 0;
+
+                    $method_data = array(
+                        'code'       => 'cargus',
+                        'title'      => $this->language->get('cargus_error_shipping_unavailable'),
+                        'quote'      => array(),
+                        'sort_order' => $this->config->get('cargus_sort_order'),
+                        'error'      => $this->language->get('cargus_error_shipping_unavailable'),
+                        'status'     => false
+                    );
+
+                    return $method_data;
+                    
                 }
 
                 $payer = $this->config->get('cargus_preferinte_payer');

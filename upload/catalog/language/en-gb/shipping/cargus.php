@@ -5,3 +5,4 @@ $_['text_description_2'] = 'Pickup from the closest Cargus warehouse';
 $_['text_discount_urgent'] = 'Order value promotion';
 $_['cargus_checkout_street'] = 'Street';
 $_['cargus_checkout_street_number'] = 'Street number';
+$_['cargus_error_shipping_unavailable'] = 'Cargus is not available for your location';

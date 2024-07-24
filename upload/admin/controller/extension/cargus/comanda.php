@@ -693,7 +693,8 @@ class ControllerExtensionCargusComanda extends Controller
                         unset( $fields['Recipient']['CodPostal'] );
 
                         unset( $fields['OpenPackage'] );
-                    } elseif (in_array($this->config->get('cargus_preferinte_service_id'), array(34))) {
+                    }
+                    /*elseif (in_array($this->config->get('cargus_preferinte_service_id'), array(34))) {
                         if ($row->row['weight'] <= 31) {
                             $fields['ServiceId'] = 34;
                         } elseif ($row->row['weight'] <= 50) {
@@ -701,7 +702,7 @@ class ControllerExtensionCargusComanda extends Controller
                         } else {
                             $fields['ServiceId'] = 36;
                         }
-                    }
+                    }*/
 
 //                    $this->log->write('Create AWB, data:' . print_r($fields, true));
 
