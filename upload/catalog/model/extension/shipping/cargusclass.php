@@ -29,7 +29,7 @@ class ModelExtensionShippingCargusClass extends Model
         $this->cargusapikey = $key;
     }
 
-    public function CallMethod($function, $verb, $parameters = '', $token = null)
+    public function CallMethod($function, $parameters = '', $verb, $token = null)
     {
         error_reporting(E_ALL);
         ini_set('display_errors', '0');
