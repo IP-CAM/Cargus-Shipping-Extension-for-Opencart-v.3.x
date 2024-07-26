@@ -7,7 +7,7 @@ class ControllerExtensionModuleCargus extends Controller
         $orderInfo['order_id'] = $args['order_id'];
         $data = array();
 
-        $this->language->load('shipping/cargus');
+        $this->load->language('extension/shipping/cargus');
         $this->load->model('extension/shipping/cargus');
 
         $awb = $this->model_extension_shipping_cargus->getAwbForOrderId($orderInfo['order_id']);
@@ -64,7 +64,7 @@ class ControllerExtensionModuleCargus extends Controller
             return null;
         }
 
-        if (!($this->config->get('cargus_preferinte_awb_retur') > 0)) {
+        if (!($this->config->get('shipping_cargus_preferinte_awb_retur') > 0)) {
             return null;
         }
 
@@ -191,7 +191,7 @@ QRCode.toDataURL(\''.$showQr.'\', opts, function (err, url) {
 
     public function checkoutShippingMethodBefore($route, &$args)
     {
-        $this->config->set('shipping_cargus_status', $this->config->get('cargus_status'));
+        $this->config->set('shipping_cargus_status', $this->config->get('shipping_cargus_status'));
     }
 
     public function carrierSaveAfter($route, &$args, &$output)
@@ -199,7 +199,7 @@ QRCode.toDataURL(\''.$showQr.'\', opts, function (err, url) {
         //check if ship&go is selected and a delivery point was selected
         $error_message = 'Va rugam selectati un punct Ship&Go';
 
-        if ($this->session->data['shipping_method']['code'] == 'cargus_ship_and_go.ship_and_go' &&
+        if ($this->session->data['shipping_method']['code'] == 'shipping_cargus_ship_and_go.ship_and_go' &&
             (
                 isset($this->session->data['order_id']) ||
                 !isset($this->session->data['shipping_address']['custom_field']['pudo_location_id'])
@@ -290,20 +290,20 @@ QRCode.toDataURL(\''.$showQr.'\', opts, function (err, url) {
 
     public function modelAddCustomFieldsAfter($route, &$args, &$output)
     {
-        $enable = $this->config->get('cargus_preferinte_postal_codes');
+        $enable = $this->config->get('shipping_cargus_preferinte_postal_codes');
 
         if (!$enable) {
             return null;
         }
 
-        $this->language->load('shipping/cargus');
+        $this->load->language('extension/shipping/cargus');
 
         //we add our custom fields to the existing array
 
         $street = array(
             'custom_field_id' => 9001,
             'custom_field_value' => array(),
-            'name' => $this->language->get('cargus_checkout_street'),
+            'name' => $this->language->get('shipping_cargus_checkout_street'),
             'type' => 'text',
             'value' => '',
             'validation' => '',
@@ -315,7 +315,7 @@ QRCode.toDataURL(\''.$showQr.'\', opts, function (err, url) {
         $streetNr = array(
             'custom_field_id' => 9002,
             'custom_field_value' => array(),
-            'name' => $this->language->get('cargus_checkout_street_number'),
+            'name' => $this->language->get('shipping_cargus_checkout_street_number'),
             'type' => 'text',
             'value' => '',
             'validation' => '',

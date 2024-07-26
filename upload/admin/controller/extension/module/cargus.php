@@ -13,41 +13,25 @@ class ControllerExtensionModuleCargus extends Controller
 
         $cargus[] = array(
             'name'     => $this->language->get('text_cargus_comanda'),
-            'href'     => $this->url->link(
-                'extension/shipping/cargus_comanda',
-                $userToken,
-                true
-            ),
+            'href'     => $this->url->link('extension/shipping/cargus_comanda', $userToken, true),
             'children' => array()
         );
 
         $cargus[] = array(
             'name'     => $this->language->get('text_cargus_istoric'),
-            'href'     => $this->url->link(
-                'extension/shipping/cargus_istoric',
-                $userToken,
-                true
-            ),
+            'href'     => $this->url->link('extension/shipping/cargus_istoric', $userToken, true),
             'children' => array()
         );
 
         $cargus[] = array(
             'name'     => $this->language->get('text_cargus_preferinte'),
-            'href'     => $this->url->link(
-                'extension/shipping/cargus_preferinte',
-                $userToken,
-                true
-            ),
+            'href'     => $this->url->link('extension/shipping/cargus_preferinte', $userToken, true),
             'children' => array()
         );
 
         $cargus[] = array(
             'name'     => $this->language->get('text_cargus_setari'),
-            'href'     => $this->url->link(
-                'extension/shipping/cargus',
-                $userToken,
-                true
-            ),
+            'href'     => $this->url->link('extension/shipping/cargus', $userToken, true),
             'children' => array()
         );
 
@@ -63,11 +47,7 @@ class ControllerExtensionModuleCargus extends Controller
 
         $cargusShip[] = array(
             'name'     => $this->language->get('text_cargus_ship_and_go_preferinte'),
-            'href'     => $this->url->link(
-                'extension/shipping/cargus_ship_and_go2',
-                $userToken,
-                true
-            ),
+            'href'     => $this->url->link('extension/shipping/cargus_ship_and_go_conf', $userToken, true),
             'children' => array()
         );
 

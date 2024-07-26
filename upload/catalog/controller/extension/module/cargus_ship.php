@@ -36,12 +36,12 @@ class ControllerExtensionModuleCargusShip extends Controller
 
             $this->load->model('extension/shipping/cargusclass');
 
-            $this->model_extension_shipping_cargusclass->SetKeys($this->config->get('cargus_api_url'), $this->config->get('cargus_api_key'));
+            $this->model_extension_shipping_cargusclass->SetKeys($this->config->get('cargus_api_url'), $this->config->get('shipping_cargus_api_key'));
 
             // UC login user
             $fields = array(
-                'UserName' => $this->config->get('cargus_username'),
-                'Password' => $this->config->get('cargus_password')
+                'UserName' => $this->config->get('shipping_cargus_username'),
+                'Password' => $this->config->get('shipping_cargus_password')
             );
             $token = $this->model_extension_shipping_cargusclass->CallMethod('LoginUser', $fields, 'POST');
             $locations = $this->model_extension_shipping_cargusclass->CallMethod('PudoPoints', array(), 'GET', $token);
